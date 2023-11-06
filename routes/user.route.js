@@ -4,6 +4,10 @@ var passport = require("../config/passport")
 var xulydb = require("../CRUD/xulydb")
 var moment = require('moment')
 
+const sendmail = require('../sendmail/sendmail')
+
+//sendmail.sendmail()
+
 router.get("/", (req, res, next) => {
     res.render("index")
 })
