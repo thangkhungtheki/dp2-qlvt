@@ -1,0 +1,58 @@
+<div style="margin-bottom:20px; color: blue; position: relative; bottom: auto;" >
+    <h3>FORM NHẬP VẬT TƯ</h3>
+</div>
+<form  action="luunhapvattu" method="post">
+    
+    <div class="form-group" id="select">
+      <label>Chọn Loại Vật Tư</label>
+      <select class="form-control" id="luachon" name="loaivattu" >
+        <option value="" selected disabled hidden>Choose here ...</option>
+        <option value="dienlanh">Điện Lạnh</option>
+        <option value="dien">Điện</option>
+        <option value="nuoc">Nước</option>
+        <option value="cokhi">Cơ Khí</option>  
+        <option value="son">Sơn</option>
+      </select>
+     
+    </div>
+    <div class="form-group" id="select">
+      <label>Tên Vật Tư</label>
+      <select class="form-control" id="vattu" name="Ma_vattu">
+        
+        
+      </select>
+     
+    </div>
+    <div class="form-group">
+      <div class="form-group col-md-6">
+        <label id="soluongton"></label>
+      </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Ngày nhập</label>
+          <input type="date" class="form-control" id="txtngaynhap" placeholder="Ngày nhập" name="ngaynhap">
+        </div>
+        <div class="form-group col-md-6">
+          <label>Số Lượng Nhập</label>
+          <input type="number" class="form-control" id="txtsoluongnhap" placeholder="Số Lượng Nhập" name="soluong">
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label>Ghi Chú</label>
+        <textarea class="form-control" rows="3" cols="10" value="" name="ghichu" id="textarea1"
+            type="text" ></textarea>
+    </div>
+    <div class="form-group">
+      
+      <input type="text" class="form-control" id="loaivt" name="loai" hidden>
+      <input type="text" class="form-control" id="id_tenvattu" name="Tenvattu" hidden>
+  </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="luunhap">LƯU NHẬP</button>
+    </div>
+    
+  </form>

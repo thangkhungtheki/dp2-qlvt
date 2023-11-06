@@ -1,0 +1,68 @@
+<% var _xoa='' %>
+<!-- Page Heading -->
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">VẬT TƯ</h1>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Báo Cáo Vật Tư </h6>
+        </div>
+    
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="table-success">
+                            <th>Loại</th>
+                            <th>Mã</th>
+                            <th>Tên</th>
+                            <th>Nhập</th>
+                            <th>Xuất</th>
+                            <th>Tồn</th>
+
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr class="table-success">
+                            <th>Loại</th>
+                            <th>Mã</th>
+                            <th>Tên</th>
+                            <th>Nhập</th>
+                            <th>Xuất</th>
+                            <th>Tồn</th>
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        <% data.forEach((value)=>{ %>
+                            
+                            <tr>
+                                <td>
+                                    <%= value.loai %>
+                                </td>
+                                <td>
+                                    <%= value.mavattu %>
+                                </td>
+                                <td>
+                                    <%= value.tenvattu %>
+                                </td>
+                                <td>
+                                    <%= value.nhap %>
+                                </td>
+                                <td>
+                                    <%= value.xuat %>
+                                </td>
+                                <td>
+                                    <%= value.ton %>
+                                </td>
+                            </tr>
+
+                        <% }) %>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,193 @@
+﻿<!-- Page Heading -->
+<% var _xoa='' %>
+    <div class="container-fluid">
+        <h1 class="h3 mb-2 text-gray-800">Thiet Bi View</h1>
+
+        <!-- <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Database Thiet Bi Views </h6>
+        </div>
+        <div class="card-body"> -->
+        <div>
+            <button class="btn btn-primary" id="btnthem" style="margin-bottom: 10px;" onclick=them()>Thêm Thiết Bị</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr class="table-success">
+                        <th>Control</th>
+                        <th>MaDinhDanh</th>
+                        <th>Mainboard</th>
+                        <th>RAM</th>
+                        <th>CPU</th>
+                        <th>HardDisk</th>
+                        <th>Monitor</th>
+                        <!-- <th>VideoCard</th> -->
+                        <th>OS</th>
+                        <th>Bộphận</th>
+                        <!-- <th>Đềxuất</th>
+                            <th>Loại</th> -->
+                        <th>Nguoidung</th>
+                        <th>Vịtrí</th>
+                        <th>Loại</th>
+                        <th>Notes</th>
+
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="table-success">
+                        <th>Control</th>
+                        <th>MaDinhDanh</th>
+                        <th>Mainboard</th>
+                        <th>RAM</th>
+                        <th>CPU</th>
+                        <th>HardDisk</th>
+                        <th>Monitor</th>
+                        <!-- <th>VideoCard</th> -->
+                        <th>OS</th>
+                        <th>Bộphận</th>
+                        <!-- <th>Đềxuất</th>
+                            <th>Loại</th> -->
+                        <th>Nguoidung</th>
+                        <th>Vịtrí</th>
+                        <th>Loại</th>
+                        <th>Notes</th>
+
+                    </tr>
+                </tfoot>
+
+                <tbody>
+                    <% data.forEach((value)=>{ %>
+                        <% var bien=value.Ma %>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')"
+                                            data-toggle="modal" data-target="#logoutModal2">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div>
+                                        <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal"
+                                            data-target="#logoutModal" onclick="Luu('<%= bien %>')">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <%= value.Ma %>
+                                </td>
+                                <td>
+                                    <%= value.Mainboard %>
+                                </td>
+                                <td>
+                                    <%= value.RAM %>
+                                </td>
+                                <td>
+                                    <%= value.CPU %>
+                                </td>
+                                <td>
+                                    <%= value.HardDisk %>
+                                </td>
+                                <td>
+                                    <%= value.Monitor %>
+                                </td>
+                                <!-- <td>
+                                    <%= value.VideoCard %>
+                                </td> -->
+                                <td>
+                                    <%= value.OS %>
+                                </td>
+                                <td>
+                                    <%= value.BoPhan %>
+                                </td>
+                                <!-- <td>
+                                    <%= value.DeXuat %>
+                                </td> -->
+                               
+                                <td>
+                                    <%= value.Nguoidung %>
+                                </td>
+                                <td>
+                                    <%= value.Vitri %>
+                                </td>
+                                <td>
+                                    <%= value.Loai %>
+                                </td>
+                                <td>
+                                    <%= value.Notes %>
+                                </td>
+
+                            </tr>
+
+
+                            <% }) %>
+
+
+                </tbody>
+            </table>
+        </div>
+        <!-- </div>
+    </div> -->
+    </div>
+
+    <!-- Logout Modal-->
+    <%- include('../layout/dialog.ejs') %>
+        <!-- xxxxxxxxxxx -->
+
+        <div class="modal fade" id="logoutModal2" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ModalLabel2">Bạn muốn sửa</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="sualabel2">#####</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <form action="searchedit" method="post">
+                            <input type="text" id="txtid" name="txtsearch" value="" hidden="true"/>
+                            <button class="btn btn-primary" type="submit" id="btnsua">SỬA</button>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            // function Xoa(param) {
+            //     alert(param)
+            //     $.ajax({
+            //         method: "POST",
+            //         url: "/delete",
+            //         data: { Link: param }
+            //     })
+            //     .done(function (msg) {
+            //         alert("Chúng tôi đã xóa Link " + param)
+            //         window.location.href = "/thietbi"
+            //     });
+            // }
+            function Luu(bien) {
+                _xoa = bien;
+                //alert(_xoa)
+                $('#ModalLabeldel').html('Bạn chắc chắn muốn xóa mã <strong>' + _xoa + "</strong> ?");
+            }
+
+            function Sua(bien) {
+                _xoa = bien;
+                //alert(_xoa);
+                $('#txtid').val(_xoa);
+                $('#ModalLabel2').html('Bạn muốn sửa thiết bị có mã: <strong>' + _xoa + "</strong>");
+                //$('#sualabel2').html("Sửa: " + _xoa);
+                //console.log(_xoa);
+
+            }
+            function them(){
+                window.location.href = "/themthietbi"
+            }
+        </script>

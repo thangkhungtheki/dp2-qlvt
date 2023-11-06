@@ -1,0 +1,75 @@
+<!-- Page Heading -->
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">User View</h1>
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Database User Views </h6>
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr class="table-success">
+                            <th>Control</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Role</th>
+
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr class="table-success">
+                            <th>Control</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Role</th>
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        <% data.forEach((value)=>{ %>
+                            <% var bien = value.username %>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <!-- <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')"
+                                            data-toggle="modal" data-target="#logoutModal2">
+                                            <i class="fas fa-info-circle"></i>
+                                        </div> -->
+                                        <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal"
+                                            data-target="#xoauserModal" onclick="Luu('<%= bien %>')">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <%= value.username %>
+                                </td>
+                                <td>
+                                    <%= value.password %>
+                                </td>
+                                <td>
+                                    <%= value.role %>
+                                </td>
+                            </tr>
+                            <% }) %>
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function Luu(bien) {
+    _xoa = bien;
+    //alert(_xoa)
+    $('#xoauserModal1').html('Bạn chắc chắn muốn xóa <strong>' + _xoa + "</strong> ?");
+    $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
+}
+</script>
