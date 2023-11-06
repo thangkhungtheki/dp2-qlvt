@@ -8,6 +8,13 @@ const sendmail = require('../sendmail/sendmail')
 
 //sendmail.sendmail()
 
+router.get('/cronjobsendmail',async(req, res) => {
+    var data =  await xulydb.doc_createthietbi()
+    var newdata = await tinhngayconlai(data)
+    sendmail.sendmail(newdata)
+    res.send(200,'ok')
+})
+
 router.get("/", (req, res, next) => {
     res.render("index")
 })
