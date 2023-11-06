@@ -50,7 +50,7 @@ function sendmail(data){
         var mainOptions = { // thiết lập đối tượng, nội dung gửi mail
             from: process.env.emailFrom,
             to: process.env.mailList,
-            //cc: 'it@diamondplace.com.vn',
+            //bcc: 'it@diamondplace.com.vn',
             subject: process.env.subject,
             //text: 'Your text is here',//Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
             html: content ,//Nội dung html mình đã tạo trên kia :)),
