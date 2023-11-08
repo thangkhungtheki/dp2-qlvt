@@ -505,6 +505,7 @@ router.get('/vattutest', (req, res) => {
         res.render("mainSbAdmin/vattu.ejs", {
             
             user: req.user,
+            _username: req.user.username,
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -545,6 +546,7 @@ router.get('/xuatvattutest', (req, res) => {
     if(req.isAuthenticated()){
         res.render("mainSbAdmin/xuatvattu.ejs", {
             user: req.user, //tạm mở user
+            _username: req.user.username,
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -577,6 +579,7 @@ router.get('/mavattutest', (req, res) => {
         res.render("mainSbAdmin/themmavattu.ejs", {
         
             user: req.user, //tạm mở user
+            _username: req.user.username,
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -629,6 +632,7 @@ router.get('/baocaovattu', async (req, res) => {
         res.render("mainSbAdmin/baocaovattu.ejs", {
 
             user: req.user, //tạm mở user
+            
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -646,7 +650,8 @@ router.get('/baocaovattu', async (req, res) => {
 
 router.get('/chart', (req, res) => {
     res.render("mainSbAdmin/main-chart.ejs",{
-        user: "req.user", //tạm mở user
+        user: req.user, //tạm mở user
+        
         activeuser: '',
         activetb: '',
         activetbdp2: '',
@@ -662,6 +667,7 @@ router.get('/chitiettheoma', async(req, res) => {
         //console.log(data)
         res.render("mainSbAdmin/chitiettheoma_tenuser",{
             user: req.user, //tạm mở user
+            
             activeuser: '',
             activetb: '',
             activetbdp2: '',
