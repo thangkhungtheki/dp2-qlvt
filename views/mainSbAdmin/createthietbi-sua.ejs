@@ -37,7 +37,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/test">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
@@ -134,7 +134,7 @@
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  <%= _username %>
+                  Profile
                 </a>
                 <!-- <a class="dropdown-item" href="#">
                   <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -158,8 +158,8 @@
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <div >
-        <%- include('../table/createte.ejs') %>
+        <div style="margin: 10px;">
+        <%- include('../layout/formcreatethietbi-sua.ejs') %>
 
         </div>
 
@@ -211,7 +211,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="xoauserModal1">Bạn chắc chắn muốn Delete </h5>
+        <h5 class="modal-title" id="xoauserModal1">Bạn chắc chắn muốn thoát?</h5>
         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
@@ -219,36 +219,12 @@
       <div class="modal-body" id="xoauserModal2">#.</div>
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-        
-          <button class="btn btn-primary" type="submit" id="btnxoatb" onclick="btnxoatb()">Delete</button>
-        
+        <button class="btn btn-primary" type="button" id="btnlogout">Logout</button>
       </div>
     </div>
   </div>
 </div>
-<!-- ----------------------------------- -->
 
-<!-- Sua  Modal-->
-<div class="modal fade" id="suamodal" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="suamodal3">Bạn chắc chắn muốn SỬA </h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body" id="suamodal4">#.</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-        
-          <button class="btn btn-primary" type="submit" id="btnxoatb" onclick="btnsuamodal()">Sửa</button>
-        
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ----------------------------------- -->
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
@@ -273,21 +249,3 @@
 </body>
 
 </html>
-<script>
-  function btnxoatb(){
-    $.ajax({
-      method: 'post',
-      url: '/xoathietbi',
-      data: {tentb: $('#xoauserModal2').val()}
-    })
-    .done(function( msg ) {
-              window.location.href = "/viewcreatethietbi"
-            });
-    
-  }
-  function btnsuamodal(){
-    // alert ($('#suamodal4').val())
-    let tentb = $('#suamodal4').val()
-    window.location.href = "/suacreatethietbi?tentb=" + tentb
-  }
-</script>

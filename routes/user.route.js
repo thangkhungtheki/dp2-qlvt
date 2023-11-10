@@ -109,6 +109,60 @@ router.post('/xoathietbi', async(req, res) => {
     }    
 })
 
+router
+.get('/suacreatethietbi', async(req, res) => {
+    let tentb = req.query.tentb
+    //console.log(tentb)
+    if(req.isAuthenticated()){
+        var data = await xulydb.tim_createthietbi(tentb)
+        
+        //var _adata = JSON.stringify(data)
+        //console.log(_adata)
+        // console.log(data)
+        //console.log(newdata)
+            res.render("mainSbAdmin/createthietbi-sua",{
+            _username: req.user.username,
+            data: data,
+            activeuser: '',
+            activetb: '',
+            activetbdp2: 'active',
+            
+        })
+        
+    }else{
+        res.redirect("/signin")
+    }
+})
+.post('/suacreatethietbi', async(req, res) => {
+    if(req.isAuthenticated()){ 
+        var nnhap = moment(req.body.ngaynhap)
+        var sothang = req.body.timehethan
+        const nhethan = nnhap.add(sothang, 'months')
+        
+        var data = {          
+                username: req.user.username,
+                tentb: req.body.tentb,
+                dvt: req.body.dvt,
+                soluong: req.body.soluong,
+                ngaynhap: req.body.ngaynhap,
+                timehethan: req.body.timehethan,
+                tenncc: req.body.tenncc,
+                sdtncc: req.body.sdtncc,
+                tinhtrang: req.body.tinhtrang,
+                ghichu: req.body.ghichu,    
+                ngayhethan: nhethan.format('YYYY-MM-DD'),
+        }
+        try{
+            await xulydb.sua_createthietbi(data.tentb, data)
+            res.redirect('/viewcreatethietbi')
+        }catch{e=>{
+            res.send(e)
+        }} 
+    }else{
+        res.redirect("/signin")
+    }  
+})
+
 router.get('/viewcreatethietbi', async(req, res) => {
     if(req.isAuthenticated()){
         var data = await xulydb.doc_createthietbi()
