@@ -41,21 +41,8 @@ async function xoa_createthietbi(tentb){
 
 async function sua_createthietbi(tentbb, doc){
     try{
-        await _createthietbi.updateOne({tentb: tentbb}, {$set: {
-            username: doc.username,
-            tentb: doc.tentb,
-            dvt: doc.dvt,
-            soluong: doc.soluong,
-            ngaynhap: doc.ngaynhap,
-            timehethan: doc.timehethan,
-            ngayhethan: doc.ngayhethan,
-            tenncc: doc.tenncc,
-            sdtncc: doc.sdtncc,
-            tinhtrang: doc.tinhtrang,
-            ghichu: doc.ghichu,
-            songayhethan: doc.songayhethan
-        }})
-        console.log(doc)
+        await _createthietbi.updateOne({tentb: tentbb}, doc)
+        
         return true
     }catch(e){
         console.log(false)

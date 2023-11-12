@@ -118,7 +118,7 @@ router
         
         //var _adata = JSON.stringify(data)
         //console.log(_adata)
-        // console.log(data)
+        //console.log(data)
         //console.log(newdata)
             res.render("mainSbAdmin/createthietbi-sua",{
             _username: req.user.username,
@@ -153,6 +153,7 @@ router
                 ngayhethan: nhethan.format('YYYY-MM-DD'),
         }
         try{
+            // console.log(data)
             await xulydb.sua_createthietbi(data.tentb, data)
             res.redirect('/viewcreatethietbi')
         }catch{e=>{
