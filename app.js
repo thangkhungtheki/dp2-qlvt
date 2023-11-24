@@ -10,6 +10,11 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var app = express();
 var indexRouter = require('./routes/user.route');
+
+var favicon = require('serve-favicon');
+app.use(favicon(path.join(__dirname,'public','img','favicon.png')));
+
+mongoose.set('strictQuery', true)
 // path database
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true });
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
