@@ -24,6 +24,10 @@
     "nodemon": "^2.0.19",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+<<<<<<< HEAD
     "serve-favicon": "^2.5.0"
+=======
+    "yarn": "^1.22.21"
+>>>>>>> 1a462eb3d3df849c535a365ca959711c279133e8
   }
 }
