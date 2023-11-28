@@ -11,7 +11,7 @@ var flash = require('connect-flash');
 var app = express();
 var indexRouter = require('./routes/user.route');
 // path database
-mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true });
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
 app.use(session({
   secret: 'thangkhungtheki',
@@ -31,6 +31,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set("trust proxy", true);
+
+
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
@@ -38,7 +41,11 @@ app.use('/', indexRouter);
 //   next(createError(404));
 // });
 app.use((req, res, next) => {
-  res.status(404).redirect("/signin");
+  // if(req.headers["x-forwarded-proto"] == "http") {
+  //   res.redirect(301, "https://" + req.host+req.url);
+  //                  next();
+  //  }
+   res.status(404).redirect("/signin");
 });
 // // error handler
 // app.use(function(err, req, res, next) {
