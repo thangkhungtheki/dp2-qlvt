@@ -746,4 +746,23 @@ router.post('/timxuatvattu', async(req, res) => {
     res.send(data)
 })
 
+router.get('/viewdevices',authenticated, async(req, res) => {
+    let data = await xulydb.docdevices()
+    console.log(data[0]._id)
+    res.render("mainSbAdmin/view_devices",{
+        _username: req.user.username,
+        data: data,
+        activeuser: '',
+        activetb: '',
+        activetbdp2: 'active',
+        
+    })
+})
+
+function authenticated(req, res , next) {
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect('/signin')
+}
 module.exports = router

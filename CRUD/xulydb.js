@@ -7,6 +7,7 @@ const _vattu = require("../model/vattu.model")
 const _nhapvattu = require("../model/nhapvattu.model")
 const _xuatvattu = require("../model/xuatvattu.model")
 const _createthietbi = require("../model/createthietbi.model")
+const _device = require('../model/device')
 //mongoose.connect("mongodb+srv://tkbot:Iqzg8qpVDNMUxTLm@cluster0.zl0wy.mongodb.net/test",{useNewUrlParser:true, useUnifiedTopology: true })
 async function docUser(){
     let docs = await _user.find()
@@ -278,6 +279,11 @@ async function timxuatvattu(__loai){
     return __xuatvattu
 }
 
+async function docdevices(){
+    let docs = await _device.find()
+    return docs
+}
+
 module.exports = {
     docUser,
     find,
@@ -306,4 +312,5 @@ module.exports = {
     xoa_createthietbi,
     tim_createthietbi,
     sua_createthietbi,
+    docdevices,
 }
