@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+var moment = require('moment')
 
 
 function sendmail(data){
@@ -9,8 +10,8 @@ function sendmail(data){
         type: 'login',
         secure: true,
         auth: {
-            user: process.env.emailFrom, //T√†i kho·∫£n gmail v·ª´a t·∫°o
-            pass: process.env.emailPass, //M·∫≠t kh·∫©u t√†i kho·∫£n gmail v·ª´a t·∫°o
+            user: process.env.emailFrom, //T‡i kho?n gmail v?a t?o
+            pass: process.env.emailPass, //M?t kh?u t‡i kho?n gmail v?a t?o
         },
         tls: {
             // do not fail on invalid certs
@@ -24,9 +25,9 @@ function sendmail(data){
         
         if( data[i].songayhethan <= 30 && data[i].songayhethan > 0 ){
             
-            var string = '<b>.T√™n: ' + `</b><span style='color: blue'>` + data[i].tentb + ` </span>
+            var string = '<b>.TÍn: ' + `</b><span style='color: blue'>` + data[i].tentb + ` </span>
                             <span>` + ` ---day: </span>
-                            <span style="color: red">` + data[i].songayhethan + ` ng√†y </span> <br>`
+                            <span style="color: red">` + data[i].songayhethan + ` ng‡y </span> <br>`
             text = text + string
            
         }
@@ -45,15 +46,15 @@ function sendmail(data){
       ];
       
       
-    content = text + _html;
+    content = text ;
     if(content != ''){
-        var mainOptions = { // thi·∫øt l·∫≠p ƒë·ªëi t∆∞·ª£ng, n·ªôi dung g·ª≠i mail
+        var mainOptions = { // thi?t l?p d?i tu?ng, n?i dung g?i mail
             from: process.env.emailFrom,
             to: process.env.mailList,
             //bcc: 'it@diamondplace.com.vn',
             subject: process.env.subject,
-            //text: 'Your text is here',//Th∆∞·ªùng thi m√¨nh kh√¥ng d√πng c√°i n√†y thay v√†o ƒë√≥ m√¨nh s·ª≠ d·ª•ng html ƒë·ªÉ d·ªÖ edit h∆°n
-            html: content ,//N·ªôi dung html m√¨nh ƒë√£ t·∫°o tr√™n kia :)),
+            //text: 'Your text is here',//Thu?ng thi mÏnh khÙng d˘ng c·i n‡y thay v‡o dÛ mÏnh s? d?ng html d? d? edit hon
+            html: content ,//N?i dung html mÏnh d„ t?o trÍn kia :)),
             
         }
     
@@ -66,7 +67,27 @@ function sendmail(data){
             }
         });
     }else{
-        console.log('Ko c√≥ h·∫øt h·∫°n')
+        
+        let daynow = moment().format('YYYY-MM-DD')
+        console.log('Date: ' + daynow +' ko co het han')
+        // content = 'test mail'
+        // var mainOptions = { // thi?t l?p d?i tu?ng, n?i dung g?i mail
+        //     from: process.env.emailFrom,
+        //     to: process.env.mailList,
+        //     //bcc: 'it@diamondplace.com.vn',
+        //     subject: process.env.subject,
+        //     //text: 'Your text is here',//Thu?ng thi mÏnh khÙng d˘ng c·i n‡y thay v‡o dÛ mÏnh s? d?ng html d? d? edit hon
+        //     html: content ,//N?i dung html mÏnh d„ t?o trÍn kia :)),
+            
+        // }
+        // transporter.sendMail(mainOptions, function(err, info){
+        //     if (err) {
+        //         console.log(err);
+                
+        //     } else {
+        //         console.log('Message sent: ' +  info.response);
+        //     }
+        // });
     }
 
     

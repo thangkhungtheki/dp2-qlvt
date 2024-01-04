@@ -1,4 +1,4 @@
-<!-- Page Heading -->
+﻿<!-- Page Heading -->
 <div class="container-fluid">
     <h1 class="h3 mb-2 text-gray-800">XEM THIẾT BỊ , Ngày hệ thống: <%= daynow  %></h1>
     
@@ -12,42 +12,106 @@
                 <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr class="table">
-                            <th>Control</th>
-                            <th>Username</th>
+                            <th>STT</th>
                             <th>Tên Thiết Bị</th>
-                            <th>DAY</th>
+                            <th>Ngày còn lại</th>
                             <th>SL</th>
+			    <th>NCC</th>
                             <th>Nhập</th>
                             <th>Tháng</th>
                             <th>DVT</th>
-                            <th>NCC</th>
+                            
                             <th>SĐT</th>
                             <th>TT</th>
                             <th>Note</th>
+			    
+                            <th>Username</th>
+			    <th>Control</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr class="table">
-                            <th>Control</th>
-                            <th>Username</th>
-                            <th>Tên TB</th>
-                            <th>Day</th>
+			    <th>STT</th>
+                            <th>Tên Thiết Bị</th>
+                            <th>Ngày còn lại</th>
                             <th>SL</th>
+			    <th>NCC</th>
                             <th>Nhập</th>
                             <th>Tháng</th>
                             <th>DVT</th>
-                            <th>NCC</th>
+                            
                             <th>SĐT</th>
                             <th>TT</th>
                             <th>Note</th>
+
+                            <th>Username</th>
+			    <th>Control</th>
                         </tr>
                     </tfoot>
 
                     <tbody>
+			<% var stt = 0 %>
                         <% data.forEach((value)=>{ %>
                             <% var bien = value.tentb %>
-                            <tr>
+			<% stt = stt + 1 %>
                                 <td>
+				<b><%= stt %></b>
+				</td>
+                                <td>
+                                    <%= value.tentb %>
+                                </td>
+                                <% var so = parseInt(value.songayhethan) %>
+                                    <% if (so <= 0) { %>
+                                        <td class="orange-text">
+                                            <%= so %>
+                                        </td>   
+                                    <% } else if (so <= 9 && so >= 1) { %>
+                                        <td class="red-text">
+                                            <%= so %>
+                                        </td>   
+                                    <% } else if (so <= 19 && so >= 10) { %>
+                                        <td class="blue-text">
+                                            <%= so %>
+                                        </td> 
+                                    <% } else if (so <= 30 && so >= 20) { %>  
+                                        <td class="green-text">
+                                            <%= so %>
+                                        </td> 
+                                    <% } else { %>   
+                                        <td class="black-text">
+                                            <%= so %>
+                                        </td> 
+                                    <% } %>
+                                
+                                <td>
+                                    <%= value.soluong %>
+                                </td>
+				<td>
+                                    <%= value.tenncc %>
+                                </td>
+                                <td>
+                                    <%= value.ngaynhap %>
+                                </td>
+                                <td>
+                                    <%= value.timehethan %>
+                                </td>
+                                <td>
+                                    <%= value.dvt %>
+                                </td>
+                                
+                                <td>
+                                    <%= value.sdtncc %>
+                                </td>
+                                <td >
+                                    <%= value.tinhtrang %>
+                                </td>
+                                <td>
+                                    <%= value.ghichu %>
+                                </td>
+				<td>
+                                    <%= value.username %>
+                                </td>
+				<td>
                                     
                                         <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')"
                                             data-toggle="modal" data-target="#suamodal">
@@ -63,59 +127,7 @@
                                           
                                 </td>
                                 
-                                <td>
-                                    <%= value.username %>
-                                </td>
-                                <td>
-                                    <%= value.tentb %>
-                                </td>
-                                <% var so = parseInt(value.songayhethan) %>
-                                    <% if (so <= 0) { %>
-                                        <td class="orange-text">
-                                            <%= so %>
-                                        </td>   
-                                    <% } else if (so < 9 && so >= 1) { %>
-                                        <td class="red-text">
-                                            <%= so %>
-                                        </td>   
-                                    <% } else if (so <= 19 && so >= 10) { %>
-                                        <td class="blue-text">
-                                            <%= so %>
-                                        </td> 
-                                    <% } else if (so < 30 && so >= 20) { %>  
-                                        <td class="green-text">
-                                            <%= so %>
-                                        </td> 
-                                    <% } else { %>   
-                                        <td class="black-text">
-                                            <%= so %>
-                                        </td> 
-                                    <% } %>
                                 
-                                <td>
-                                    <%= value.soluong %>
-                                </td>
-                                <td>
-                                    <%= value.ngaynhap %>
-                                </td>
-                                <td>
-                                    <%= value.timehethan %>
-                                </td>
-                                <td>
-                                    <%= value.dvt %>
-                                </td>
-                                <td>
-                                    <%= value.tenncc %>
-                                </td>
-                                <td>
-                                    <%= value.sdtncc %>
-                                </td>
-                                <td >
-                                    <%= value.tinhtrang %>
-                                </td>
-                                <td>
-                                    <%= value.ghichu %>
-                                </td>
                             </tr>
                             <% }) %>
 
@@ -142,6 +154,18 @@ function Xoatb(bien) {
     $('#xoauserModal2').val(_xoa)
     $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
 }
+</script>
+<!-- Page level plugins -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+ <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+ <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $.noConflict();
+    var table = $('#dataTable').DataTable({
+	"pageLength": 50
+	});
+  });
 </script>
 <style>
     .red-text {

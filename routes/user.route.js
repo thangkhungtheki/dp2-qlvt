@@ -12,11 +12,16 @@ router.get('/cronjobsendmail',async(req, res) => {
     var data =  await xulydb.doc_createthietbi()
     var newdata = await tinhngayconlai(data)
     sendmail.sendmail(newdata)
-    res.send(200,'ok')
+    res.status(200).send('ok');
+
 })
 
 router.get("/", (req, res, next) => {
-    res.render("index")
+    res.redirect("/signin")
+})
+
+router.get('/.well-known/pki-validation/32E58AB3EEC936EDF6D79C8FD615AC68.txt' , (req, res) => {
+	res.sendfile('public/32E58AB3EEC936EDF6D79C8FD615AC68.txt')
 })
 
 router.get("/signin", (req, res , next) => {
