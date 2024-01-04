@@ -13,21 +13,15 @@ router.get('/cronjobsendmail',async(req, res) => {
     var newdata = await tinhngayconlai(data)
     sendmail.sendmail(newdata)
     res.status(200).send('ok');
-<<<<<<< HEAD
 
-=======
->>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
 })
 
 router.get("/", (req, res, next) => {
     res.redirect("/signin")
-<<<<<<< HEAD
 })
 
 router.get('/.well-known/pki-validation/32E58AB3EEC936EDF6D79C8FD615AC68.txt' , (req, res) => {
 	res.sendfile('public/32E58AB3EEC936EDF6D79C8FD615AC68.txt')
-=======
->>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
 })
 
 router.get("/signin", (req, res , next) => {

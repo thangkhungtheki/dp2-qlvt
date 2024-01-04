@@ -10,13 +10,8 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var app = express();
 var indexRouter = require('./routes/user.route');
-
-var favicon = require('serve-favicon');
-app.use(favicon(path.join(__dirname,'public','img','favicon.png')));
-
-mongoose.set('strictQuery', true)
 // path database
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true });
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
 app.use(session({
   secret: 'thangkhungtheki',
@@ -36,9 +31,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set("trust proxy", true);
-
-
 app.use('/', indexRouter);
 
 
@@ -48,21 +40,12 @@ app.use('/', indexRouter);
 //   next(createError(404));
 // });
 app.use((req, res, next) => {
-<<<<<<< HEAD
 	res.status(404).redirect("/signin");
 });
 
 
 
 
-=======
-  // if(req.headers["x-forwarded-proto"] == "http") {
-  //   res.redirect(301, "https://" + req.host+req.url);
-  //                  next();
-  //  }
-   res.status(404).redirect("/signin");
-});
->>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
 // // error handler
 // app.use(function(err, req, res, next) {
 //   // set locals, only providing error in development
