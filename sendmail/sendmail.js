@@ -1,6 +1,9 @@
 const nodemailer = require('nodemailer')
 var moment = require('moment')
+<<<<<<< HEAD
 
+=======
+>>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
 
 function sendmail(data){
 
@@ -46,7 +49,11 @@ function sendmail(data){
       ];
       
       
+<<<<<<< HEAD
     content = text ;
+=======
+    content = text;
+>>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
     if(content != ''){
         var mainOptions = { // thi?t l?p d?i tu?ng, n?i dung g?i mail
             from: process.env.emailFrom,
@@ -67,6 +74,7 @@ function sendmail(data){
             }
         });
     }else{
+<<<<<<< HEAD
         
         let daynow = moment().format('YYYY-MM-DD')
         console.log('Date: ' + daynow +' ko co het han')
@@ -88,6 +96,10 @@ function sendmail(data){
         //         console.log('Message sent: ' +  info.response);
         //     }
         // });
+=======
+        let daynow = moment().format('YYYY-MM-DD')
+        console.log('Date: ' + daynow +'Ko có hết hạn')
+>>>>>>> d387aec9d2cc818b7ef3af66669c64df726255da
     }
 
     
