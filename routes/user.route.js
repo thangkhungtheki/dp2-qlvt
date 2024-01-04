@@ -748,8 +748,8 @@ router.post('/timxuatvattu', async(req, res) => {
 
 router.get('/viewdevices',authenticated, async(req, res) => {
     let data = await xulydb.docdevices()
-    console.log(data[0]._id)
-    res.render("mainSbAdmin/view_devices",{
+    //console.log(data[0]._id)
+    res.render("mainSbAdmin/main_create_devices",{
         _username: req.user.username,
         data: data,
         activeuser: '',
