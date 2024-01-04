@@ -747,16 +747,45 @@ router.post('/timxuatvattu', async(req, res) => {
 })
 
 router.get('/viewdevices',authenticated, async(req, res) => {
-    let data = await xulydb.docdevices()
+   
     //console.log(data[0]._id)
     res.render("mainSbAdmin/main_create_devices",{
+        _username: req.user.username,
+        
+        activeuser: '',
+        activetb: '',
+        activetbdp2: '',
+        
+    })
+})
+
+router.get('/viewdevices1',authenticated, async(req, res) => {
+    let data = await xulydb.docdevices()
+    //console.log(data[0]._id)
+    res.render("mainSbAdmin/view_devices",{
         _username: req.user.username,
         data: data,
         activeuser: '',
         activetb: '',
-        activetbdp2: 'active',
+        activetbdp2: '',
         
     })
+})
+
+router.post('/create_device',authenticated, async(req, res) => {
+    let doc = {
+        name: req.body.name,
+        location: req.body.location,
+        power: req.body.power,
+        modem: req.body.modem,
+        note: req.body.modem,
+        username: req.user.username,
+    }
+    //console.log(doc)
+    let result = await xulydb.create_device(doc)
+    // if(result){
+        res.redirect('/viewdevices')
+    // }
 })
 
 function authenticated(req, res , next) {

@@ -283,7 +283,15 @@ async function docdevices(){
     let docs = await _device.find()
     return docs
 }
-
+async function create_device(doc){
+    //console.log(doc)
+    try{
+        await _device.create(doc)
+        return true
+    }catch(e){
+        return false
+    }
+}
 module.exports = {
     docUser,
     find,
@@ -313,4 +321,5 @@ module.exports = {
     tim_createthietbi,
     sua_createthietbi,
     docdevices,
+    create_device,
 }
