@@ -23,6 +23,9 @@ $('document').ready(()=>{
     $('#btnxem').click(()=>{
       window.location.href = "/viewdevices1"
     })
+    $('#btnxemtbdp2').click(()=>{
+      window.location.href = '/viewcreatethietbi'
+    })
     // $("#btnsua").click(() => {
     //   $.ajax({
     //     method: "POST",
