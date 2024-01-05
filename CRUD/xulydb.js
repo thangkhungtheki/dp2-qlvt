@@ -292,6 +292,39 @@ async function create_device(doc){
         return false
     }
 }
+async function delete_device(_id){
+    try {
+        await _device.deleteOne({_id: _id})
+        return true
+    } catch (error) {
+        return error
+    }
+    
+    
+}
+async function docdeviceid(id){
+    let docs = await _device.findById({_id: id})
+    return docs
+}
+
+async function update_device(id, doc){
+    //console.log(doc)
+    try{
+        // await _device.updateOne({_id: id}, {
+        //     name: doc.name,
+        //     location: doc.localtion,
+        //     power: doc.power,
+        //     modem: doc.modem,
+        //     username: doc.username,
+        //     note: doc.note
+        // })
+        await _device.findByIdAndUpdate(id, doc)
+        return true
+    }catch(e){
+        return false
+    }
+}
+
 module.exports = {
     docUser,
     find,
@@ -322,4 +355,7 @@ module.exports = {
     sua_createthietbi,
     docdevices,
     create_device,
+    delete_device,
+    docdeviceid,
+    update_device
 }

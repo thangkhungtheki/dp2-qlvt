@@ -11,7 +11,19 @@ var flash = require('connect-flash');
 var app = express();
 var indexRouter = require('./routes/user.route');
 // path database
-mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true });
+mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true ,},);
+// mongoose.set('strictQuery', false)
+
+// const mongooseOptions = {
+//   // ...
+//   useUnifiedTopology: true,
+//   useNewUrlParser:true
+//   // ...
+// };
+
+// mongoose.connect(process.env.DATABASE_URL, mongooseOptions);
+
+
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
 app.use(session({
   secret: 'thangkhungtheki',

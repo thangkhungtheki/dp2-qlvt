@@ -40,6 +40,7 @@
                         
                         <% data.forEach((value) => { %>
                             <% var bien = value._id %>
+                            <% var tendevice = value.name %>
 			                <% stt = stt + 1 %>
                         
                                 <td>
@@ -68,12 +69,12 @@
                                 </td>
 				                <td>
                                     
-                                        <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')"
+                                        <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>', '<%= tendevice %>')"
                                             data-toggle="modal" data-target="#suamodal">
                                             <i class="fas fa-info-circle"></i>
                                         </div>
                                         <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal"
-                                            data-target="#xoauserModal" onclick="Xoatb('<%= bien %>')">
+                                            data-target="#xoauserModal" onclick="Xoatb('<%= bien %>', '<%= tendevice %>')">
                                             <i class="fas fa-trash">
                                             </i>
                                         </div>
@@ -93,21 +94,65 @@
         </div>
     </div>
 </div>
+<!-- Xoa User Modal-->
+<div class="modal fade" id="xoauserModal" tabindex="0" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="xoauserModal1">Bạn chắc chắn muốn Delete </h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body" id="xoauserModal2">#.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          
+            <button class="btn btn-danger" type="button" id="btnxoatb" onclick="btnxoatb()">Delete</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ----------------------------------- -->
+  
+  <!-- Sua  Modal-->
+  <div class="modal fade" id="suamodal" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="suamodal3">Bạn chắc chắn muốn SỬA </h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body" id="suamodal4">#.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          
+            <button class="btn btn-info" type="button" id="btnsuadevice" onclick="btnsuamodal()">Sửa</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ----------------------------------- -->
 <script>
-function Sua(bien) {
+function Sua(bien, tendevice) {
     _xoa = bien;
     //alert("Chưa có làm ... bấm vui thôi nhé :))")
     // $('#xoauserModal1').html('Bạn chắc chắn muốn xóa <strong>' + _xoa + "</strong> ?");
     // $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
     $('#suamodal4').val(_xoa)
-    $("#suamodal4").html("Sửa <strong> " + _xoa + "</strong> ... ???")
+    $("#suamodal4").html("Sửa <strong> " + tendevice + "</strong> ... ???")
 }
-function Xoatb(bien) {
+function Xoatb(bien, tendevice) {
     _xoa = bien;
+   
     //alert('Bạn muốn xoá,', bien)
     // $('#xoauserModal1').html('Bạn chắc chắn muốn xóa <strong>' + _xoa + "</strong> ?");
     $('#xoauserModal2').val(_xoa)
-    $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
+    $("#xoauserModal2").html("Delete <strong> " +  tendevice  + "</strong> ... ???")
 }
 </script>
 <!-- Page level plugins -->
@@ -121,6 +166,25 @@ function Xoatb(bien) {
 	"pageLength": 50
 	});
   });
+</script>
+<script>
+    function btnxoatb(){
+    
+    $.ajax({
+      method: 'post',
+      url: '/delete_device',
+      data: {id: $('#xoauserModal2').val()}
+    })
+    .done(function( msg ) {
+              window.location.href = "/viewdevices1"
+            });
+    
+  }
+  function btnsuamodal(){
+    // alert ($('#suamodal4').val())
+    let tentb = $('#suamodal4').val()
+    window.location.href = "/update_device?id=" + tentb
+  }
 </script>
 <style>
     .red-text {

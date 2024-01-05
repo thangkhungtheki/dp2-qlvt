@@ -6,7 +6,7 @@ const schema = new Schema({
     power: {type: Number, required: false},
     modem: {type: String, required: false},
     note: {type: String, required: false},
-    
+    username: {type: String, required: false}
 })
 
 

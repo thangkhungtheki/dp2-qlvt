@@ -21,7 +21,7 @@ $('document').ready(()=>{
         });
     }),
     $('#btnxem').click(()=>{
-      window.location.href = "/viewcreatethietbi"
+      window.location.href = "/viewdevices1"
     })
     // $("#btnsua").click(() => {
     //   $.ajax({

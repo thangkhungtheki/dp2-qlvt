@@ -778,7 +778,7 @@ router.post('/create_device',authenticated, async(req, res) => {
         location: req.body.location,
         power: req.body.power,
         modem: req.body.modem,
-        note: req.body.modem,
+        note: req.body.note,
         username: req.user.username,
     }
     //console.log(doc)
@@ -786,6 +786,39 @@ router.post('/create_device',authenticated, async(req, res) => {
     // if(result){
         res.redirect('/viewdevices')
     // }
+})
+
+router.post('/delete_device', authenticated, async(req, res) => {
+    let id = req.body.id
+    let result = await xulydb.delete_device(id)
+    res.redirect('/viewdevices1')
+})
+
+router.get('/update_device', authenticated, async (req, res) => {
+    let id = req.query.id
+    let doc = await xulydb.docdeviceid(id)
+    //console.log(doc)
+    res.render("mainSbAdmin/main_update_devices",{
+        _username: req.user.username,
+        data: doc,
+        activeuser: '',
+        activetb: '',
+        activetbdp2: '',
+        
+    })
+})
+router.post('/update_device', authenticated, async(req, res) => {
+    let id = req.body.nameid
+    let doc = {
+        name: req.body.name,
+        location: req.body.location,
+        power: req.body.power,
+        modem: req.body.modem,
+        note: req.body.note,
+        username: req.user.username,
+    }
+    let result = await xulydb.update_device(id,doc)
+    res.redirect('/viewdevices1')
 })
 
 function authenticated(req, res , next) {
