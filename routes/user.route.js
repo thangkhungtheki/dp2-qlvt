@@ -3,7 +3,7 @@ var router =  express.Router()
 var passport = require("../config/passport")
 var xulydb = require("../CRUD/xulydb")
 var moment = require('moment')
-
+const toolmongo = require("../tool_mongo/backup")
 const sendmail = require('../sendmail/sendmail')
 
 //sendmail.sendmail()
@@ -827,4 +827,22 @@ function authenticated(req, res , next) {
     }
     res.redirect('/signin')
 }
+
+router.get("/backupmongo",(req, res) => {
+    let a = toolmongo.backupMongo("mongodb://127.0.0.1:27017/qlvt", (e, result) => {
+        if(e){
+            console.error(`Error: ${e.message}`);
+            return 'lỗi'
+        }else {
+            console.log(`Backup and conversion successful. Exported to: ${result}`);
+            return 'ok'
+        }
+    })
+    res.send(a)
+})
+
+router.get("/restoremongo", (req, res) => {
+    let a = toolmongo.restoremongo("mongodb://127.0.0.1:27017/qlvt")
+    res.end()
+})
 module.exports = router
