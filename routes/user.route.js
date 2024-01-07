@@ -845,4 +845,7 @@ router.get("/restoremongo", (req, res) => {
     let a = toolmongo.restoremongo("mongodb://127.0.0.1:27017/qlvt")
     res.end()
 })
+router.get("/danhgiasaotest", (req, res) => {
+    res.render('danhgiasao')
+})
 module.exports = router

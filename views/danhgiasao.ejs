@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Thêm CSS tùy chỉnh cho hệ thống đánh giá sao */
+        .rating {
+            display: inline-block;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            cursor: pointer;
+            color: #ddd;
+            font-size: 30px;
+        }
+
+        .rating input:checked ~ label,
+        .rating input:checked ~ label ~ label {
+            color: #fdd036;
+        }
+
+        .review-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hệ thống đánh giá sao -->
+    <div class="rating">
+        <input type="radio" id="star1" name="rating" value="1">
+        <label for="star1">★</label>
+        <input type="radio" id="star2" name="rating" value="2">
+        <label for="star2">★</label>
+        <input type="radio" id="star3" name="rating" value="3">
+        <label for="star3">★</label>
+        <input type="radio" id="star4" name="rating" value="4">
+        <label for="star4">★</label>
+        <input type="radio" id="star5" name="rating" value="5">
+        <label for="star5">★</label>
+    </div>
+
+    <!-- Nút đánh giá -->
+    <button class="btn btn-primary review-btn">Submit Review</button>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Script xử lý khi người dùng chọn ngôi sao -->
+    <script>
+        $(document).ready(function() {
+            $('.rating input').on('change', function() {
+                alert('Đánh giá: ' + this.value);
+            });
+
+            $('.review-btn').on('click', function() {
+                alert('Đánh giá: ' + this.value);
+            });
+        });
+    </script>
+
+</body>
+</html>
