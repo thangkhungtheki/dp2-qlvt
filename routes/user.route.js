@@ -5,7 +5,7 @@ var xulydb = require("../CRUD/xulydb")
 var moment = require('moment')
 const toolmongo = require("../tool_mongo/backup")
 const sendmail = require('../sendmail/sendmail')
-const xlsx = require('xlsx');
+const exceljs = require('exceljs');
 
 //sendmail.sendmail()
 
@@ -849,4 +849,47 @@ router.get("/restoremongo", (req, res) => {
 router.get("/danhgiasaotest", (req, res) => {
     res.render('danhgiasao')
 })
+function chuyenthanhfilexcel(data){
+    // Định nghĩa các cột trong excel
+    const headers = [
+    { header: 'Tên', key: 'name', width: 30 },
+    //...
+  ];
+  // Chuyển đổi dữ liệu thành xlsx 
+    const xls = xlsx.utils.json_to_sheet(data, {headers});
+}
+
+router.get('/chuyenexcel', async(req, res)=> {
+    try {
+        // Lấy dữ liệu từ MongoDB
+        const documents = await xulydb.docUser();
+    
+        // Tạo workbook và worksheet của Excel
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('Documents');
+    
+        // Đặt tên các cột
+        worksheet.columns = [
+          { header: 'Title', key: 'title', width: 20 },
+          { header: 'Content', key: 'content', width: 40 },
+        ];
+    
+        // Thêm dữ liệu vào worksheet
+        documents.forEach((document) => {
+          worksheet.addRow({ title: document.username, content: document.password });
+        });
+    
+        // Tạo file Excel và gửi về client
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=documents.xlsx');
+        await workbook.xlsx.write(res);
+        res.end();
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
+  
+})
+
+
 module.exports = router
