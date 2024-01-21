@@ -1,7 +1,9 @@
 ﻿<!-- Page Heading -->
 <div class="container-fluid">
+  <div>
     <h1 class="h3 mb-2 text-gray-800">View Devices</h1>
-    
+    <button class="btn btn-info" type="button" onclick="chuyenexcel()">Xuất excel</button>
+  </div>
     <div class="card shadow mb-4">
         <!-- <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Database User Views </h6>
@@ -184,6 +186,10 @@ function Xoatb(bien, tendevice) {
     // alert ($('#suamodal4').val())
     let tentb = $('#suamodal4').val()
     window.location.href = "/update_device?id=" + tentb
+  }
+
+  function chuyenexcel(){
+    window.location.href = "/chuyenexcel"
   }
 </script>
 <style>

@@ -859,10 +859,10 @@ function chuyenthanhfilexcel(data){
     const xls = xlsx.utils.json_to_sheet(data, {headers});
 }
 
-router.get('/chuyenexcel', async(req, res)=> {
+router.get('/chuyenexcel', authenticated, async(req, res)=> {
     try {
         // Lấy dữ liệu từ MongoDB
-        const documents = await xulydb.docUser();
+        const documents = await xulydb.docdevices();
     
         // Tạo workbook và worksheet của Excel
         const workbook = new exceljs.Workbook();
@@ -870,13 +870,24 @@ router.get('/chuyenexcel', async(req, res)=> {
     
         // Đặt tên các cột
         worksheet.columns = [
-          { header: 'Title', key: 'title', width: 20 },
-          { header: 'Content', key: 'content', width: 40 },
+          { header: 'Ten TB', key: 'name', width: 20 },
+          { header: 'Vi Tri', key: 'location', width: 20 },
+          { header: 'Cong Suat', key: 'power', width: 20 },
+          { header: 'Modem', key: 'modem', width: 20 },
+          { header: 'Ghichu', key: 'note', width: 20 },
+          { header: 'Username', key: 'username', width: 20 },
         ];
     
         // Thêm dữ liệu vào worksheet
         documents.forEach((document) => {
-          worksheet.addRow({ title: document.username, content: document.password });
+          worksheet.addRow({ 
+            name: document.name, 
+            location: document.location, 
+            power: document.power, 
+            modem: document.modem, 
+            note: document.note, 
+            username: document.username, 
+        });
         });
     
         // Tạo file Excel và gửi về client
