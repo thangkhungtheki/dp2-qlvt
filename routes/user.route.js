@@ -6,6 +6,7 @@ var moment = require('moment')
 const toolmongo = require("../tool_mongo/backup")
 const sendmail = require('../sendmail/sendmail')
 const exceljs = require('exceljs');
+const fs = require('fs')
 
 //sendmail.sendmail()
 
@@ -902,5 +903,37 @@ router.get('/chuyenexcel', authenticated, async(req, res)=> {
   
 })
 
+router.get('/backupdatabase', async (req, res) => {
+    await toolmongo.backupMongo(process.env.DATABASE_URL,(callback)=>{
+        console.log(callback)
+        fs.readFile(callback, (err, data) => {
+            if (err) {
+              res.writeHead(500, { 'Content-Type': 'text/plain' });
+              res.end('Internal Server Error');
+            } else {
+              // Thiết lập các header cho response
+              res.writeHead(200, {
+                'Content-Type': 'text/plain',
+                'Content-Disposition': 'attachment; filename=backup.gz', // Tên tệp tin khi tải về
+              });
+        
+              // Gửi nội dung của tệp tin
+              res.end(data);
+            }
+        })
+    })
+    
+
+})
+
+router.get('/mainSbadmin_hethong', authenticated, (req, res) => {
+    res.render("mainSbAdmin/mainSbadmin_hethong",{
+        _username: req.user.username,
+        activeuser: '',
+        activetb: '',
+        activetbdp2: '',
+        
+    })
+})
 
 module.exports = router
