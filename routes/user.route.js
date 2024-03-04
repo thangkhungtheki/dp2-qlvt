@@ -827,7 +827,26 @@ function authenticated(req, res , next) {
     if(req.isAuthenticated()){
         return next()
     }
-    res.redirect('/signin')
+    const token = req.headers['authorization']; // Lấy token từ header
+  
+    if (token) {
+      try {
+        // Verify token 
+        const decoded = jwt.verify(token, secret);  
+  
+        // Lấy thông tin user từ token
+        req.user = decoded.user; 
+  
+        return next();
+  
+      } catch (err) {
+        // Token không hợp lệ
+      }
+    }
+  
+    // Nếu cả Passport và JWT đều không xác thực được
+    // thì redirect tới trang đăng nhập
+    return res.redirect('/login'); 
 }
 
 router.get("/backupmongo",(req, res) => {

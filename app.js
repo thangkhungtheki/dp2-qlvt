@@ -1,4 +1,6 @@
 ﻿require('dotenv').config()
+const cors = require('cors');
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -10,6 +12,9 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var app = express();
 var indexRouter = require('./routes/user.route');
+
+const routerLogin = require('./routes/login.router')
+
 // path database
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true ,},);
 // mongoose.set('strictQuery', false)
@@ -25,6 +30,9 @@ mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopol
 
 
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
+
+app.use(cors())
+
 app.use(session({
   secret: 'thangkhungtheki',
   resave: false,
@@ -45,6 +53,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
+app.use('/api/login/', routerLogin)
 
 
 // catch 404 and forward to error handler
@@ -55,7 +64,22 @@ app.use((req, res, next) => {
 	res.status(404).redirect("/signin");
 });
 
+app.use(async (req, res, next) => {
 
+  const token = req.headers['authorization'].split(' ')[1];
+
+  // Verify JWT
+  const decoded = jwt.verify(token, 'taolathangkhungtheki');
+
+  // Lấy thông tin user ID
+  const userId = decoded.uid; 
+
+  // Lưu userId vào req
+  req.user.userId = userId;
+  
+  next();
+
+});
 
 
 // // error handler
