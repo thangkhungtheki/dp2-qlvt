@@ -1,133 +1,106 @@
-<div class="row">
-  <div class="container">
+<div class="container">
 
-    <h2> SỬA THIẾT BỊ </h2>
-    <div>
-      <form action="searchedit" method="post">
-        <input class="effect-20" type="text" placeholder="" name='txtsearch' id="id1ma" disabled
-          value="<%= data.Ma  %>" />
-        <span class="focus-border">
-          <i></i>
-        </span>
-        <button class="btn btn-primary" type="submit" id="btnsearch" disabled>Search</button>
-      </form>
+  <h2> SỬA THIẾT BỊ </h2>
+  <div>
+    <form action="searchedit" method="post">
+      <input class="effect-20" type="text" placeholder="" name='txtsearch' id="id1ma" disabled value="<%= data.Ma  %>" />
+      <span class="focus-border">
+        <i></i>
+      </span>
+      <button class="btn btn-primary" type="submit" id="btnsearch" disabled>Search</button>
+    </form>
+  </div>
+  <form action="capnhat" method="post">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Mainboard</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Mainboard %>" name="txtmain">
+      </div>
+      <div class="form-group col-md-6">
+        <label>RAM</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.RAM %>" name="txtram">
+      </div>
     </div>
-    <form action="capnhat" method="post">
-      <div class="col-3 input-effect">
-        Mainboard
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.Mainboard %>" name="txtmain">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        RAM
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.RAM %>" name="txtram">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        CPU
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.CPU %>" name="txtcpu">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        Hard Disk
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.HardDisk %>" name="txthdd">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        Monitor Type
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.Monitor %>" name="txtmonitor">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        Video Card
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.VideoCard %>" name="txtvideo">
-        <span class="focus-border">
-          <i></i>
-        </span>
-      </div>
-      <div class="col-3 input-effect">
-        Bộ Phận
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.BoPhan %>" name="txtbophan">
-        <span class="focus-border">
-          <i></i>
-        </span>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>CPU</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.CPU %>" name="txtcpu">
       </div>
 
-      <div class="col-3 input-effect">
-        Loại
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.Loai %>" name="txtloai">
-        <span class="focus-border">
-          <i></i>
-        </span>
+      <div class="form-group col-md-6">
+        <label>Hard Disk</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.HardDisk %>" name="txthdd">
       </div>
-      <div class="col-3 input-effect">
-        Người dùng
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.Nguoidung %>" name="txtnguoidung">
-        <span class="focus-border">
-          <i></i>
-        </span>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Monitor Type</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Monitor %>" name="txtmonitor">
       </div>
-      <div class="col-3 input-effect">
-        Vị trí
-        <input class="effect-20" type="text" placeholder="" value="<%=  data.Vitri %>" name="txtvitri">
-        <span class="focus-border">
-          <i></i>
-        </span>
+
+      <div class="form-group col-md-6">
+        <label>Video Card</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.VideoCard %>" name="txtvideo">
       </div>
-      <div class="col-3 input-effect">
-        OS
-        <textarea class="form-control" rows="3" style="resize: none;" value="" name="txtOS" id="idtxtOS"
-          type="text"><%=  data.OS %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Bộ Phận</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.BoPhan %>" name="txtbophan">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label>Loại</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Loai %>" name="txtloai">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Người dùng</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Nguoidung %>" name="txtnguoidung">
+      </div>
+      <div class="form-group col-md-6">
+        <label>Vị trí</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Vitri %>" name="txtvitri">
+      </div>
+      <div class="form-group col-md-6">
+        <label>OS</label>
+        <textarea class="form-control" rows="3" style="resize: none;" value="" name="txtOS" id="idtxtOS" type="text"><%=  data.OS %></textarea>
         <!-- <input class="effect-20" type="text" placeholder="" value="" name="txtOS">
         
         <span class="focus-border">
           <i></i>
         </span> -->
-        <div style="clear: both;">
-
-        </div>
       </div>
+    </div>
 
-      <div class="col-3 input-effect">
-        Đề Xuất
-        <textarea class="form-control" rows="3" style="resize: none;" value="" name="txtdexuat" id="textareadx"
-          type="text"><%=  data.DeXuat %></textarea>
-        <!-- <input class="effect-20" type="text" placeholder="" value="<%=  data.DeXuat %>" name="txtdexuat">
-            <span class="focus-border">
-                <i></i>
-            </span> -->
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Đề Xuất</label>
+        <textarea class="form-control" rows="3" style="resize: none;" value="" name="txtdexuat" id="textareadx" type="text"><%=  data.DeXuat %></textarea>
       </div>
-      <div class="col-3 input-effect">
-        Notes
-        <textarea class="form-control" rows="10" cols="50" value="" name="txtnotes" id="textarea"
-          type="text"><%=  data.Notes %></textarea>
+      <div class="form-group col-md-6">
+        <label>Notes</label>
+        <textarea class="form-control" rows="10" cols="50" value="" name="txtnotes" id="textarea" type="text"><%=  data.Notes %></textarea>
         <!-- <input class="effect-20" type="text" placeholder="" value="<%=  data.Notes %>" name="txtnotes"> -->
         <!-- <span class="focus-border">
                 <i></i>
             </span> -->
       </div>
-
-      <div class="col-3 input-effect">
-
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
         <button class="btn btn-primary" type="submit" id="btncapnhat" onclick=capnhat()>Cap nhat</button>
-
       </div>
-      <div>
-        <input type="text" id="idma" name="txtma" hidden="true" />
-      </div>
-    </form>
-  </div>
+    </div>
+    <div>
+      <input type="text" id="idma" name="txtma" hidden="true" />
+    </div>
+  </form>
 </div>
+
+
 <script>
   function capnhat() {
     let a = $('#id1ma').val();
