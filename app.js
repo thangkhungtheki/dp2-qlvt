@@ -15,6 +15,8 @@ var indexRouter = require('./routes/user.route');
 
 const routerLogin = require('./routes/login.router')
 
+const routercheckip = require('./routes/checkip.router')
+
 // path database
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true ,},);
 // mongoose.set('strictQuery', false)
@@ -59,11 +61,28 @@ app.use('/', indexRouter);
 
 app.use('/api/login/', routerLogin)
 
+app.use('/ip',routercheckip )
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //   next(createError(404));
 // });
+// Middleware để lấy địa chỉ IP và user-agent
+app.use((req, res, next) => {
+  // Lấy địa chỉ IP của client
+  const ip = req.ip;
+
+  // Lấy user-agent của client
+  const userAgent = req.get('User-Agent');
+
+  // Gán vào req để truy cập từ các route hoặc view
+  req.clientIP = ip;
+  req.userAgent = userAgent;
+
+  // Tiếp tục xử lý các middleware hoặc route khác
+  next();
+});
+
 app.use((req, res, next) => {
 	res.status(404).redirect("/signin");
 });

@@ -869,15 +869,7 @@ router.get("/restoremongo", (req, res) => {
 router.get("/danhgiasaotest", (req, res) => {
     res.render('danhgiasao')
 })
-function chuyenthanhfilexcel(data){
-    // Định nghĩa các cột trong excel
-    const headers = [
-    { header: 'Tên', key: 'name', width: 30 },
-    //...
-  ];
-  // Chuyển đổi dữ liệu thành xlsx 
-    const xls = xlsx.utils.json_to_sheet(data, {headers});
-}
+
 
 router.get('/chuyenexcel', authenticated, async(req, res)=> {
     try {
