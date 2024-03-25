@@ -15,5 +15,8 @@ router.get('/', (req, res) => {
     os
   });
 })
+router.get('/full', (req, res) => {
+    res.send(req.useragent)
+})
 
 module.exports = router
