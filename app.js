@@ -33,11 +33,12 @@ mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopol
 
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
 
-// app.use(cors())
+app.use(cors())
 
-app.use(cors({
-  origin: ['https://h5.zdn.vn', 'zbrowser://h5.zdn.vn']
-  }));
+// app.use(cors({
+//   origin: ['https://h5.zdn.vn', 'zbrowser://h5.zdn.vn']
+//   origin: '*'
+//   }));
 
 app.use(session({
   secret: 'thangkhungtheki',

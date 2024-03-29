@@ -11,8 +11,9 @@
 <%= hasErrors %> 
 <%= messages %> 
 <div class="login-form">
+   <center><img src="img/logo@2x.png" class="imglogo" /></center>
   <form action="signin" method="post">
-    <h1>SIGN IN</h1>
+    <center><h1>Đăng nhập</h1></center>
     <div class="content">
       <div class="input-field">
         <input type="username" placeholder="Username" autocomplete="nope" name="username">
@@ -23,8 +24,8 @@
       <a href="#" class="link">Forgot Your Password?</a>
     </div>
     <div class="action"> 
-        <button type="submit">SIGN IN</button>
-        <button type="button" onclick=register()>Register</button>
+        <button type="submit">Đăng nhập</button>
+        <button type="button" onclick=register()>Tạo Tài Khoản</button>
     </div>
   </form>
 </div>
@@ -37,4 +38,11 @@
   }
 </script>
 </body>
+<style>
+
+  .imglogo{
+    width: 80%;
+  }
+  
+</style>
 </html>
