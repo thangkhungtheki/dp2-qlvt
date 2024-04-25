@@ -36,7 +36,7 @@ require('./config/passport'); //vượt qua passport để config trang đăng n
 // app.use(cors())
 
 app.use(cors({
-  origin: ['https://h5.zdn.vn', 'zbrowser://h5.zdn.vn']
+
   }));
 
 app.use(session({
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
 
   // Gán vào req để truy cập từ các route hoặc view
   req.clientIP = ip;
-  req.userAgent = userAgent;
+  req.useragent = userAgent;
 
   // Tiếp tục xử lý các middleware hoặc route khác
   next();

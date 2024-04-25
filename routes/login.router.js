@@ -18,7 +18,8 @@ router.get('/post', (req, res) => {
 function login(req, res) {
     // Tạo JWT với uid của user
     const userId = req.user.id;
-    const token = jwt.sign({ uid: userId }, secret)
+    const expiresInMinute = 1 * 60
+    const token = jwt.sign({ uid: userId }, secret,{expiresIn: expiresInMinute})
 
     // Trả về cho client
     res.send({
