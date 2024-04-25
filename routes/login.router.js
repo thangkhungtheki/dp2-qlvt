@@ -7,7 +7,7 @@ const secret = "taolathangkhungtheki"
 
 router.post('/jwt', passport.authenticate('local.signin'), login)
 
-router.get('/post', (req, res) => {
+router.get('/testget', (req, res) => {
     res.json({
         id: 1,
         router: 'api login',

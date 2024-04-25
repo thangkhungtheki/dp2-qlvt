@@ -2,7 +2,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>Signup Form</title>
+  <title>Register Form</title>
   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Rubik:400,700'><link rel="stylesheet" href="./style.css">
 
 </head>
@@ -11,8 +11,9 @@
 <%= hasErrors %> 
 <%= messages %> 
 <div class="login-form">
+  <center><img src="img/logo@2x.png" class="imglogo" /></center>
   <form action="signup" method="post">
-    <h1>SIGN UP</h1>
+    <center><h1>Tạo tài khoản </h1></center>
     <div class="content">
       <div class="input-field">
         <input type="username" placeholder="Username" autocomplete="nope" name="username">
@@ -23,8 +24,8 @@
       <!-- <a href="#" class="link">Forgot Your Password?</a> -->
     </div>
     <div class="action"> 
-        <button type="button" onclick= signin()>SIGN IN</button>
-        <button type="submit" >Register</button>
+        <button type="button" onclick= signin()>Đăng nhập</button>
+        <button type="button" onclick="()=>{alert('Tạm khoá tạo tài khoản')}">Tạo tài khoản</button>
     </div>
   </form>
 </div>
@@ -37,4 +38,11 @@
   }
 </script>
 </body>
+<style>
+
+  .imglogo{
+    width: 80%;
+  }
+  
+</style>
 </html>
