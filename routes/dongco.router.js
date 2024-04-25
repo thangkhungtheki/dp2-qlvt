@@ -18,4 +18,70 @@ router.get('/themdongco', (req, res) => {
     res.render('mainSbAdmin/dongco_them',{_username: ''})
 })
 
+router.post('/taodongco', async(req, res) => {
+    let doc = {
+        tenthietbi: req.body.tentb,
+        vitri: req.body.vitri,
+        congsuat: req.body.congsuat,
+        model: req.body.model,
+        dienap: req.body.dienap,
+        ghichu: req.body.ghichu
+    }
+    //console.log(doc)
+    let result = await xulydongco.tao_dongco(doc)
+    if(result){
+        req.flash('success','đã thêm thành công')
+        const msg = req.flash('success')
+        return res.render('mainSbAdmin/dongco_them',{
+            _username: '',
+            msg
+        })
+    }else {
+        req.flash('not','Lỗi server ... thử lại sau')
+        const msge = req.flash('not')
+        return res.render('mainSbAdmin/dongco_them',{
+            _username: '',
+            msge
+        })
+    }
+})
+
+router.post('/xoadongco', async(req, res)=>{
+    let id = req.body.id
+    const result = await xulydongco.delete_dongco(id)
+    // if(result){
+    //     return res.redirect('/dongco/view')
+    // }else{
+        res.end()
+    // }
+})
+
+router
+.get('/suadongco', async (req, res) => {
+    let id = req.query.id
+    let result = await xulydongco.timdongcotheoID(id)
+    if(result){
+        return res.render('mainSbAdmin/dongco_sua', {_username: '',data: result})
+    }else{
+        res.end()
+    }
+})
+.post('/suadongco', async(req, res) => {
+    let doc = {
+        tenthietbi: req.body.tentb,
+        vitri: req.body.vitri,
+        congsuat: req.body.congsuat,
+        model: req.body.model,
+        dienap: req.body.dienap,
+        ghichu: req.body.ghichu
+    }
+    let id = req.body.id
+    let result = await xulydongco.update_dongco(id,doc)
+    if(result){
+        return res.redirect('/dongco/view')
+    }else{
+        res.end()
+    }
+})
+
 module.exports = router

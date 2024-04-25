@@ -1,7 +1,20 @@
 <div style="margin-bottom:20px; color: rgba(219, 14, 141, 0.925); position: relative; bottom: auto;">
   <h3>FORM NHẬP ĐỘNG CƠ</h3>
 </div>
-<form action="#" method="post">
+<div>
+  <% if (typeof msg != 'undefined') { %>
+    <div style="color: green; align-items: center;">
+      <%= msg %>
+    </div>
+  <% } else if (typeof msge != 'undefined') { %>
+    <div style="color: rgb(239, 5, 28); align-items: center;">
+      <%= msge %>
+    </div>
+  <% } else { %>
+
+  <% } %>
+</div>
+<form action="/dongco/taodongco" method="post">
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
       <label>1.Tên Thiết Bị</label>
@@ -35,7 +48,12 @@
   <div class="form-row col-md-12">
     <div class="form-group col-md-12">
       <button type="submit" class="btn btn-primary" id="btncreatetb">THÊM ĐỘNG CƠ</button>
-      <button type="button" class="btn btn-success float-right">XEM BẢNG</button>
+      <button type="button" class="btn btn-success float-right" onclick="xembang()">XEM BẢNG</button>
     </div>
   </div>
 </form>
+<script>
+  function xembang(){
+    window.location.href = "/dongco/view"
+  }
+</script>

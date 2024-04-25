@@ -277,17 +277,17 @@
   function btnxoatb(){
     $.ajax({
       method: 'post',
-      url: '/xoathietbi',
-      data: {tentb: $('#xoauserModal2').val()}
+      url: '/dongco/xoadongco',
+      data: {id: $('#xoauserModal2').val()}
     })
     .done(function( msg ) {
-              window.location.href = "/viewcreatethietbi"
+              window.location.href = "/dongco/view"
             });
     
   }
   function btnsuamodal(){
     // alert ($('#suamodal4').val())
-    let tentb = $('#suamodal4').val()
-    window.location.href = "/suacreatethietbi?tentb=" + tentb
+    let id = $('#suamodal4').val()
+    window.location.href = "/dongco/suadongco?id=" + id
   }
 </script>
