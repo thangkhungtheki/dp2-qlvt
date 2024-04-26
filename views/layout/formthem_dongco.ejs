@@ -1,5 +1,5 @@
 <div style="margin-bottom:20px; color: rgba(219, 14, 141, 0.925); position: relative; bottom: auto;">
-  <h3>FORM NHẬP ĐỘNG CƠ</h3>
+  <h3>FORM NHẬP ĐỘNG CƠ / MÁY LẠNH</h3>
 </div>
 <div>
   <% if (typeof msg != 'undefined') { %>
@@ -15,6 +15,16 @@
   <% } %>
 </div>
 <form action="/dongco/taodongco" method="post">
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-6">
+      <label>0.Loại</label>
+      <select class="custom-select" id="inputGroupSelectheadcount" name="selectloai" required>
+          <option value='' selected disabled hidden>Chọn Loại ... </option>
+          <option value="Động Cơ">Động cơ</option>
+          <option value="Máy Lạnh">Máy Lạnh</option>
+      </select>
+    </div>
+  </div>
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
       <label>1.Tên Thiết Bị</label>
@@ -46,8 +56,18 @@
     </div>
   </div>
   <div class="form-row col-md-12">
+    <div class="form-group col-md-6">
+      <label>7.Ngày mua</label>
+      <input type="date" class="form-control" name="ngaymua" required>
+    </div>
+    <div class="form-group col-md-6">
+      <label>8.Ngày hết hạn</label>
+      <input type="date" class="form-control" name="ngayhethan" required>
+    </div>
+  </div>
+  <div class="form-row col-md-12">
     <div class="form-group col-md-12">
-      <button type="submit" class="btn btn-primary" id="btncreatetb">THÊM ĐỘNG CƠ</button>
+      <button type="submit" class="btn btn-primary" id="btncreatetb">LƯU DATABASE</button>
       <button type="button" class="btn btn-success float-right" onclick="xembang()">XEM BẢNG</button>
     </div>
   </div>

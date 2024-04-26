@@ -5,6 +5,11 @@ async function doc_dongco(){
     return docs
 }
 
+async function loai_dongco(loai){
+    let docs = await _dongco.find({loai: loai})
+    return docs
+}
+
 async function tao_dongco(doc){
     try{
         // console.log(doc)
@@ -48,5 +53,6 @@ module.exports = {
     tao_dongco,
     update_dongco,
     delete_dongco,
-    timdongcotheoID
+    timdongcotheoID,
+    loai_dongco
 }

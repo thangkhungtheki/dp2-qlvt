@@ -1,5 +1,5 @@
 <div style="margin-bottom:20px; color: rgba(47, 7, 225, 0.925); position: relative; bottom: auto;">
-  <h3>FORM SỬA ĐỘNG CƠ</h3>
+  <h3>FORM SỬA ĐỘNG CƠ / MÁY LẠNH</h3>
 </div>
 <div>
   <% if (typeof msg != 'undefined') { %>
@@ -18,6 +18,15 @@
   <div class="form-group col-md-6">
     
     <input type="text" class="form-control" value="<%= data.id %>" name="id" hidden>
+  </div>
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-6">
+      <label>0.Loại</label>
+      <select class="custom-select" id="inputGroupSelectheadcount" name="selectloai" value="<%= data.loai %>" required>
+          <option value="Động Cơ">Động cơ</option>
+          <option value="Máy Lạnh">Máy Lạnh</option>
+      </select>
+    </div>
   </div>
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
@@ -47,6 +56,16 @@
     <div class="form-group col-md-6">
       <label>6.Ghi chú</label>
       <textarea class="form-control" rows="8" cols="50" id="areaghichu" name="ghichu"><%= data.ghichu %></textarea>
+    </div>
+  </div>
+  <div class="form-row col-md-12">
+    <div class="form-group col-md-6">
+      <label>7.Ngày mua</label>
+      <input type="date" class="form-control" name="ngaymua" value="<%= data.ngaymua %>" required>
+    </div>
+    <div class="form-group col-md-6">
+      <label>8.Ngày hết hạn</label>
+      <input type="date" class="form-control" name="ngayhethan" value="<%= data.ngayhethan %>" required>
     </div>
   </div>
   <div class="form-row col-md-12">

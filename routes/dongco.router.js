@@ -14,13 +14,30 @@ router.get('/view', async(req, res) => {
     })
 })
 
+router.get('/phanloai', async(req, res) => {
+    const daynow = moment().format('DD-MM-YYYY');
+    const loai = req.query.loai
+    const data = await xulydongco.loai_dongco(loai)
+    res.render('mainSbAdmin/dongcoview',{
+        _username : '',
+        daynow: daynow,
+        data: data
+    
+    })
+})
+
 router.get('/themdongco', (req, res) => {
     res.render('mainSbAdmin/dongco_them',{_username: ''})
 })
 
 router.post('/taodongco', async(req, res) => {
+    let ngaymua = moment(req.body.ngaymua,'YYYY-MM-DD')
+    let ngayhethan = moment(req.body.ngayhethan,'YYYY-MM-DD')
     let doc = {
         tenthietbi: req.body.tentb,
+        loai: req.body.selectloai,
+        ngaymua: ngaymua.format('YYYY-MM-DD'),
+        ngayhethan: ngayhethan.format('YYYY-MM-DD'),
         vitri: req.body.vitri,
         congsuat: req.body.congsuat,
         model: req.body.model,
@@ -30,7 +47,7 @@ router.post('/taodongco', async(req, res) => {
     //console.log(doc)
     let result = await xulydongco.tao_dongco(doc)
     if(result){
-        req.flash('success','đã thêm thành công')
+        req.flash('success','đã thêm thành công ' +  doc.tenthietbi)
         const msg = req.flash('success')
         return res.render('mainSbAdmin/dongco_them',{
             _username: '',
@@ -67,8 +84,13 @@ router
     }
 })
 .post('/suadongco', async(req, res) => {
+    let ngaymua = moment(req.body.ngaymua,'YYYY-MM-DD')
+    let ngayhethan = moment(req.body.ngayhethan,'YYYY-MM-DD')
     let doc = {
         tenthietbi: req.body.tentb,
+        loai: req.body.selectloai,
+        ngaymua: ngaymua.format('YYYY-MM-DD'),
+        ngayhethan: ngayhethan.format('YYYY-MM-DD'),
         vitri: req.body.vitri,
         congsuat: req.body.congsuat,
         model: req.body.model,
