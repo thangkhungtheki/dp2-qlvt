@@ -2,6 +2,9 @@ var express = require("express")
 var router =  express.Router()
 var xulydongco = require('../CRUD/db.dongco')
 var moment = require('moment')
+const exceljs = require('exceljs');
+const fs = require('fs')
+
 
 router.get('/view', async(req, res) => {
     const daynow = moment().format('DD-MM-YYYY');
@@ -104,6 +107,55 @@ router
     }else{
         res.end()
     }
+})
+
+router.get('/xuatexceldongco', async(req, res) => {
+    try {
+        // Lấy dữ liệu từ MongoDB
+        const documents = await xulydongco.doc_dongco();
+    
+        // Tạo workbook và worksheet của Excel
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('DongcoMayLanh');
+    
+        // Đặt tên các cột
+        worksheet.columns = [
+          { header: 'tenthietbi', key: 'tenthietbi', width: 20 },
+          { header: 'loai', key: 'loai', width: 20 },
+          { header: 'ngaymua', key: 'ngaymua', width: 20 },
+          { header: 'ngayhethan', key: 'ngayhethan', width: 20 },
+          { header: 'vitri', key: 'vitri', width: 20 },
+          { header: 'congsuat', key: 'congsuat', width: 20 },
+          { header: 'model', key: 'model', width: 20 },
+          { header: 'dienap', key: 'dienap', width: 20 },
+          { header: 'ghichu', key: 'ghichu', width: 20 },
+        ];
+    
+        // Thêm dữ liệu vào worksheet
+        documents.forEach((document) => {
+          worksheet.addRow({ 
+            tenthietbi: document.tenthietbi, 
+            loai: document.loai, 
+            ngaymua: document.ngaymua, 
+            ngayhethan: document.ngayhethan, 
+            vitri: document.vitri, 
+            congsuat: document.congsuat, 
+            model: document.model, 
+            dienap: document.dienap, 
+            ghichu: document.ghichu, 
+            
+        });
+        });
+    
+        // Tạo file Excel và gửi về client
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=dongcomaylanh.xlsx');
+        await workbook.xlsx.write(res);
+        res.end();
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+      }
 })
 
 module.exports = router

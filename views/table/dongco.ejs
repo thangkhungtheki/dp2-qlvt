@@ -4,7 +4,7 @@
   <div class="form-row">
     <div class="form-group col-md-12">
       <button type="button" class="btn btn-primary" onclick="them()">Thêm </button>
-      <button type="button" class="btn btn-success float-right">Xuất Excel</button>
+      <button type="button" class="btn btn-success float-right" onclick="Xuatexcel()">Xuất Excel</button>
     </div>
   </div>
 
@@ -136,6 +136,10 @@
 
   function them() {
     window.location.href = '/dongco/themdongco'
+  }
+
+  function Xuatexcel(){
+    window.location.href = '/dongco/xuatexceldongco'
   }
 </script>
 <style>
