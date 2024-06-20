@@ -3,7 +3,7 @@ var router =  express.Router()
 var xulyhopdong = require('../CRUD/db.hopdong')
 var moment = require('moment')
 const exceljs = require('exceljs');
-const fs = require('fs')
+
 const sendmailhopdong = require('../sendmail/sendmailhopdong')
 
 
@@ -134,5 +134,7 @@ async function tinhngayconlai(data){
 
     return newdata
 }
+
+
 
 module.exports = router
