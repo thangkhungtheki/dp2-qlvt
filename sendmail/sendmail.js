@@ -10,8 +10,8 @@ function sendmail(data){
         type: 'login',
         secure: true,
         auth: {
-            user: process.env.emailFrom, //Tài kho?n gmail v?a t?o
-            pass: process.env.emailPass, //M?t kh?u tài kho?n gmail v?a t?o
+            user: process.env.emailFrom, //Tï¿½i kho?n gmail v?a t?o
+            pass: process.env.emailPass, //M?t kh?u tï¿½i kho?n gmail v?a t?o
         },
         tls: {
             // do not fail on invalid certs
@@ -25,9 +25,9 @@ function sendmail(data){
         
         if( data[i].songayhethan <= 30 && data[i].songayhethan > 0 ){
             
-            var string = '<b>.Tên: ' + `</b><span style='color: blue'>` + data[i].tentb + ` </span>
+            var string = '<b>.TÃªn: ' + `</b><span style='color: blue'>` + data[i].tentb + ` </span>
                             <span>` + ` ---day: </span>
-                            <span style="color: red">` + data[i].songayhethan + ` ngày </span> <br>`
+                            <span style="color: red">` + data[i].songayhethan + ` ngÃ y </span> <br>`
             text = text + string
            
         }
@@ -53,8 +53,8 @@ function sendmail(data){
             to: process.env.mailList,
             //bcc: 'it@diamondplace.com.vn',
             subject: process.env.subject,
-            //text: 'Your text is here',//Thu?ng thi mình không dùng cái này thay vào dó mình s? d?ng html d? d? edit hon
-            html: content ,//N?i dung html mình dã t?o trên kia :)),
+            //text: 'Your text is here',//Thu?ng thi mï¿½nh khï¿½ng dï¿½ng cï¿½i nï¿½y thay vï¿½o dï¿½ mï¿½nh s? d?ng html d? d? edit hon
+            html: content ,//N?i dung html mï¿½nh dï¿½ t?o trï¿½n kia :)),
             
         }
     
@@ -76,8 +76,8 @@ function sendmail(data){
         //     to: process.env.mailList,
         //     //bcc: 'it@diamondplace.com.vn',
         //     subject: process.env.subject,
-        //     //text: 'Your text is here',//Thu?ng thi mình không dùng cái này thay vào dó mình s? d?ng html d? d? edit hon
-        //     html: content ,//N?i dung html mình dã t?o trên kia :)),
+        //     //text: 'Your text is here',//Thu?ng thi mï¿½nh khï¿½ng dï¿½ng cï¿½i nï¿½y thay vï¿½o dï¿½ mï¿½nh s? d?ng html d? d? edit hon
+        //     html: content ,//N?i dung html mï¿½nh dï¿½ t?o trï¿½n kia :)),
             
         // }
         // transporter.sendMail(mainOptions, function(err, info){

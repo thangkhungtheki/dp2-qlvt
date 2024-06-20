@@ -4,6 +4,17 @@ var xulyhopdong = require('../CRUD/db.hopdong')
 var moment = require('moment')
 const exceljs = require('exceljs');
 const fs = require('fs')
+const sendmailhopdong = require('../sendmail/sendmailhopdong')
+
+
+router.get('/cronjobsendmailhopdong',async(req, res) => {
+    // let daynow = moment().format('DD-MM-YYYY');
+    var data =  await xulyhopdong.doc_hopdong()
+    var newdata = await tinhngayconlai(data)
+    sendmailhopdong.sendmail(newdata)
+    res.status(200).send('ok');
+
+})
 
 router.get('/theodoihopdong', async(req, res) => {
     const daynow = moment().format('DD-MM-YYYY');
