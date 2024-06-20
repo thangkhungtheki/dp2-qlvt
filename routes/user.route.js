@@ -26,6 +26,27 @@ router.get('/.well-known/pki-validation/32E58AB3EEC936EDF6D79C8FD615AC68.txt' , 
 	return res.sendfile('public/32E58AB3EEC936EDF6D79C8FD615AC68.txt')
 })
 
+router.post("/signin",
+    passport.authenticate('local.signin', { successRedirect: '/vattutest',
+                                  failureRedirect: '/signin',
+                                  failureFlash: true })
+);
+
+router.post("/signup", 
+passport.authenticate('local.signup', { successRedirect: '/signin',
+                                  failureRedirect: '/signup',
+                                  failureFlash: true })
+);
+
+/* GET sign-up page. */
+router.get('/signup', function(req, res, next) {
+    var messages = req.flash('error')
+   
+    return res.render('signup',{ 
+      messages: messages,
+      hasErrors: messages.length > 0,
+     })
+  });
 router.get("/signin", (req, res , next) => {
     // hien thi trang va truyen lai nhung tin nhan tu phia server neu co
     var messages = req.flash('error')
@@ -221,27 +242,7 @@ async function tinhngayconlai(data){
     return newdata
 }
 
-router.post("/signin",
-    passport.authenticate('local.signin', { successRedirect: '/vattutest',
-                                  failureRedirect: '/signin',
-                                  failureFlash: true })
-);
 
-router.post("/signup", 
-passport.authenticate('local.signup', { successRedirect: '/signin',
-                                  failureRedirect: '/signup',
-                                  failureFlash: true })
-);
-
-/* GET sign-up page. */
-router.get('/signup', function(req, res, next) {
-    var messages = req.flash('error')
-   
-    return res.render('signup',{ 
-      messages: messages,
-      hasErrors: messages.length > 0,
-     })
-  });
 
 router.get('/dashboard', async(req, res) => {
     if(req.isAuthenticated()){

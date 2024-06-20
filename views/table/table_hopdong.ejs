@@ -1,0 +1,334 @@
+﻿<!-- Page Heading -->
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Thông số thiết bị, systems day: <%= daynow  %></h1>
+  <div class="form-row">
+    <div class="form-group col-md-12">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#themhopdong" data-whatever="@mdo">Thêm Hợp Đồng</button>
+      <button type="button" class="btn btn-success float-right" onclick="Xuatexcel()">Xuất Excel</button>
+    </div>
+  </div>
+
+
+
+  <div class="card shadow mb-4">
+    <!-- <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Database User Views </h6>
+        </div> -->
+    <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr class="table">
+              <th>STT</th>
+              <th>Tên HD</th>
+              <th>NgayConLai</th>
+              <th>ngaybatdau</th>
+              <th>ngayketthuc</th>
+              <th>GhiChu</th>
+              <th>Control</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr class="table">
+              <th>STT</th>
+              <th>Tên HD</th>
+              <th>NgayConLai</th>
+              <th>ngaybatdau</th>
+              <th>ngayketthuc</th>
+              <th>GhiChu</th>
+              <th>Control</th>
+            </tr>
+          </tfoot>
+
+          <tbody>
+            <% var stt = 0 %>
+            <% data.forEach((value)=>{ %>
+            <% var id = value._id %>
+            <% var bien = value.tenhopdong %>
+            <% var datasua = JSON.stringify(value) %>
+            <% stt = stt + 1 %>
+            <td>
+              <b><%= stt %></b>
+            </td>
+            <td>
+              <%= value.tenhopdong %>
+            </td>
+            <td>
+              <%= value.songayhethan %>
+            </td>
+            <td>
+              <%= value.ngaybatdau %>
+            </td>
+            <td>
+              <%= value.ngayketthuc %>
+            </td>
+            <td>
+              <%= value.ghichu %>  
+            </td>
+            
+            <td>
+
+              <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= id %>', '<%= bien %>' ,  '<%= datasua %>')" data-toggle="modal" data-target="#suahopdong">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#xoamodalhopdong" onclick="Xoatb('<%= id %>','<%= bien %>')">
+                <i class="fas fa-trash">
+                </i>
+              </div>
+            </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Xoa User Modal-->
+<div class="modal fade" id="xoamodalhopdong" tabindex="3" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="xoamodalhopdong1">Bạn chắc chắn muốn Delete </h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="xoamodalhopdong2">#.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        
+          <button class="btn btn-danger" type="submit" id="btnxoamodalhopdong" onclick="btnxoamodalhopdong()">Delete</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------- -->
+
+<!-- Sua  Modal-->
+<div class="modal fade" id="suamodalhopdong" tabindex="4" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="suamodalhopdong1">Bạn chắc chắn muốn SỬA </h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="suamodalhopdong2">#.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        
+          <button class="btn btn-primary" type="button" onclick="">Sửa</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- them hop dong----------------------------------------------------- -->
+
+<div class="modal fade" id="themhopdong" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Thêm Hợp Đồng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="#" method="post">
+          <div class="form-group">
+            <label class="col-form-label">Tên Hợp Đồng</label>
+            <input type="text" class="form-control" id="tenhopdong" name="tenhopdong">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ngày Hợp Đồng</label>
+            <input type="date" class="form-control" id="ngayhopdong" name="ngayhopdong">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ngày Kết Thúc</label>
+            <input type="date" class="form-control" id="ngayketthuc" name="ngayketthuc">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ghi Chú:</label>
+            <textarea class="form-control" id="ghichu" name="ghichu" rows="5"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="luudatabase()">Lưu Database</button>
+      </div>
+   
+    </div>
+  </div>
+</div>
+<!------------------------------------------------------- -->
+
+
+<!-- sua hop dong----------------------------------------------------- -->
+
+<div class="modal fade" id="suahopdong" tabindex="5" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sửa Hợp Đồng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="#" method="post">
+          <div class="form-group">
+            <label class="col-form-label">ID Hợp Đồng</label>
+            <input type="text" class="form-control" id="idhopdongs" name="idhopdong" readonly>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Tên Hợp Đồng</label>
+            <input type="text" class="form-control" id="tenhopdongs" name="tenhopdong">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ngày Hợp Đồng</label>
+            <input type="date" class="form-control" id="ngayhopdongs" name="ngayhopdong">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ngày Kết Thúc</label>
+            <input type="date" class="form-control" id="ngayketthucs" name="ngayketthuc">
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Ghi Chú:</label>
+            <textarea class="form-control" id="ghichus"  rows="5"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="suadatabase()">Sửa Database</button>
+      </div>
+   
+    </div>
+  </div>
+</div>
+<!------------------------------------------------------- -->
+<script>
+  function Sua(id, bien, datasua) {
+    
+    _xoa = bien;
+    //alert("Chưa có làm ... bấm vui thôi nhé :))")
+    // $('#xoauserModal1').html('Bạn chắc chắn muốn xóa <strong>' + _xoa + "</strong> ?");
+    // $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
+    $('#suamodalhopdong1').val(id)
+    $("#suamodalhopdong2").html("Sửa <strong> " + _xoa + "</strong> ... ???")
+    let data = JSON.parse(datasua)
+    // console.log(data._id)
+    $('#idhopdongs').val(data._id)
+    $('#tenhopdongs').val(data.tenhopdong)
+    $('#ngayhopdongs').val(data.ngaybatdau)
+    $('#ngayketthucs').val(data.ngayketthuc)
+    $('#ghichus').val(data.ghichu)
+  }
+
+  function Xoatb(id, bien) {
+    
+    
+    //alert('Bạn muốn xoá,', bien)
+    // $('#xoauserModal1').html('Bạn chắc chắn muốn xóa <strong>' + _xoa + "</strong> ?");
+    $('#xoamodalhopdong1').val(id)
+    $("#xoamodalhopdong2").html("Delete <strong> " + bien + "</strong> ... ???")
+  }
+</script>
+<!-- Page level plugins -->
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $.noConflict();
+    var table = $('#dataTable').DataTable({
+      "pageLength": 50
+    });
+  });
+
+  function btnxoamodalhopdong(){
+    $.ajax({
+        method: "POST",
+        url: "/hopdong/xoahopdong",
+        data: { 
+          id: $('#xoamodalhopdong1').val(),
+        }
+      })
+        .done(function (msg) {
+          alert("dã xoá thành công")
+          window.location.href = "/hopdong/theodoihopdong"
+        });
+  }
+
+  function suadatabase() {
+    // alert('Sua hợp đồng')
+    $.ajax({
+        method: "POST",
+        url: "/hopdong/suahopdong",
+        data: { 
+          id:  $('#idhopdongs').val(),
+          tenhopdong: $("#tenhopdongs").val(),
+          ngaybatdau: $("#ngaybatdaus").val(),
+          ngayketthuc: $("#ngayketthucs").val(),
+          ghichu: $("#ghichus").val(),
+        }
+      })
+        .done(function (msg) {
+          alert("Đã sửa thành công")
+          window.location.href = "/hopdong/theodoihopdong"
+    });
+  }
+
+  function luudatabase() {
+    $.ajax({
+        method: "POST",
+        url: "/hopdong/themhopdong",
+        data: { 
+          tenhopdong: $("#tenhopdong").val(),
+          ngaybatdau: $("#ngaybatdau").val(),
+          ngayketthuc: $("#ngayketthuc").val(),
+          ghichu: $("#ghichu").val(),
+        }
+      })
+        .done(function (msg) {
+          alert("Đã lưu thành công")
+          window.location.href = "/hopdong/theodoihopdong"
+        });
+  }
+
+  function Xuatexcel(){
+    window.location.href = '/hopdong/xuatexcelhopdong'
+  }
+</script>
+<style>
+  .red-text {
+    color: red;
+  }
+
+  .yellow-text {
+    color: yellow;
+  }
+
+  .green-text {
+    color: green;
+  }
+
+  .black-text {
+    color: black;
+  }
+
+  .orange-text {
+    color: orange;
+  }
+
+  .blue-text {
+    color: blue;
+  }
+</style>

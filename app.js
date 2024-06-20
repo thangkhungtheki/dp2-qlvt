@@ -19,6 +19,8 @@ const routercheckip = require('./routes/checkip.router')
 
 const routerdongco = require('./routes/dongco.router')
 
+const routerhopdong = require('./routes/hopdong.router')
+
 // path database
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true ,},);
 // mongoose.set('strictQuery', false)
@@ -66,6 +68,8 @@ app.use('/api/login/', routerLogin)
 app.use('/ip',routercheckip )
 
 app.use('/dongco/', routerdongco)
+
+app.use('/hopdong/', routerhopdong)
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
