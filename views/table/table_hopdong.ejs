@@ -78,7 +78,7 @@
             
             <td>
 
-              <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= id %>', '<%= bien %>' ,  '<%= datasua %>')" data-toggle="modal" data-target="#suahopdong">
+              <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= id %>', '<%= bien %>')" data-toggle="modal" data-target="#suahopdong">
                 <i class="fas fa-info-circle"></i>
               </div>
               <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#xoamodalhopdong" onclick="Xoatb('<%= id %>','<%= bien %>')">
@@ -224,7 +224,7 @@
 </div>
 <!------------------------------------------------------- -->
 <script>
-  function Sua(id, bien, datasua) {
+   function Sua(id, bien) {
     
     _xoa = bien;
     //alert("Chưa có làm ... bấm vui thôi nhé :))")
@@ -232,13 +232,27 @@
     // $("#xoauserModal2").html("Delete <strong> " + _xoa + "</strong> ... ???")
     $('#suamodalhopdong1').val(id)
     $("#suamodalhopdong2").html("Sửa <strong> " + _xoa + "</strong> ... ???")
-    let data = JSON.parse(datasua)
+    
     // console.log(data._id)
-    $('#idhopdongs').val(data._id)
-    $('#tenhopdongs').val(data.tenhopdong)
-    $('#ngayhopdongs').val(data.ngaybatdau)
-    $('#ngayketthucs').val(data.ngayketthuc)
-    $('#ghichus').val(data.ghichu)
+    $.ajax({
+        method: "get",
+        url: "/hopdong/getdataidhopdong?id=" + id ,
+      })
+        .done(function (data) {
+          // let newdata = JSON.parse(data)
+          // console.log(data)
+          $('#idhopdongs').val(data._id)
+          $('#tenhopdongs').val(data.tenhopdong)
+          $('#ngayhopdongs').val(data.ngaybatdau)
+          $('#ngayketthucs').val(data.ngayketthuc)
+          $('#ghichus').val(data.ghichu)
+          // window.location.href = "/hopdong/theodoihopdong"
+        });
+    // $('#idhopdongs').val(data._id)
+    // $('#tenhopdongs').val(data.tenhopdong)
+    // $('#ngayhopdongs').val(data.ngaybatdau)
+    // $('#ngayketthucs').val(data.ngayketthuc)
+    // $('#ghichus').val(data.ghichu)
   }
 
   function Xoatb(id, bien) {
@@ -290,7 +304,7 @@
         }
       })
         .done(function (msg) {
-          alert("Đã sửa thành công")
+          // alert("Đã sửa thành công")
           window.location.href = "/hopdong/theodoihopdong"
     });
   }
@@ -307,7 +321,7 @@
         }
       })
         .done(function (msg) {
-          alert("Đã lưu thành công")
+          // alert("Đã lưu thành công")
           window.location.href = "/hopdong/theodoihopdong"
         });
   }

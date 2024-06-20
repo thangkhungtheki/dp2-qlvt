@@ -16,6 +16,19 @@ router.get('/cronjobsendmailhopdong',async(req, res) => {
 
 })
 
+router.get('/getdataidhopdong', async(req,res) => {
+    let id = req.query.id
+    // console.log(id)
+    let doc = await xulyhopdong.timhopdongtheoID(id)
+    // console.log(doc)
+    if(doc){
+        
+        return res.json(doc)
+    }else{
+        return res.send('none')
+    }
+})
+
 router.get('/theodoihopdong', async(req, res) => {
     const daynow = moment().format('DD-MM-YYYY');
     const data = await xulyhopdong.doc_hopdong()
