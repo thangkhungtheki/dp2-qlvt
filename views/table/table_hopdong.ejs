@@ -307,7 +307,7 @@
         data: { 
           id:  $('#idhopdongs').val(),
           tenhopdong: $("#tenhopdongs").val(),
-          ngaybatdau: $("#ngaybatdaus").val(),
+          ngaybatdau: $("#ngayhopdongs").val(),
           sothang: $('#sothangs').val(),
           ngayketthuc: $("#ngayketthucs").val(),
           ghichu: $("#ghichus").val(),
@@ -387,15 +387,15 @@
   }
 
 function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
-    const year = date.getFullYear();
+    let day = String(date.getDate()).padStart(2, '0');
+    let month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
+    let year = date.getFullYear();
     return `${year}-${month}-${day}`;
 }
 function capnhatngayketthucs(){
     // Lấy giá trị từ các input
-    const startDateInput = $("#ngaybatdaus").val();
-    const monthsToAdd = parseInt($('#sothangs').val());
+    const startDateInputs = $("#ngayhopdongs").val();
+    const monthsToAdds = parseInt($('#sothangs').val());
 
     // if (!startDateInput || isNaN(monthsToAdd)) {
     //     alert('Please enter a valid date and number of months.');
@@ -403,27 +403,27 @@ function capnhatngayketthucs(){
     // }
 
     // Chuyển đổi giá trị ngày thành đối tượng Date
-    const startDate = new Date(startDateInput);
+    const startDates = new Date(startDateInputs);
 
     // Tính ngày mới sau khi cộng thêm số tháng
-    const newDate = new Date(startDate);
-    newDate.setMonth(newDate.getMonth() + monthsToAdd);
+    const newDates = new Date(startDates);
+    newDates.setMonth(newDates.getMonth() + monthsToAdds);
 
     // Xử lý số năm khi cộng thêm tháng
-    const year = newDate.getFullYear();
-    const month = newDate.getMonth() + 1; // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
-    const day = newDate.getDate();
+    const year = newDates.getFullYear();
+    const month = newDates.getMonth() + 1; // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
+    const day = newDates.getDate();
 
     // Lấy số ngày trong tháng của ngày mới
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysInMonths = new Date(year, month, 0).getDate();
 
     // Định dạng ngày theo dd-mm-yyyy
-    const formattedDate = formatDate(newDate);
+    const formattedDates = formatDate(newDates);
     //console.log(`After adding ${monthsToAdd} months, the date is ${formattedDate} and the month has ${daysInMonth} days.`)
     // Hiển thị kết quả
     // document.getElementById('result').textContent = `After adding ${monthsToAdd} months, the date is ${formattedDate} and the month has ${daysInMonth} days.`;
-    
-    $("#ngayketthucs").val(formattedDate)
+    // console.log(startDateInputs)
+    $("#ngayketthucs").val(formattedDates)
   }
 </script>
 <style>
