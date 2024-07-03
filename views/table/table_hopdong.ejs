@@ -152,15 +152,19 @@
         <form action="#" method="post">
           <div class="form-group">
             <label class="col-form-label">Tên Hợp Đồng</label>
-            <input type="text" class="form-control" id="tenhopdong" name="tenhopdong">
+            <input type="text" class="form-control" id="tenhopdong" name="tenhopdong" required>
           </div>
           <div class="form-group">
             <label class="col-form-label">Ngày Hợp Đồng</label>
-            <input type="date" class="form-control" id="ngayhopdong" name="ngayhopdong">
+            <input type="date" class="form-control" id="ngaybatdau" name="ngayhopdong" onchange="capnhatngayketthuc()" required>
+          </div>
+           <div class="form-group">
+            <label class="col-form-label">Thời gian / số tháng</label>
+            <input type="number" class="form-control" id="sothang" name="sothang" onchange="capnhatngayketthuc()" required>
           </div>
           <div class="form-group">
             <label class="col-form-label">Ngày Kết Thúc</label>
-            <input type="date" class="form-control" id="ngayketthuc" name="ngayketthuc">
+            <input type="date" class="form-control" id="ngayketthuc" name="ngayketthuc"  readonly>
           </div>
           <div class="form-group">
             <label class="col-form-label">Ghi Chú:</label>
@@ -202,11 +206,15 @@
           </div>
           <div class="form-group">
             <label class="col-form-label">Ngày Hợp Đồng</label>
-            <input type="date" class="form-control" id="ngayhopdongs" name="ngayhopdong">
+            <input type="date" class="form-control" id="ngayhopdongs" name="ngayhopdong" onchange="capnhatngayketthuc()" required>
+          </div>
+           <div class="form-group">
+            <label class="col-form-label">Thời gian / số tháng</label>
+            <input type="number" class="form-control" id="sothangs" name="sothang" onchange="capnhatngayketthuc()" required>
           </div>
           <div class="form-group">
             <label class="col-form-label">Ngày Kết Thúc</label>
-            <input type="date" class="form-control" id="ngayketthucs" name="ngayketthuc">
+            <input type="date" class="form-control" id="ngayketthucs" name="ngayketthuc" readonly>
           </div>
           <div class="form-group">
             <label class="col-form-label">Ghi Chú:</label>
@@ -244,6 +252,7 @@
           $('#idhopdongs').val(data._id)
           $('#tenhopdongs').val(data.tenhopdong)
           $('#ngayhopdongs').val(data.ngaybatdau)
+          $('#sothangs').val(data.sothang)
           $('#ngayketthucs').val(data.ngayketthuc)
           $('#ghichus').val(data.ghichu)
           // window.location.href = "/hopdong/theodoihopdong"
@@ -299,6 +308,7 @@
           id:  $('#idhopdongs').val(),
           tenhopdong: $("#tenhopdongs").val(),
           ngaybatdau: $("#ngaybatdaus").val(),
+          sothang: $('#sothangs').val(),
           ngayketthuc: $("#ngayketthucs").val(),
           ghichu: $("#ghichus").val(),
         }
@@ -317,6 +327,7 @@
           tenhopdong: $("#tenhopdong").val(),
           ngaybatdau: $("#ngaybatdau").val(),
           ngayketthuc: $("#ngayketthuc").val(),
+          sothang: $('#sothang').val(),
           ghichu: $("#ghichu").val(),
         }
       })
@@ -340,6 +351,47 @@
           window.location.href = "/hopdong/theodoihopdong"
         });
   }
+
+  function capnhatngayketthuc(){
+    
+            // Lấy giá trị từ các input
+            const startDateInput = $("#ngaybatdau").val();
+            const monthsToAdd = parseInt($('#sothang').val());
+
+            // if (!startDateInput || isNaN(monthsToAdd)) {
+            //     alert('Please enter a valid date and number of months.');
+            //     return;
+            // }
+
+            // Chuyển đổi giá trị ngày thành đối tượng Date
+            const startDate = new Date(startDateInput);
+
+            // Tính ngày mới sau khi cộng thêm số tháng
+            const newDate = new Date(startDate);
+            newDate.setMonth(newDate.getMonth() + monthsToAdd);
+
+            // Xử lý số năm khi cộng thêm tháng
+            const year = newDate.getFullYear();
+            const month = newDate.getMonth() + 1; // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
+            const day = newDate.getDate();
+
+            // Lấy số ngày trong tháng của ngày mới
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // Định dạng ngày theo dd-mm-yyyy
+            const formattedDate = formatDate(newDate);
+            //console.log(`After adding ${monthsToAdd} months, the date is ${formattedDate} and the month has ${daysInMonth} days.`)
+            // Hiển thị kết quả
+            // document.getElementById('result').textContent = `After adding ${monthsToAdd} months, the date is ${formattedDate} and the month has ${daysInMonth} days.`;
+            $("#ngayketthuc").val(formattedDate)
+          }
+  
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng trong JavaScript tính từ 0-11, cần +1 để lấy tháng đúng
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
 </script>
 <style>
   .red-text {

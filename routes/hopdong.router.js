@@ -54,10 +54,12 @@ router.post('/suahopdong', async(req, res) => {
     let ngayformat = originalDate.format('YYYY-MM-DD')
     let originNgayketthuc = moment(req.body.ngayketthuc)
     let ngayketthucFormat = originNgayketthuc.format('YYYY-MM-DD')
+    let sothang = req.body.sothang
     let doc  = {
         tenhopdong: req.body.tenhopdong,
         ngaybatdau: ngayformat,
         ngayketthuc: ngayketthucFormat,
+        sothang: sothang,
         ghichu: req.body.ghichu
     }
     // console.log(doc)
@@ -75,10 +77,12 @@ router.post('/themhopdong', async(req, res) => {
     let ngayformat = originalDate.format('YYYY-MM-DD')
     let originNgayketthuc = moment(req.body.ngayketthuc)
     let ngayketthucFormat = originNgayketthuc.format('YYYY-MM-DD')
+    let sothang = req.body.sothang
     let doc = {
         tenhopdong: req.body.tenhopdong,
         ngaybatdau: ngayformat,
         ngayketthuc: ngayketthucFormat,
+        sothang: sothang,
         ghichu: req.body.ghichu,
     }
     //console.log(doc)
@@ -105,6 +109,7 @@ router.get('/xuatexcelhopdong', async(req, res) => {
           { header: 'Ten Hop Dong', key: 'tenhopdong', width: 20 },
        
           { header: 'Ngay Bat Dau', key: 'ngaybatdau', width: 20 },
+          { header: 'So Thang', key: 'sothang', width: 20 },
           { header: 'Ngay Ket Thuc', key: 'ngayketthuc', width: 20 },
           { header: 'Ghi Chu', key: 'ghichu', width: 20 },
         
@@ -115,6 +120,7 @@ router.get('/xuatexcelhopdong', async(req, res) => {
           worksheet.addRow({ 
             tenhopdong: document.tenhopdong, 
             ngaybatdau: document.ngaybatdau, 
+            sothang: document.sothang,
             ngayketthuc: document.ngayketthuc, 
             ghichu: document.ghichu, 
             

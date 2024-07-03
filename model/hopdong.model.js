@@ -5,7 +5,7 @@ const schema = new Schema({
     ngaybatdau: {type: String, required: false},
     // timehethan: {type: String, required: false},   //step bước số ngày từ này bắt đầu và ngày kết thúc (để dành lặp lại)
     ngayketthuc: {type: String, require: false},
-       
+    sothang: {type: Number, require: false},
     
     songayhethan: {type: String, require: false}, //được add vào mỗi lần gọi yc gửi api sendmail
     ghichu: {type: String, required: false},    
