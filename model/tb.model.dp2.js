@@ -2,7 +2,7 @@ const mongooge = require("mongoose")
 const Schema = mongooge.Schema
 const bcrypt = require("bcrypt")
 const schema = new Schema({
-    Ma: {type: String, required: true},
+    Ma: {type: String, required: false},
     Mainboard: {type: String, required: false},
     RAM: {type: String, required: false},
     CPU: {type: String, required: false},

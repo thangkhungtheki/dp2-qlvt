@@ -92,8 +92,8 @@ async function timTb(ab){
     return docs
 }
 
-async function timTbdp2(ab){
-    let docs = await _thietbidp2.findOne({Ma: ab})
+async function timTbdp2(id){
+    let docs = await _thietbidp2.findById(id)
     return docs
 }
 
@@ -108,9 +108,9 @@ async function xoaTb(_tb){
     
 }
 
-async function xoaTbdp2(_tb){
+async function xoaTbdp2(id){
     try {
-        await _thietbidp2.deleteOne({Ma: _tb})
+        await _thietbidp2.findByIdAndDelete(id)
         return true
     } catch (error) {
         return error
@@ -128,9 +128,11 @@ async function updatetb(ma, doc){
     }
 }
 
-async function updatetbdp2(ma, doc){
+async function updatetbdp2(id, doc){
     try{
-        await _thietbidp2.updateOne({Ma: ma},doc)
+        // console.log('Xuly ID>>>', id)
+        // console.log(doc)
+        await _thietbidp2.findByIdAndUpdate(id,doc)
         return true
     }catch(e){
         return false

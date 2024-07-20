@@ -58,15 +58,16 @@
 
       <tbody>
         <% data.forEach((value)=>{ %>
-        <% var bien=value.Ma %>
+        <% var bien=value._id %>
+        <% var devicename =  value.Ma %>
         <tr>
           <td>
 
             <div>
-              <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')" data-toggle="modal" data-target="#logoutModal2">
+              <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>', '<%= devicename %>')" data-toggle="modal" data-target="#logoutModal2">
                 <i class="fas fa-info-circle"></i>
               </div>
-              <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#logoutModal" onclick="Luu('<%= bien %>')">
+              <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#logoutModal" onclick="Luu('<%= bien %>', '<%= devicename %>')">
                 <i class="fas fa-trash">
                 </i>
               </div>
@@ -201,17 +202,17 @@
   //         window.location.href = "/thietbi"
   //     });
   // }
-  function Luu(bien) {
+  function Luu(bien, tentb) {
     _xoa = bien;
-    //alert(_xoa)
-    $('#ModalLabeldel').html('Bạn chắc chắn muốn xóa mã <strong>' + _xoa + "</strong> ?");
+    alert(tentb)
+    $('#ModalLabeldel').html('Bạn chắc chắn muốn xóa mã <strong>' + tentb + "</strong> ?");
   }
 
-  function Sua(bien) {
+  function Sua(bien, tentb) {
     _xoa = bien;
-    //alert(_xoa);
+    alert(tentb);
     $('#txtid').val(_xoa);
-    $('#ModalLabel2').html('Bạn muốn sửa thiết bị có mã: <strong>' + _xoa + "</strong>");
+    $('#ModalLabel2').html('Bạn muốn sửa thiết bị có mã: <strong>' + tentb + "</strong>");
     //$('#sualabel2').html("Sửa: " + _xoa);
     //console.log(_xoa);
 

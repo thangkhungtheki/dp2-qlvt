@@ -22,7 +22,7 @@ const routerdongco = require('./routes/dongco.router')
 const routerhopdong = require('./routes/hopdong.router')
 
 // path database
-mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true, useUnifiedTopology: true ,},);
+mongoose.connect(process.env.DATABASE_URL);
 // mongoose.set('strictQuery', false)
 
 // const mongooseOptions = {

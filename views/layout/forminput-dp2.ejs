@@ -1,22 +1,33 @@
 <div class="container">
 
   <h2> SỬA THIẾT BỊ DP2 </h2>
-  <div>
+  <!-- <div>
     <form action="searchedit" method="post">
       <div class="form-row">
         <div class="form-group col-md-6">
-          <input class="effect-20" type="text" placeholder="" name='txtsearch' id="id1ma" disabled value="<%= data.Ma  %>" />
+          <input class="effect-20" type="text" placeholder="" name='txtsearch' id="id1ma" value="" />
           <span class="focus-border">
             <i></i>
           </span>
         </div>
         <div class="form-group col-md-6">
-          <button class="btn btn-primary" type="submit" id="btnsearch" disabled>Search</button>
+          
         </div>
       </div>
     </form>
-  </div>
+  </div> -->
   <form action="capnhatdp2" method="post">
+    <div class="form-row">
+       <div class="form-group col-md-6">
+        <label>ID</label>
+        <input class="form-control" type="text" placeholder="" value="<%= data._id %>" name="txtid" readonly>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Mã Thiết Bị</label>
+        <input class="form-control" type="text" placeholder="" value="<%=  data.Ma %>" name="txtma">
+      </div>
+     
+    </div>
     <div class="form-row">
       <div class="form-group col-md-6">
         <label>Mainboard</label>
@@ -100,15 +111,13 @@
         <button class="btn btn-primary" type="submit" id="btncapnhat" onclick=capnhat()>Cap nhat</button>
       </div>
     </div>
-    <div>
-      <input type="text" id="idma" name="txtma" hidden="true" />
-    </div>
+    
 </div>
 </form>
 
 <script>
-  function capnhat() {
-    let a = $('#id1ma').val();
-    $("#idma").val(a);
-  }
+  // function capnhat() {
+  //   let a = $('#id1ma').val();
+  //   $("#idma").val(a);
+  // }
 </script>

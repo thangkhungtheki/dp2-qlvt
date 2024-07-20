@@ -414,7 +414,9 @@ router.post('/searchedit', async(req, res) => {
 
 router.post('/searcheditdp2', async(req, res) => {
     //console.log(req.body.txtsearch)
-    let doc =  await xulydb.timTbdp2(req.body.txtsearch)
+    let id = req.body.txtsearch
+    let doc =  await xulydb.timTbdp2(id)
+    //console.log(req.body.txtsearch)
     if(doc){
         //console.log(doc)
         return res.render("mainSbAdmin/dbthietbi-edit-dp2",{
@@ -535,6 +537,7 @@ router.post("/capnhat",(req, res) => {
 router.post("/capnhatdp2",(req, res) => {
     //console.log(req.body)
     let doc = {
+        Ma: req.body.txtma,
         Mainboard: req.body.txtmain,
         RAM: req.body.txtram,
         CPU: req.body.txtcpu,
@@ -549,7 +552,8 @@ router.post("/capnhatdp2",(req, res) => {
         Nguoidung: req.body.txtnguoidung,
         Vitri: req.body.txtvitri,
     }
-    xulydb.updatetbdp2(req.body.txtma,doc)
+    // console.log('Req>>>',req.body.txtid)
+    xulydb.updatetbdp2(req.body.txtid,doc)
     res.redirect('/thietbidp2')
 })
 
