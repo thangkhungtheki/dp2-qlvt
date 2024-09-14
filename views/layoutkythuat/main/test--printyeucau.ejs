@@ -1,0 +1,147 @@
+<div style="margin: 5px;">
+    <%- include('../formmau/info') %>
+    <% var noidung %>
+    <% switch (user.role) {
+       case 'tp': %>
+    <p> Đây là hiển thị của trưởng phòng chỉ để xem </p>
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Mô tả Công việc thực hiện kỹ thuật:</label>
+      <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='areamota' readonly><%= data[0].motakythuat %></textarea>
+    </div>
+    <div>Hình ảnh đơn hàng có chữ ký: </div>
+    <div class="mx-auto text-center">
+      <% data[0].fileanhdonhang.forEach((file, index) => { %>
+      <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+      <% }) %>
+    </div>
+
+    <% if (data[0].trangthai == 'hoanthanh' && data[0].diem == undefined) { %>
+    <%- include('danhgiasao') %>
+    <% } else { %>
+    <div>Feedback: <b><%= data[0].feedback %></b></div>
+    <div>Điểm: </div>
+    <div>
+      <h2><%= data[0].diem %> / 5</h2>
+    </div>
+    <% } %>
+
+
+    <% break 
+       case 'admin': %>
+    <% if (data[0].trangthai !== 'daduyet' && data[0].trangthai !== 'hoanthanh') { %>
+    <p> Đây là hiển thị của admin kỹ thuật để chỉnh sửa </p>
+    <form action='/qlkt/updatekythuat' method='post' enctype="multipart/form-data">
+
+
+      <input type="text" class="form-control" id="txtmayeucau" name="code" value="<%= data[0].mayeucau %>" hidden>
+
+      <div class="form-row">
+        <label for="exampleFormControlTextarea1">Mô tả công việc thực hiện kỹ thuật:</label>
+        <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='motacuakythuat'><%= data[0].motakythuat %></textarea>
+      </div>
+      <div>Hình ảnh đơn hàng có chữ ký: </div>
+      <div class="mx-auto text-center">
+        <% data[0].fileanhdonhang.forEach((file, index) => { %>
+
+        <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+        <% }) %>
+      </div>
+      <div class="form-group">
+        <input type="file" id="imageInput2" name="image2" accept="image/*" multiple>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="btnupdate">Update Xử lý</button>
+        <button type="button" class="btn btn-success float-right" id="btnhoanthanh" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn btn-secondary " id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>            </div>
+    </form>
+    <% } else { %>
+    <div> này là đã duyệt không sửa </div>
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Mô tả Công việc thực hiện kỹ thuật:</label>
+      <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='areamota' readonly><%= data[0].motakythuat %></textarea>
+    </div>
+    <div>Hình ảnh đơn hàng có chữ ký: </div>
+    <div class="mx-auto text-center">
+      <% data[0].fileanhdonhang.forEach((file, index) => { %>
+      <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+      <% }) %>
+
+      <div>Feedback: <b><%= data[0].feedback %></b></div>
+      <div>Điểm: </div>
+      <div>
+        <h2><%= data[0].diem %> / 5</h2>
+      </div>
+
+      <div class="form-group">
+        <button type="button" class="btn btn-success float-right" id="btnhoanthanh1" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn btn-secondary float-left" id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+      
+      
+        <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>
+      </div>
+    </div>
+
+    <% } %>
+    <% break 
+       case 'root': %>
+    <p> Đây là hiển thị của admin kỹ thuật để chỉnh sửa </p>
+    <form action='/qlkt/updatekythuat' method='post' enctype="multipart/form-data">
+
+
+      <input type="text" class="form-control" id="txtmayeucau" name="code" value="<%= data[0].mayeucau %>" hidden>
+
+      <div class="form-row">
+        <label for="exampleFormControlTextarea1">Mô tả công việc thực hiện kỹ thuật:</label>
+        <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='motacuakythuat'><%= data[0].motakythuat %></textarea>
+      </div>
+      <div>Hình ảnh đơn hàng có chữ ký: </div>
+      <div class="mx-auto text-center">
+        <% data[0].fileanhdonhang.forEach((file, index) => { %>
+
+        <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+        <% }) %>
+      </div>
+      <div class="form-group">
+        <input type="file" id="imageInput2" name="image2" accept="image/*" multiple>
+      </div>
+
+      <div>Feedback: <b><%= data[0].feedback %></b></div>
+      <div>Điểm: </div>
+      <div>
+        <h2><%= data[0].diem %> / 5</h2>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" id="btnupdate">Update Xử lý</button>
+        <button type="button" class="btn btn-success float-right" id="btnhoanthanh" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn-danger float-right" id="btndeleteyc" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        <button type="button" class="btn btn btn-secondary " id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+      </div>
+    </form>
+    <% break 
+       default: %>
+
+    <% } %>
+
+
+
+    <div class="margin">
+      <!-- <img src="/2023-12-20-09-58-54-zalo_last_screenshot.png" alt=""> -->
+    </div>
+  </div>
+
+
+
+
+
+</div>

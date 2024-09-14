@@ -326,7 +326,11 @@ async function update_device(id, doc){
         return false
     }
 }
-
+async function timUser(users){
+    let doc = await _user.findOne({username: users})
+    
+    return doc
+}
 module.exports = {
     docUser,
     find,
@@ -359,5 +363,6 @@ module.exports = {
     create_device,
     delete_device,
     docdeviceid,
-    update_device
+    update_device,
+    timUser
 }

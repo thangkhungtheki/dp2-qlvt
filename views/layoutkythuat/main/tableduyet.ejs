@@ -1,0 +1,204 @@
+<!-- Page Heading -->
+
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Bảng Yêu Cầu</h1>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+      <thead>
+        <tr class="table-success">
+          <th>Control</th>
+          <th>NgườiYC</th>
+          <th>NgàyYC</th>
+          <th>BP</th>
+          <th>Đt</th>
+          <th>Vịtri</th>
+          <th>khan</th>
+          <th>Mô tả</th>
+          <th>ttbp</th>
+          <th>XemChiTiet</th>
+
+        </tr>
+      </thead>
+      <tfoot>
+        <tr class="table-success">
+          <th>Control</th>
+          <th>NgườiYC</th>
+          <th>NgàyYC</th>
+          <th>BP</th>
+          <th>Đt</th>
+          <th>Vịtri</th>
+          <th>khan</th>
+          <th>Mô tả</th>
+          <th>ttbp</th>
+          <th>XemChiTiet</th>
+        </tr>
+      </tfoot>
+
+      <tbody>
+        <% data.forEach((data)=>{ %>
+        <% var bien = data.mayeucau %>
+        <tr>
+          <td>
+            <div>
+              <div class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#idsua" onclick="sua('<%= bien %>')">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#idxoa" onclick="sua('<%= bien %>')">
+                <i class="fas fa-trash">
+                </i>
+              </div>
+            </div>
+            
+          </td>
+          <td>
+            <%= data.nguoiyeucau %>
+          </td>
+          <td>
+            <%= data.ngayyeucau %>
+          </td>
+          <td>
+            <%= data.bophan %>
+          </td>
+          <td>
+            <%= data.dienthoai %>
+          </td>
+          <td>
+            <%= data.vitri %>
+          </td>
+          <td>
+            <%= data.khancap %>
+          </td>
+          <td>
+            <%= data.mota %>
+          </td>
+          <td>
+            <%= data.ttbp %>
+          </td>
+          <td>
+            <button type="button" class="btn btn-info" onclick="btnclick('<%= data.mayeucau %>')">Info</button>
+          </td>
+        </tr>
+
+
+        <% }) %>
+
+
+      </tbody>
+    </table>
+  </div>
+  <!-- </div>
+    </div> -->
+</div>
+
+<!-- Logout Modal-->
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Bạn chắc chắn muốn thoát?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Lựa chọn "Logout" chúng tôi sẽ xóa session.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnlogout">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Xoa User Modal-->
+<div class="modal fade" id="idsua" tabindex="0" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thông Báo</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Duyệt Yêu Cầu </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnduyet" onclick="duyetyc()">Duyệt</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- xxxxxxxxxxx -->
+
+<div class="modal fade" id="idxoa" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel2">Thông báo</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="sualabel2">Xoá Yêu Cầu</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <!-- <form action="searcheditdp2" method="post"> -->
+          <!-- <input type="text" id="txtid" name="txtsearch" value="" hidden="true" /> -->
+          <button class="btn btn-primary" type="button" id="btnxoayc" onclick="xoayc()">Thực hiện Xoá</button>
+
+        <!-- </form> -->
+      </div>
+    </div>
+  </div>
+</div>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script>
+  function btnclick(ma) {
+
+    window.location.href = '/qlkt/info?mayeucau=' + ma
+  }
+
+  function sua(ma) {
+    var mass = ma
+    $('#btnduyet').val(mass)
+    $('#btnxoayc').val(mass)
+    // alert(mass)
+  }
+
+  function duyetyc() {
+    var mas = $('#btnduyet').val()
+    // alert(mas)
+    $.ajax({
+        method: "POST",
+        url: "/qlkt/updatettbp",
+        data: {mayeucau: mas},
+      })
+      .done(function(msg) {
+        alert('Đã duyệt !!!')
+        window.location.href = "/qlkt"
+      });
+
+  }
+
+  function xoayc() {
+    var mes = $('#btnxoayc').val()
+    $.ajax({
+        method: "POST",
+        url: "/qlkt/deletettbp",
+        data: {mayeucau: mes},
+      })
+      .done(function(msg) {
+        alert('Đã xoá !!!')
+        window.location.href = "/qlkt"
+      });
+  }
+</script>
+<script>
+  $(document).ready(function() {
+    $.noConflict();
+    var table = $('#dataTable').DataTable({
+      "pageLength": 50
+    });
+  });
+</script>

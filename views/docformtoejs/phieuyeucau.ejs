@@ -1,0 +1,228 @@
+<% var mayeucau = data[0].mayeucau || '' %>
+<% var nguoiyeucau = data[0].nguoiyeucau || '' %>
+<% var ngayyc = data[0].ngayyeucau || '' %>
+<% var bophan = data[0].bophan || '' %>
+<% var khancap = data[0].khancap || '' %>
+<% var dt = data[0].dienthoai || '' %>
+<% var vitri = data[0].vitri || '' %>
+<% var mota = mota || '' %>
+<% var duyet = "%------ đã duyệt -----%" %>
+<% var tentruongphong = tentruongphong %>
+<% var motakythuat = motakythuat || '' %>
+
+
+<html>
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+  <meta name=Generator content="Microsoft Word 15 (filtered)">
+  <style>
+    .headerlogo {
+      width: 60px;
+      height: 60px
+    }
+
+    .headerlogochu {
+      height: 30px;
+    }
+
+    .fleft {
+      float: right;
+      margin-top: 30px;
+    }
+
+    .tablehead {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+
+
+    .tableheadth {
+      padding: 5px;
+      text-align: left;
+    }
+    .tableheadthright {
+      padding: 5px;
+      text-align: right;
+    }
+    .tablemiddle {
+
+      width: 100%;
+      border-collapse: collapse;
+
+
+    }
+
+    .tablemiddleth {
+      padding: 5px;
+      text-align: center;
+    }
+    .divright {
+      margin-right: 100px;
+      float: right;
+    }
+    .tablebophan {
+
+      width: 100%;
+      border-collapse: collapse ;
+     
+    }
+  </style>
+
+</head>
+
+<body lang=EN-US style='word-wrap:break-word'>
+  <div>
+    <img class="headerlogo" src="/img/logodp.png">
+    <img class="headerlogochu" src="/img/logochudp.png">
+    <span class="fleft">BM01/QT – EN – 01</span>
+  </div>
+  <div>
+    <center>
+      <h2>PHIẾU YÊU CẦU HỖ TRỢ KỸ THUẬT</h2>
+    </center>
+  </div>
+  <div>
+    <table class="tablehead">
+      <tr class="tableheadth">
+        <th class="tableheadth"><b>Mã yêu cầu: </b><%- mayeucau %></th>
+
+      </tr>
+      <tr class="tableheadth">
+        <td class="tableheadth"><b>Người yêu cầu: </b><%- nguoiyeucau %></td>
+        <td class="tableheadth"><b>Ngày: </b><%- ngayyc %></td>
+      </tr>
+      <tr class="tableheadth">
+        <td class="tableheadth"><b>Bộ phận: </b><%- bophan %></td>
+        <td class="tableheadth"><b>Điện thoại: </b><%- dt %></td>
+      </tr>
+      <tr class="tableheadth">
+        <td class="tableheadth"><b>Vị trí: </b><%- vitri %></td>
+        <td class="tableheadth"><b>Khẩn cấp: </b><%- khancap %></td>
+      </tr>
+
+    </table>
+  </div>
+  <div>
+    <table class="tablehead">
+      <tr class="tableheadth">
+        <th class="tableheadth"><i>Mô tả</i></th>
+      </tr>
+      <tr class="tableheadth">
+        <td class="tableheadth">
+          <b>***</b>
+          <%- mota %>
+        </td>
+      </tr>
+
+    </table>
+  </div>
+
+  <div>
+    <table class="tablemiddle">
+      <tr class="tablemiddleth">
+        <td class="tablemiddleth"><i>Tổng quản lý duyệt</i></td>
+        <td class="tablemiddleth"><i>Trưởng bộ phận</i></td>
+      </tr>
+      <tr class="tablemiddleth">
+        <td>
+          <br>
+          <br>
+          <br>
+          <br>
+        </td>
+        <td></td>
+      </tr>
+      <tr class="tablemiddleth">
+        <td><b>Trần Ngọc Thanh Trọng</b></td>
+        <td><b><%- tentruongphong %></b></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <div>
+    <b>Phần dành cho nhân viên kỹ thuật</b>
+  </div>
+  <div>
+    <i>Mô tả chi tiết công việc đã thực hiện:</i>
+  </div>
+  <div>
+    <b>***</b>
+    <%- motakythuat %>
+  </div>
+  <hr>
+  <div>
+    <table class="tablebophan">
+      <tr>
+        <td style="width: 60%;">
+          
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          <b>Bộ Phận Kỹ Thuật</b>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 60%;">
+           <hr />
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 60%;">
+           <hr />
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 60%;">
+          <hr />
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 60%;">
+           <hr />
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 60%;">
+          
+        </td>
+        <td style="width: 10%;">
+
+        </td>
+        <td style="width: 20%;">
+          
+        </td>
+      </tr>
+    </table>
+    
+  </div>
+</body>
+
+</html> 

@@ -1,0 +1,146 @@
+<div class="row">
+  <!-- Biểu đồ cột -->
+  <div class="col-md-6">
+    <h2 class="text-center">Biểu Đồ Cột</h2>
+    <canvas id="columnChart" style="width: 100%;" ></canvas>
+  </div>
+
+  <!-- Biểu đồ tròn -->
+  <div class="col-md-6">
+    <h2 class="text-center">Biểu đồ tròn</h2>
+    <canvas id="pieChart" style="width: 100%;" ></canvas>
+  </div>
+</div>
+
+<!-- <div class="container mt-5" >
+  <h2 id="h2thanhprocess">Đang tính toán ... </h2>
+  <div class="progress">
+    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+  </div>
+</div> -->
+
+<!-- Thêm Bootstrap JS và thư viện Chart.js -->
+<script src="/vendor/chart.js/Chart.bundle.min.js"></script>
+<script src="/vendor/chart.js/Chart.min.js"></script>
+
+<script>
+  // Đặt dữ liệu mẫu
+  var dataForColumnChart = {
+    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Khác"],
+    datasets: [{
+      label: 'Biểu Đồ Cột',
+      data: ['<%- total.bep %>', '<%- total.fb %>', '<%- total.mar %>', '<%- total.nhansu %>', '<%- total.sales %>', '<%- total.av %>', '<%- total.ketoan %>', '<%= total.house %>', '<%= total.khac %>'],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(220, 156, 138, 0.7)',
+        'rgba(222, 222, 148, 0.7)',
+        'rgba(0, 220, 216, 0.7)',
+        'rgba(0, 55, 216, 0.7)',
+        'rgba(209, 20, 6, 0.7)',
+        'rgba(7, 245, 221,1)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(220, 156, 138, 1)',
+        'rgba(222, 222, 148, 1)',
+        'rgba(0, 220, 216, 1)',
+        'rgba(0, 55, 216, 1)',
+        'rgba(209, 20, 6, 1)',
+        'rgba(7, 245, 221,1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  var dataForPieChart = {
+    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Khác"],
+    datasets: [{
+      data: ['<%= total.bep %>', '<%= total.fb %>', '<%= total.mar %>', '<%= total.nhansu %>', '<%= total.sales %>', '<%= total.av %>', '<%= total.ketoan %>', '<%= total.house %>', '<%= total.khac %>'],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.7)',
+        'rgba(54, 162, 235, 0.7)',
+        'rgba(255, 206, 86, 0.7)',
+        'rgba(220, 156, 138, 0.7)',
+        'rgba(222, 222, 148, 0.7)',
+        'rgba(0, 220, 216, 0.7)',
+        'rgba(0, 55, 216, 0.7)',     
+        'rgba(209, 20, 6, 0.7)',
+        'rgba(7, 245, 221,1)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(220, 156, 138, 1)',
+        'rgba(222, 222, 148, 1)',
+        'rgba(0, 220, 216, 1)',
+        'rgba(0, 55, 216, 1)',
+        'rgba(209, 20, 6, 1)',
+        'rgba(7, 245, 221,1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  // Lấy tham chiếu đến các canvas để vẽ biểu đồ
+  var columnChartCanvas = document.getElementById('columnChart').getContext('2d');
+  var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+
+  // Vẽ biểu đồ cột
+  var columnChart = new Chart(columnChartCanvas, {
+    type: 'bar',
+    data: dataForColumnChart,
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }],
+        xAxes: [{
+          barPercentage: 0.7, // Tỉ lệ chiều rộng của cột
+        }],
+      }
+    }
+  });
+
+  // Vẽ biểu đồ tròn
+  var pieChart = new Chart(pieChartCanvas, {
+    type: 'pie',
+    data: dataForPieChart
+  });
+
+
+</script>
+
+<script>
+  // document.addEventListener('DOMContentLoaded', function () {
+  //   const progressBar = document.getElementById('progress-bar');
+  
+  //   // Giả sử bạn có một hàm thực hiện request GET, bạn có thể thay thế bằng hàm thực hiện công việc thực tế
+  //   function simulateGetRequest() {
+  //     return new Promise(resolve => {
+  //       setTimeout(() => {
+  //         resolve();
+  //       }, 500);
+  //     });
+  //   }
+  
+  //   async function performTask() {
+  //     for (let i = 25; i <= 100; i += 25) {
+  //       progressBar.style.width = i + '%';
+  //       progressBar.innerHTML = i + '%';
+  //       await simulateGetRequest(); // Đợi một khoảng thời gian giả lập request GET
+  //     }
+  //     $('#h2thanhprocess').html('Hoàn thành')
+  //     $('#columnChart').removeAttr('hidden')
+  //     $('#pieChart').removeAttr('hidden')
+  //   }
+  
+  //   performTask(); // Gọi hàm để thực hiện công việc và cập nhật thanh tiến trình
+  // });
+  </script>

@@ -1,0 +1,174 @@
+<div class='contentpyc'>
+
+  <h3>
+    <center> PHIẾU YÊU CẦU HỖ TRỢ KỸ THUẬT </center>
+  </h3>
+
+  <form action='#' method='get' enctype="multipart/form-data">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+          
+          <input type="text" class="form-control" id="txtmayeucau" name="mayc" value="<%= data[0].mayeucau %>" hidden>
+        </div>
+      </div>
+    <input id="idcode" name="code" value="" hidden="true">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Người yêu cầu</label>
+        <input type="text" class="form-control" id="txtnguoiyc" placeholder="Người yêu cầu" name="nguoiyc" value="<%= data[0].nguoiyeucau %>" readonly>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Ngày</label>
+        <input type="date" class="form-control" id="txtngay" placeholder="Ngày" name="ngay" value="<%= data[0].ngayyeucau %>" readonly>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Bộ Phận</label>
+        <input type="text" class="form-control" id="txtbophan" placeholder="Bộ phận" name="bophan" value="<%= data[0].bophan %>" readonly>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Điện thoại</label>
+        <input type="text" class="form-control" id="txtdt" placeholder="Điện thoại" name="dienthoai" value="<%= data[0].dienthoai %>" readonly>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label>Vị trí</label>
+        <input type="text" class="form-control" id="txtvitri" placeholder="Vị trí" name="vitri" value="<%= data[0].vitri %>" readonly>
+      </div>
+      <div class="form-group col-md-6">
+        <b> Khẩn Cấp : </b>
+
+        <% if (data[0].khancap == 'yes') { %>
+        <div style="color: rgb(250, 10, 22);">
+          <h4> Có </h4>
+        </div>
+        <% } else { %>
+        <div style="color: rgb(18, 22, 247);">
+            <h4> Không </h4>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Mô tả:</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" name='areamota' readonly><%= data[0].mota %></textarea>
+    </div>
+    <div class="form-group">
+      Trạng thái trưởng bộ phận <b><%= data[0].bophan %></b>:
+      <% var content1 %>
+      <% switch (data[0].ttbp) {
+              case 'dangxuly':
+              content1 = "<h4 class='maudo'> Chờ Duyệt </h4>"
+              break
+            //   case 'duyet':
+            //   content1 = "<h4 class='mauxanhduong'> Đã Duyệt </h4>"
+            //   break
+              case 'duyet':
+              content1 = "<h4 class='mauxanhla'> Đã Duyệt </h4>"
+              break
+              default : 
+              content1 = '...'
+          } %>
+      <%- content1 %>
+    </div>
+    <div class="form-group">
+      Trạng thái phòng kỹ thuật:
+      <% var content %>
+      
+      <% switch (data[0].trangthai) {
+            case 'choduyet':
+            content = "<h4 class='maudo' id='contenth4'> Chờ Duyệt </h4>"
+            break
+            case 'dangxuly':
+            content = "<h4 class='maucam' id='contenth4'> Đang Xử Lý </h4>"
+            break
+            case 'daduyet':
+            content = "<h4 class='mauxanhduong' id='contenth4'> Đã Duyệt </h4>"
+            break
+            case 'hoanthanh':
+            content = "<h4 class='mauxanhla' id='contenth4'> Đã Hoàn Thành </h4>"
+            break
+            default : 
+            content = '...'
+        } %>
+      <%- content %>
+    </div>
+  </form>
+  <div>Hình ảnh: </div>
+  <div class="mx-auto text-center">
+  <% data[0].filename.forEach((file, index) => { %>
+ 
+        <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+  <% }) %>
+  </div>
+<div class="margin">
+  <!-- <img src="/2023-12-20-09-58-54-zalo_last_screenshot.png" alt=""> -->
+</div>
+
+
+
+<style>
+  .margin {
+    margin-bottom: 100px;
+  }
+  
+  .custom-img {
+   
+    border: 1px solid #fa9005bb; /*Đổi màu sắc của đường viền */
+    padding: 3px; /* Tăng kích thước của đường viền */
+    border-radius: 10px; /* Làm tròn các góc của đường viền */
+   
+  }
+  .contentpyc {
+    padding: 5px;
+    background: #f2f2f2;
+  }
+
+  body {
+    font-size: 80%;
+    /* Điều chỉnh kích thước tổng thể bằng cách sử dụng font-size */
+  }
+
+  .maudo {
+    color: #c00000;
+  }
+  .maucam{
+    color: coral;
+  }
+
+  .mauxanhduong {
+    color: blue;
+  }
+
+  .mauxanhla {
+    color: darkgreen;
+  }
+
+
+  .clickable-image {
+    cursor: pointer;
+    width: 150px;
+    height: 150px;
+    transition: transform 0.3s ease-in-out;
+
+    
+  }
+
+  .clickable-image.full-size {
+    transform: scaleX(1.5) scaleY(2);
+    transform-origin: center center;
+    
+    /* You can adjust the scale factor as needed */
+  }
+</style>
+<script>
+  function showFullSize(image) {
+    // Thêm hoặc xoá lớp CSS để thay đổi kích thước
+    image.classList.toggle('full-size');
+
+    // Nếu bạn muốn chuyển đến một trang mới khi click vào ảnh, bạn có thể sử dụng window.location.href
+    // Ví dụ: window.location.href = 'url_cua_trang_anh_larger.html';
+  }
+</script>

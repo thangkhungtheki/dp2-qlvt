@@ -10,6 +10,40 @@ const fs = require('fs')
 
 //sendmail.sendmail()
 
+const ycsc = require('../CRUD/xulyyeucau')
+
+// Middleware để thiết lập dữ liệu trong res.locals
+router.use(async (req, res, next) => {
+  let total = await tongsuachuaton()
+  res.locals.arrayTong = total
+  next();
+});
+async function tongsuachuaton() {
+  let bep = await ycsc.timyctheobophan('bep')
+  let sales = await ycsc.timyctheobophan('sales')
+  let mar = await ycsc.timyctheobophan('marketing')
+  let fb = await ycsc.timyctheobophan('fb')
+  let ketoan = await ycsc.timyctheobophan('ketoan')
+  let av = await ycsc.timyctheobophan('avtrangtri')
+  let house = await ycsc.timyctheobophan('house')
+  let nhansu = await ycsc.timyctheobophan('nhansu')
+  let baove = await ycsc.timyctheobophan('baove')
+  let khac = await ycsc.timyctheobophan('khac')
+  let total = {
+    bep: bep.length,
+    sales: sales.length,
+    mar: mar.length,
+    fb: fb.length,
+    ketoan: ketoan.length,
+    av: av.length,
+    house: house.length,
+    nhansu: nhansu.length,
+    baove: baove.length,
+    khac: khac.length
+  }
+  return total
+}
+
 router.get('/cronjobsendmail',async(req, res) => {
     var data =  await xulydb.doc_createthietbi()
     var newdata = await tinhngayconlai(data)
@@ -25,9 +59,9 @@ router.get("/", (req, res, next) => {
 router.get('/.well-known/pki-validation/32E58AB3EEC936EDF6D79C8FD615AC68.txt' , (req, res) => {
 	return res.sendfile('public/32E58AB3EEC936EDF6D79C8FD615AC68.txt')
 })
-
+ 
 router.post("/signin",
-    passport.authenticate('local.signin', { successRedirect: '/vattutest',
+    passport.authenticate('local.signin', { successRedirect: '/qlkt',
                                   failureRedirect: '/signin',
                                   failureFlash: true })
 );

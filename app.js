@@ -20,8 +20,13 @@ const routercheckip = require('./routes/checkip.router')
 const routerdongco = require('./routes/dongco.router')
 
 const routerhopdong = require('./routes/hopdong.router')
+var qltkRouter = require('./routes/qlkt.router')
+var userktRouter = require('./routes/user.kt')
+// dùng router house
+var houseRouter = require('./routes/house.router')
 
-// path database
+const ycsc = require('./CRUD/xulyyeucau')
+// path database 
 mongoose.connect(process.env.DATABASE_URL);
 // mongoose.set('strictQuery', false)
 
@@ -60,7 +65,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.static(path.join(__dirname, 'multer-upload/uploads')));
 app.use('/', indexRouter);
 
 app.use('/api/login/', routerLogin)
@@ -70,6 +75,10 @@ app.use('/ip',routercheckip )
 app.use('/dongco/', routerdongco)
 
 app.use('/hopdong/', routerhopdong)
+
+app.use('/qlkt/', qltkRouter);
+app.use('/user/' ,userktRouter )
+app.use('/house/', houseRouter)
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
@@ -107,12 +116,44 @@ app.use(async (req, res, next) => {
 
   // Lưu userId vào req
   req.user.userId = userId;
-  
+  let total = await tongsuachuaton()
+  res.locals.arrayTong = total
   next();
 
 });
 
+// Middleware để thiết lập dữ liệu trong res.locals
+// app.use(async (req, res, next) => {
+//   let total = await tongsuachuaton()
+//   res.locals.arrayTong = total
+//   next();
+// });
 
+async function tongsuachuaton() {
+  let bep = await ycsc.timyctheobophan('bep')
+  let sales = await ycsc.timyctheobophan('sales')
+  let mar = await ycsc.timyctheobophan('marketing')
+  let fb = await ycsc.timyctheobophan('fb')
+  let ketoan = await ycsc.timyctheobophan('ketoan')
+  let av = await ycsc.timyctheobophan('avtrangtri')
+  let house = await ycsc.timyctheobophan('house')
+  let nhansu = await ycsc.timyctheobophan('nhansu')
+  let baove = await ycsc.timyctheobophan('baove')
+  let khac = await ycsc.timyctheobophan('khac')
+  let total = {
+    bep: bep.length,
+    sales: sales.length,
+    mar: mar.length,
+    fb: fb.length,
+    ketoan: ketoan.length,
+    av: av.length,
+    house: house.length,
+    nhansu: nhansu.length,
+    baove: baove.length,
+    khac: khac.length
+  }
+  return total
+}
 // // error handler
 // app.use(function(err, req, res, next) {
 //   // set locals, only providing error in development
