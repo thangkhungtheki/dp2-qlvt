@@ -6,31 +6,31 @@ function sendmail(params){
     var emailpb = ""
     // switch (params[0].bophan) {
     //     case "bep":
-    //         emailpb = " , nt.tu@diamondplace.com.vn , Bepdp@diamondplace.com.vn , bepdp01@diamondplace.com.vn"
+    //         emailpb = " , bep.dp2@diamondplace.com.vn"
     //         break;
     //     case "sales":
-    //         emailpb = " , sales.manager@diamondplace.com.vn"
+    //         emailpb = " , nt.dung@diamondplace.com.vn"
     //         break;
     //     case "fb":
-    //         emailpb = " , vq.nam@diamondplace.com.vn"
+    //         emailpb = " , fb.manager.dp2@diamondplace.com.vn"
     //         break;
     //     case "ketoan":
-    //         emailpb = " , ln.quan@diamondplace.com.vn"
+    //         emailpb = " , Chiefaccountant.dp2@diamondplace.com.vn"
     //         break;
     //     case "marketing":
     //         emailpb = " , Marketing.Ma@diamondplace.com.vn"
     //         break;
     //     case "avtrangtri":
-    //         emailpb = " , nv.hieu@diamondplace.com.vn"
+    //         emailpb = " , tn.thuan@diamondplace.com.vn"
     //         break;
     //     case "house":
     //         emailpb = " , House.Keeper@diamondplace.com.vn"
     //         break;
     //     case "baove":
-    //         emailpb = " , sec.manager@diamondplace.com.vn"
+    //         emailpb = " , sec.ma@diamondplace.com.vn"
     //         break;
     //     case "nhansu":
-    //         emailpb = " , hr@diamondplace.com.vn"
+    //         emailpb = " , tb.dung@diamondplace.com.vn"
     //         break;        
     //     default:
     //         break;

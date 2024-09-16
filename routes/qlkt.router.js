@@ -371,29 +371,32 @@ router.get('/printyeucau',authenticated, async (req, res) => {
   var tentruongphong = ''
   switch (doc[0].bophan) {
     case "fb":
-      tentruongphong = 'Văn Quốc Nam'
+      tentruongphong = 'Nguyễn Thái Bình'
       break;
     case "bep":
-      tentruongphong = 'Bùi Văn Oánh'
+      tentruongphong = 'Phan Bảo Toàn'
       break;
     case "sales":
-      tentruongphong = 'Phạm Nhật Thịnh'
+      tentruongphong = 'Nguyễn Thị Thanh Dung'
       break;
-    case "mar":
+    case "marketing":
       tentruongphong = 'Phạm Anh Tuấn'
       break;
     case "ketoan":
-      tentruongphong = 'Lê Nhựt Quan'
+      tentruongphong = 'Phạm Thanh Thuỳ'
       break;
     case "house":
       tentruongphong = 'Phạm Khắc Quy'
       break;
     case "nhansu":  
-      tentruongphong = 'Nguyễn Thị Kim Ngân'
+      tentruongphong = 'Trần Thị Bích Dung'
       break;
     case "baove":
-      tentruongphong = 'Nguyễn Lý Quốc Khánh'
-      break;  
+      tentruongphong = 'Nguyễn Hoàng Phương'
+      break; 
+    case "avtrangtri":
+      tentruongphong = 'Trần Ninh Thuận'
+      break; 
     default:
       break;
   }
