@@ -21,7 +21,7 @@ router.use(async (req, res, next) => {
 async function tongsuachuaton() {
   let bep = await ycsc.timyctheobophan('bep')
   let sales = await ycsc.timyctheobophan('sales')
-  let mar = await ycsc.timyctheobophan('marketing')
+  let marketing = await ycsc.timyctheobophan('marketing')
   let fb = await ycsc.timyctheobophan('fb')
   let ketoan = await ycsc.timyctheobophan('ketoan')
   let av = await ycsc.timyctheobophan('avtrangtri')
@@ -32,7 +32,7 @@ async function tongsuachuaton() {
   let total = {
     bep: bep.length,
     sales: sales.length,
-    mar: mar.length,
+    marketing: marketing.length,
     fb: fb.length,
     ketoan: ketoan.length,
     av: av.length,

@@ -17,3 +17,13 @@ tb.dung@diamondplace.com.vn
 baove
 sec.ma@diamondplace.com.vn
 
+    bep: bep.length,
+    sales: sales.length,
+    marketing: marketing.length,
+    fb: fb.length,
+    ketoan: ketoan.length,
+    av: av.length,
+    house: house.length,
+    nhansu: nhansu.length,
+    baove: baove.length,
+    khac: khac.length
