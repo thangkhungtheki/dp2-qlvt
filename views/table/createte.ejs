@@ -31,32 +31,29 @@
                     </thead>
                     <tfoot>
                         <tr class="table">
-			    <th>STT</th>
+			                <th>STT</th>
                             <th>Tên Thiết Bị</th>
                             <th>Ngày còn lại</th>
                             <th>SL</th>
-			    <th>NCC</th>
+			                <th>NCC</th>
                             <th>Nhập</th>
                             <th>Tháng</th>
-                            <th>DVT</th>
-                            
+                            <th>DVT</th>   
                             <th>SĐT</th>
                             <th>TT</th>
                             <th>Note</th>
-
                             <th>Username</th>
-			    <th>Control</th>
+			                <th>Control</th>
                         </tr>
                     </tfoot>
-
                     <tbody>
-			<% var stt = 0 %>
+			            <% var stt = 0 %>
                         <% data.forEach((value)=>{ %>
-                            <% var bien = value.tentb %>
-			<% stt = stt + 1 %>
+                        <% var bien = value.tentb %>
+			            <% stt = stt + 1 %>
                                 <td>
-				<b><%= stt %></b>
-				</td>
+				                    <b><%= stt %></b>
+				                </td>
                                 <td>
                                     <%= value.tentb %>
                                 </td>
@@ -86,7 +83,7 @@
                                 <td>
                                     <%= value.soluong %>
                                 </td>
-				<td>
+				                <td>
                                     <%= value.tenncc %>
                                 </td>
                                 <td>
@@ -108,11 +105,10 @@
                                 <td>
                                     <%= value.ghichu %>
                                 </td>
-				<td>
+				                <td>
                                     <%= value.username %>
                                 </td>
-				<td>
-                                    
+				                <td>
                                         <div class="btn btn-info btn-circle btn-sm" onclick="Sua('<%= bien %>')"
                                             data-toggle="modal" data-target="#suamodal">
                                             <i class="fas fa-info-circle"></i>
@@ -122,16 +118,9 @@
                                             <i class="fas fa-trash">
                                             </i>
                                         </div>
-                                        
-                                    
-                                          
                                 </td>
-                                
-                                
                             </tr>
                             <% }) %>
-
-
                     </tbody>
                 </table>
             </div>
