@@ -70,11 +70,11 @@ router.get('/', async (req, res) => {
         res.redirect('/qlkt/bieudotron')
         break;
       case "tp":
-        if (user.bp === 'house') {
-          let doc = await ycsc.docyeucautheotrangthai('dangxuly', user.bp)
-          return res.render('admin_house/main/dashboard', { data: doc })
-          break;
-        }
+        // if (user.bp === 'house') {
+        //   let doc = await ycsc.docyeucautheotrangthai('dangxuly', user.bp)
+        //   return res.render('admin_house/main/dashboard', { data: doc })
+        //   break;
+        // }
         let doc = await ycsc.docyeucautheotrangthai('dangxuly', user.bp)
         return res.render('layoutkythuat/main/dashboard', { data: doc })
         break;
