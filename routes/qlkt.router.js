@@ -221,7 +221,7 @@ router.get('/viewyeucau', authenticated, (req, res) => {
   // }
 
   const successMessage = req.flash('success')[0]
-  if (req.user.bp == 'house') {
+  if (req.user.bp == 'housetat') {
     // const successMessage = req.flash('success')[0]
 
     return res.render('admin_house/main/view_guiyc', { data: req.user, successMessage })
