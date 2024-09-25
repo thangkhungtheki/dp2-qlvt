@@ -62,9 +62,10 @@ function sendmail(data){
             if (err) {
                 console.log(err);
                 
-            } else {
-                console.log('Message sent: ' +  info.response);
-            }
+            } 
+            // else {
+            //     console.log('Message sent: ' +  info.response);
+            // }
         });
     }else{
         

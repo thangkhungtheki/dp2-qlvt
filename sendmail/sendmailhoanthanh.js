@@ -4,37 +4,37 @@ var moment = require('moment')
 
 function sendmail(params){
     var emailpb = ""
-    // switch (params[0].bophan) {
-    //     case "bep":
-    //         emailpb = " , bep.dp2@diamondplace.com.vn"
-    //         break;
-    //     case "sales":
-    //         emailpb = " , nt.dung@diamondplace.com.vn"
-    //         break;
-    //     case "fb":
-    //         emailpb = " , fb.manager.dp2@diamondplace.com.vn"
-    //         break;
-    //     case "ketoan":
-    //         emailpb = " , Chiefaccountant.dp2@diamondplace.com.vn"
-    //         break;
-    //     case "marketing":
-    //         emailpb = " , Marketing.Ma@diamondplace.com.vn"
-    //         break;
-    //     case "avtrangtri":
-    //         emailpb = " , tn.thuan@diamondplace.com.vn"
-    //         break;
-    //     case "house":
-    //         emailpb = " , House.Keeper@diamondplace.com.vn"
-    //         break;
-    //     case "baove":
-    //         emailpb = " , sec.ma@diamondplace.com.vn"
-    //         break;
-    //     case "nhansu":
-    //         emailpb = " , tb.dung@diamondplace.com.vn"
-    //         break;        
-    //     default:
-    //         break;
-    // }
+    switch (params[0].bophan) {
+        case "bep":
+            emailpb = " , bep.dp2@diamondplace.com.vn"
+            break;
+        case "sales":
+            emailpb = " , nt.dung@diamondplace.com.vn"
+            break;
+        case "fb":
+            emailpb = " , fb.manager.dp2@diamondplace.com.vn"
+            break;
+        case "ketoan":
+            emailpb = " , Chiefaccountant.dp2@diamondplace.com.vn"
+            break;
+        case "marketing":
+            emailpb = " , Marketing.Ma@diamondplace.com.vn"
+            break;
+        case "avtrangtri":
+            emailpb = " , tn.thuan@diamondplace.com.vn"
+            break;
+        case "house":
+            emailpb = " , House.Keeper@diamondplace.com.vn"
+            break;
+        case "baove":
+            emailpb = " , sec.ma@diamondplace.com.vn"
+            break;
+        case "nhansu":
+            emailpb = " , tb.dung@diamondplace.com.vn"
+            break;        
+        default:
+            break;
+    }
     var transporter =  nodemailer.createTransport({ // config mail server
         host: process.env.hostEmail,
         port: process.env.portEmail,
@@ -65,7 +65,7 @@ Trạng thái : <span style="color: green"> Hoàn thành </span>`
             from: process.env.emailFrom,
             to: senttoemail,
             //bcc: 'it@diamondplace.com.vn',
-            subject: "THÔNG BÁO HOÀN THÀNH PHIẾU YÊU CẦU",
+            subject: "HOÀN THÀNH PHIẾU YÊU CẦU",
             //text: 'Your text is here',//Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
             html: content ,//Nội dung html mình đã tạo trên kia :)),
             
@@ -75,9 +75,10 @@ Trạng thái : <span style="color: green"> Hoàn thành </span>`
             if (err) {
                 console.log('>>>Lỗi transproter: ', err);
                 
-            } else {
-                console.log('Message sent: ' +  'send mail Success');
-            }
+            } 
+            // else {
+            //     console.log('Message sent: ' +  'send mail Success');
+            // }
         });
     } catch (error) {
         console.log(error)
