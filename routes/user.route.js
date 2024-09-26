@@ -283,7 +283,7 @@ router.get('/dashboard', async(req, res) => {
         if(await xulydb.find(req.user.username)){
             let data = await xulydb.docUser()
         //console.log(data)
-            return res.render("mainSbAdmin/dashboard",{
+            return res.render("mainSbAdmin/dashboard",{ 
             _username: req.user.username,
             data: data,
             activeuser: 'active',
