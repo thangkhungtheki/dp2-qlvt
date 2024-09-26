@@ -66,7 +66,7 @@ async function tim_createthietbi(tentbb){
 async function find(users){
     let doc = await _user.findOne({username: users})
     
-    if(doc.role == 'admin'){
+    if(doc.role == 'admin' || doc.role == 'root'){
         //console.log(doc)
         return true
     } 
