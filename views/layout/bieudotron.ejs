@@ -29,7 +29,7 @@
     labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Khác"],
     datasets: [{
       label: 'Biểu Đồ Cột',
-      data: ['<%- total.bep %>', '<%- total.fb %>', '<%- total.mar %>', '<%- total.nhansu %>', '<%- total.sales %>', '<%- total.av %>', '<%- total.ketoan %>', '<%= total.house %>', '<%= total.khac %>'],
+      data: ['<%= total.bep %>', '<%= total.fb %>', '<%= total.mar %>', '<%= total.nhansu %>', '<%= total.sales %>', '<%= total.av %>', '<%= total.ketoan %>', '<%= total.house %>', '<%= total.khac %>'],
       backgroundColor: [
         'rgba(255, 99, 132, 0.7)',
         'rgba(54, 162, 235, 0.7)',
@@ -94,18 +94,7 @@
   var columnChart = new Chart(columnChartCanvas, {
     type: 'bar',
     data: dataForColumnChart,
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }],
-        xAxes: [{
-          barPercentage: 0.7, // Tỉ lệ chiều rộng của cột
-        }],
-      }
-    }
+    
   });
 
   // Vẽ biểu đồ tròn
