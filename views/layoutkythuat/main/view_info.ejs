@@ -182,6 +182,9 @@
 
           <% if (data[0].trangthai == 'hoanthanh' && data[0].diem == undefined) { %>
           <%- include('danhgiasao') %>
+          <div class="form-group">
+              <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>  
+          </div>
           <% } else { %>
           <div>Feedback: <b><%= data[0].feedback %></b></div>
           <div>Điểm: </div>
