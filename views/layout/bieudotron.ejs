@@ -26,10 +26,10 @@
 <script>
   // Đặt dữ liệu mẫu
   var dataForColumnChart = {
-    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Khác"],
+    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Bảo vệ", "Khác"],
     datasets: [{
       label: 'Biểu Đồ Cột',
-      data: ['<%= total.bep %>', '<%= total.fb %>', '<%= total.mar %>', '<%= total.nhansu %>', '<%= total.sales %>', '<%= total.av %>', '<%= total.house %>', '<%= total.ketoan %>', '<%= total.baove %>', '<%= total.khac %>', 6],
+      data: ['<%= total.bep %>', '<%= total.fb %>', '<%= total.mar %>', '<%= total.nhansu %>', '<%= total.sales %>', '<%= total.av %>', '<%= total.ketoan %>', '<%= total.house %>','<%= total.baove %>', '<%= total.khac %>', 6],
       backgroundColor: [
         'rgba(255, 99, 132, 0.7)',
         'rgba(54, 162, 235, 0.7)',
@@ -59,7 +59,7 @@
   };
 
   var dataForPieChart = {
-    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Khác"],
+    labels: ["Bếp", "FB", "Marketing", "Nhân sự", "Sales", "AV-TrangTri", "Kế Toán", "House", "Bảo vệ", "Khác"],
     datasets: [{
       data: ['<%= total.bep %>', '<%= total.fb %>', '<%= total.mar %>', '<%= total.nhansu %>', '<%= total.sales %>', '<%= total.av %>', '<%= total.ketoan %>', '<%= total.house %>',  '<%= total.baove %>', '<%= total.khac %>'],
       backgroundColor: [
