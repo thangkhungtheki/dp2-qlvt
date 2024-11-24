@@ -407,7 +407,7 @@ router.get('/printyeucau',authenticated, async (req, res) => {
   if (doc) {
     let fixmota = doc[0]?.mota?.replace(/\n/g, '<br>')
     let fixmotakythuat = doc[0]?.motakythuat?.replace(/\n/g, '<br>')
-    return res.render('docformtoejs/phieuyeucau.ejs', { data: doc, user: user, tentruongphong: tentruongphong, mota: fixmota, motakythuat : fixmotakythuat, myPathENV: process.env.myPathENV })
+    return res.render('docformtoejs/phieuyeucau.ejs', { data: doc, _username: '', user: user, tentruongphong: tentruongphong, mota: fixmota, motakythuat : fixmotakythuat, myPathENV: process.env.myPathENV })
   }
 
 

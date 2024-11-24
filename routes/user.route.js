@@ -454,7 +454,7 @@ router.post('/searcheditdp2', async(req, res) => {
     if(doc){
         //console.log(doc)
         return res.render("mainSbAdmin/dbthietbi-edit-dp2",{
-            _username: req.user.username,
+            _username: "",
             activeuser: '',
             activetb: '',
             activeedittb: 'active',
@@ -463,7 +463,7 @@ router.post('/searcheditdp2', async(req, res) => {
 })
     }else{
         return res.render("mainSbAdmin/dbthietbi-edit-dp2",{
-            _username: req.user.username,
+            _username: "",
             activeuser: '',
             activetb: '',
             activeedittb: 'active',
@@ -606,7 +606,7 @@ router.get('/vattutest', (req, res) => {
         return res.render("mainSbAdmin/vattu.ejs", {
             
             user: req.user,
-            _username: req.user.username,
+            _username: "",
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -647,7 +647,7 @@ router.get('/xuatvattutest', (req, res) => {
     if(req.isAuthenticated()){
         return res.render("mainSbAdmin/xuatvattu.ejs", {
             user: req.user, //tạm mở user
-            _username: req.user.username,
+            _username: "",
             activeuser: '',
             activetb: '',
             activetbdp2: '',
@@ -680,7 +680,7 @@ router.get('/mavattutest', (req, res) => {
         return res.render("mainSbAdmin/themmavattu.ejs", {
         
             user: req.user, //tạm mở user
-            _username: req.user.username,
+            _username: "",
             activeuser: '',
             activetb: '',
             activetbdp2: '',

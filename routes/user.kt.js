@@ -29,7 +29,7 @@ let doc = await ycsc.timyctheoma(mayeucau)
 //console.log(datafile)
 if (doc) {
 // return res.render('docformtoejs/usr_bmphieuyeucau', { data: doc, user: user, myPathENV: process.env.myPathENV })
-return res.render('docformtoejs/usr_bmphieuyeucau', { data: doc })
+return res.render('docformtoejs/usr_bmphieuyeucau', { data: doc , _username:''})
 }
 })
 
