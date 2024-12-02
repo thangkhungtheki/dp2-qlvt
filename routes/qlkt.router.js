@@ -208,7 +208,7 @@ router.get('/xemlichsu', authenticated, async (req, res) => {
       return res.render('layoutkythuat/user/dashboard', { data: req.user, successMessage })
       break;
     default:
-      return res.send('bạn đã Đăng ký thành công!!! <br\> Chào bạn: <b>' + user.username + ' </b>, vui lòng liên hệ admin và báo tên user, để được cấp quyền')
+      return res.send('bạn đã Đăng ký thành công!!! <br\> Chào bạn: <b>' + ' </b>, vui lòng liên hệ admin và báo tên user, để được cấp quyền')
   }
 
 })
