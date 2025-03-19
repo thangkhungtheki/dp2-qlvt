@@ -3,7 +3,7 @@ var moment = require('moment')
 
 
  function sendmail(data){
-
+    var sortData = data.sort((a, b) => a.songayhethan - b.songayhethan);
     var transporter =  nodemailer.createTransport({ // config mail server
         host: process.env.HouseHostMail,
         port: process.env.HousePort,
@@ -21,14 +21,14 @@ var moment = require('moment')
     });
     
     var text = ''
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < sortData.length; i++) {
         
-        if( (data[i].songayhethan * 1) >= 0 && (data[i].hoanthanh != 'yes') && data[i].flagguimail == "yes"){
+        if( (sortData[i].songayhethan * 1) >= 0 && (sortData[i].hoanthanh != 'yes') && sortData[i].flagguimail == "yes"){
            
-            var string = '<b>.TênCV: ' + `</b><span style='color: blue'>` + data[i].tencv + ` </span>` + 
-                            `Vị trí/Ngày thực hiện: ` + `<span style='color: green'>` + data[i].vitricv + `</span>` +
+            var string = '<b>.TênCV: ' + `</b><span style='color: blue'>` + sortData[i].tencv + ` </span>` + 
+                            `Vị trí/Ngày thực hiện: ` + `<span style='color: green'>` + sortData[i].vitricv + `</span>` +
                             `<span>` + ` ngày đến hạn: </span>
-                            <span style="color: red">` + data[i].songayhethan + `</span> ngày <br>
+                            <span style="color: red">` + sortData[i].songayhethan + `</span> ngày <br>
                             `
             // var string = data[i].tencv
             text = text + string

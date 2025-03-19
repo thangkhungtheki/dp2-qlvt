@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<% var _username = '' %>
+
+<% var path = myPathENV %>
+
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB - make by TKTK</title>
+
+  <!-- Custom fonts for this template -->
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> -->
+
+  <!-- Custom styles for this template -->
+  <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3"><%= _username %></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+
+
+      <!-- Nav Item - Tables -->
+      <!-- dùng chỗ này điều hướng cho 2 nơi đen tp chỗ left-sites và xanh admin   -->
+      <% if(user.role == 'tp') { %>
+      <%- include('./left-sites.ejs') %>
+      <% } else { %>
+      <%- include(path + 'views/layout/left-sites.ejs') %>
+      <% } %>
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <!-- Topbar Search -->
+          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+              <!-- <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2"> -->
+              <div class="input-group-append">
+                <!-- <button class="btn btn-primary" type="button">
+                  <i class="fas fa-search fa-sm"></i>
+                </button> -->
+              </div>
+            </div>
+          </form>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                  <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </li>
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+
+            </li>
+
+            <!-- Nav Item - Messages -->
+            <li class="nav-item dropdown no-arrow mx-1">
+
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><strong><%= _username %></strong></span>
+                <img class="img-profile rounded-circle" src="/img/undraw_posting_photo.svg">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <!-- <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a> -->
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div style="margin: 5px;">
+          <%- include('../formmau/info') %>
+          <% var noidung %>
+          <% switch (user.role) {
+             case 'tp': %>
+          <p> Đây là hiển thị của trưởng phòng chỉ để xem </p>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Mô tả Công việc thực hiện kỹ thuật:</label>
+            <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='areamota' readonly><%= data[0].motakythuat %></textarea>
+          </div>
+          <div>Hình ảnh đơn hàng có chữ ký: </div>
+          <div class="mx-auto text-center">
+            <% data[0].fileanhdonhang.forEach((file, index) => { %>
+            <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+            <% }) %>
+          </div>
+
+          <% if (data[0].trangthai == 'hoanthanh' && data[0].diem == undefined) { %>
+          <%- include('danhgiasao') %>
+          <% } else { %>
+          <div>Feedback: <b><%= data[0].feedback %></b></div>
+          <div>Điểm: </div>
+          <div>
+            <h2><%= data[0].diem %> / 5</h2>
+          </div>
+          <% } %>
+
+
+          <% break 
+             case 'admin': %>
+          <% if (data[0].trangthai !== 'daduyet' && data[0].trangthai !== 'hoanthanh') { %>
+          <p> Đây là hiển thị của admin kỹ thuật để chỉnh sửa </p>
+          <form action='/qlkt/updatekythuat' method='post' enctype="multipart/form-data">
+
+
+            <input type="text" class="form-control" id="txtmayeucau" name="code" value="<%= data[0].mayeucau %>" hidden>
+
+            <div class="form-row">
+              <label for="exampleFormControlTextarea1">Mô tả công việc thực hiện kỹ thuật:</label>
+              <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='motacuakythuat'><%= data[0].motakythuat %></textarea>
+            </div>
+            <div>Hình ảnh đơn hàng có chữ ký: </div>
+            <div class="mx-auto text-center">
+              <% data[0].fileanhdonhang.forEach((file, index) => { %>
+
+              <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+              <% }) %>
+            </div>
+            <div class="form-group">
+              <input type="file" id="imageInput2" name="image2" accept="image/*" multiple>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="btnupdate">Update Xử lý</button>
+              <button type="button" class="btn btn-success float-right" id="btnhoanthanh" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn btn-secondary " id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>            </div>
+          </form>
+          <% } else { %>
+          <div> này là đã duyệt không sửa </div>
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Mô tả Công việc thực hiện kỹ thuật:</label>
+            <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='areamota' readonly><%= data[0].motakythuat %></textarea>
+          </div>
+          <div>Hình ảnh đơn hàng có chữ ký: </div>
+          <div class="mx-auto text-center">
+            <% data[0].fileanhdonhang.forEach((file, index) => { %>
+            <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+            <% }) %>
+
+            <div>Feedback: <b><%= data[0].feedback %></b></div>
+            <div>Điểm: </div>
+            <div>
+              <h2><%= data[0].diem %> / 5</h2>
+            </div>
+
+            <div class="form-group">
+              <button type="button" class="btn btn-success float-right" id="btnhoanthanh1" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn btn-secondary float-left" id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+            
+            
+              <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>
+            </div>
+          </div>
+
+          <% } %>
+          <% break 
+             case 'root': %>
+          <p> Đây là hiển thị của admin kỹ thuật để chỉnh sửa </p>
+          <form action='/qlkt/updatekythuat' method='post' enctype="multipart/form-data">
+
+
+            <input type="text" class="form-control" id="txtmayeucau" name="code" value="<%= data[0].mayeucau %>" hidden>
+
+            <div class="form-row">
+              <label for="exampleFormControlTextarea1">Mô tả công việc thực hiện kỹ thuật:</label>
+              <textarea class="form-control" id="exampleFormControlTextarea2" rows="5" name='motacuakythuat'><%= data[0].motakythuat %></textarea>
+            </div>
+            <div>Hình ảnh đơn hàng có chữ ký: </div>
+            <div class="mx-auto text-center">
+              <% data[0].fileanhdonhang.forEach((file, index) => { %>
+
+              <img src="/<%= file.filename %>" atl="..." class="rounded custom-img clickable-image " onclick="showFullSize(this)">
+              <% }) %>
+            </div>
+            <div class="form-group">
+              <input type="file" id="imageInput2" name="image2" accept="image/*" multiple>
+            </div>
+
+            <div>Feedback: <b><%= data[0].feedback %></b></div>
+            <div>Điểm: </div>
+            <div>
+              <h2><%= data[0].diem %> / 5</h2>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" id="btnupdate">Update Xử lý</button>
+              <button type="button" class="btn btn-success float-right" id="btnhoanthanh" onclick="hoanthanh('<%= data[0].trangthai %>')">Hoàn thành</button>
+
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-danger float-right" id="btndeleteyc" data-toggle="modal" data-target="#deleteModal">Delete</button>
+              <button type="button" class="btn btn btn-secondary " id="btnduyet" onclick="duyet('<%= data[0].trangthai %>')">Duyệt</button>
+            </div>
+            <div class="form-group">
+              <button type="button" class="btn btn btn-primary " id="btninyc" onclick="inyeucau()">In yêu cầu</button>
+            </div>
+          </form>
+          <% break 
+             default: %>
+
+          <% } %>
+
+
+
+          <div class="margin">
+            <!-- <img src="/2023-12-20-09-58-54-zalo_last_screenshot.png" alt=""> -->
+          </div>
+        </div>
+
+
+
+
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('./footer.ejs') %>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="/vendor/jquery/jquery.js"></script>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+
+
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="/js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+
+
+  <!-- Xu ly Click button Logout -->
+
+  <script src="/xulylogout.js"></script>
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Bạn chắc chắn muốn thoát?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Lựa chọn "Logout" chúng tôi sẽ xóa session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" type="button" id="btnlogout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal-->
+  <div class="modal fade" id="deleteModal" tabindex="3" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel3">Bạn chắc chắn muốn Delete?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">"Delete" chúng tôi sẽ xóa tất cả Phiếu YC mã: <strong><%= data[0].mayeucau %></strong>, bao gồm cả hình ảnh kèm theo.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-danger" type="button" id="btndeletemodal" onclick="deleteyc()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+<style>
+  .margin {
+    margin: 100px;
+  }
+
+  yellow {
+    color: yellow;
+  }
+</style>
+<script>
+  function duyet(value) {
+    if (value == "dangxuly") {
+      $.ajax({
+          method: 'post',
+          data: {
+            code: $('#txtmayeucau').val(),
+            trangthai: 'daduyet'
+          },
+          url: '/qlkt/updatehoanthanh'
+        })
+        .done((msg) => {
+          if (msg == true) {
+            alert('Thông báo: Đã Duyệt')
+            window.location.href = "/qlkt/info?mayeucau=" + $('#txtmayeucau').val()
+          } else {
+            alert('Có lỗi gì đó ...')
+          }
+        })
+    }
+  }
+
+  function hoanthanh(value) {
+    var ktraduyet = '<%= data[0].trangthai %>'
+    if (value == 'daduyet') {
+      $.ajax({
+          method: 'post',
+          data: {
+            code: $('#txtmayeucau').val(),
+            trangthai: 'hoanthanh'
+          },
+          url: '/qlkt/updatehoanthanh'
+        })
+        .done((mes) => {
+          if (mes == true) {
+            alert('Thông báo: Đã Hoàn thành')
+            window.location.href = "/qlkt/info?mayeucau=" + $('#txtmayeucau').val()
+          } else {
+            alert('Có lỗi gì đó ...')
+          }
+
+
+        })
+    } else {
+
+      alert('Chưa duyệt hoặc đã hoàn thành !!!')
+    }
+  }
+
+  function deleteyc() {
+    $.ajax({
+        method: 'post',
+        data: {
+          mayeucau: $('#txtmayeucau').val(),
+
+        },
+        url: '/qlkt/deletephongkythuat'
+      })
+      .done((mes) => {
+        if (mes == true) {
+          alert('Thông báo: Xoá thành công !!!')
+          window.location.href = "/qlkt/tonghophoanthanh"
+        } else {
+          alert('Có lỗi gì đó ...')
+        }
+
+
+      })
+  }
+
+  function inyeucau() {
+    // alert('in yêu cầu')
+    window.open("/qlkt/printyeucau?mayeucau=" + $('#txtmayeucau').val())
+  }
+</script>
