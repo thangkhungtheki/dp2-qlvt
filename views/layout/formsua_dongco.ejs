@@ -25,9 +25,9 @@
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
       <label>0.Loại</label>
-      <select class="custom-select" id="inputGroupSelectheadcount" name="selectloai" value="<%= data.loai %>" required>
-          <option value="Động Cơ">Động cơ</option>
-          <option value="Máy Lạnh">Máy Lạnh</option>
+      <select class="custom-select" id="inputGroupSelectheadcount" name="selectloai" required>
+        <option value="Động Cơ" <%= data.loai == 'Động Cơ' ? 'selected' : '' %>>Động cơ</option>
+        <option value="Máy Lạnh" <%= data.loai == 'Máy Lạnh' ? 'selected' : '' %>>Máy Lạnh</option>
       </select>
     </div>
   </div>
