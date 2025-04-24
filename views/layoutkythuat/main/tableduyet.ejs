@@ -172,7 +172,9 @@
     $.ajax({
         method: "POST",
         url: "/qlkt/updatettbp",
-        data: {mayeucau: mas},
+        data: {
+          mayeucau: mas
+        },
       })
       .done(function(msg) {
         alert('Đã duyệt !!!')

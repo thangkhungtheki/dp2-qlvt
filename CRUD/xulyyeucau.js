@@ -1,5 +1,6 @@
 const _ycsc = require('../model/yeucausuachua.model')
 const _file = require('../FileProcess/file')
+const moment = require('moment-timezone');
 //const _path = 'DP1-VATTU/DP1-Ver.Conect-DB-Node-login-use-schema/multer-upload/uploads/'
 async function taoyc(doc){
     try{
@@ -58,8 +59,23 @@ async function timtatca_yctheobophan(bp){
 
 
 async function updatetttbp(mayeucau, ttbp){
-    try {
-        await _ycsc.updateOne({mayeucau: mayeucau}, {$set:{ttbp: ttbp}})
+
+    // Lấy thời điểm hiện tại theo UTC
+    const nowUTC = moment.utc();
+
+    // Chuyển đổi sang múi giờ GMT+7 (ví dụ: Asia/Ho_Chi_Minh hoặc Asia/Bangkok)
+    const nowGMT7 = nowUTC.tz('Asia/Ho_Chi_Minh');
+
+    // Lấy ngày giờ hiện tại theo định dạng mong muốn (ví dụ: YYYY-MM-DD HH:mm:ss)
+    const formattedGMT7 = nowGMT7.format('YYYY-MM-DD HH:mm:ss');
+    console.log('xulyyc-Ngày duyệt: ',formattedGMT7)
+        try {
+        await _ycsc.updateOne({mayeucau: mayeucau}, 
+            {
+                $set:{
+                    ttbp: ttbp,
+                    ngayduyet: formattedGMT7
+                }})
     } catch (e) {
         console.log(e)
         return false

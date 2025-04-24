@@ -18,7 +18,8 @@ const schema = new Schema({
     fileanhdonhang: {type: Array, required: false},
     ngayhoanthanh:{type: String, required: false},
     feedback: {type: String, required: false},
-    diem: {type: Number, required: false}
+    diem: {type: Number, required: false},
+    ngayduyet: {type: String, required: false},
 })
 
 
