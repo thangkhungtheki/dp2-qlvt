@@ -9,6 +9,7 @@
 <% var duyet = "%------ đã duyệt -----%" %>
 <% var tentruongphong = tentruongphong %>
 <% var motakythuat = motakythuat || '' %>
+<% var ngayduyet = data[0]?.ngayduyet || '' %>
 
 
 <html>
@@ -104,6 +105,9 @@
       <tr class="tableheadth">
         <td class="tableheadth"><b>Vị trí: </b><%- vitri %></td>
         <td class="tableheadth"><b>Khẩn cấp: </b><%- khancap %></td>
+      </tr>
+      <tr class="tableheadth">
+        <td class="tableheadth"><b>Ngày duyệt TBP: </b><%- ngayduyet %></td>
       </tr>
 
     </table>

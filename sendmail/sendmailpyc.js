@@ -57,7 +57,8 @@ function sendmail(params){
 Bộ phận: <b>` + params[0].bophan + `</b> <br>
 Mô tả: <span style="color: blue">` + params[0].mota + `</span> <br>
 Khẩn cấp: <b>` + params[0].khancap + `</b> <br>
-Trạng thái trưởng bộ phận : <span style="color: blue"> Duyệt </span>`
+Trạng thái trưởng bộ phận : <span style="color: blue"> Duyệt </span>` + `<br>` +
+`Ngày duyệt: <span style="color: red">` + params[0]?.ngayduyet + `</span>`
     // console.log(params)
     // console.log(content)
     if(content != ''){
