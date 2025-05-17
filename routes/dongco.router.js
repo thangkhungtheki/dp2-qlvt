@@ -152,6 +152,7 @@ router.get('/xuatexceldongco', async(req, res) => {
     
         // Đặt tên các cột
         worksheet.columns = [
+          { header: 'id', key: 'idthietbi', width: 20 },
           { header: 'tenthietbi', key: 'tenthietbi', width: 20 },
           { header: 'loai', key: 'loai', width: 20 },
           { header: 'ngaymua', key: 'ngaymua', width: 20 },
@@ -166,6 +167,7 @@ router.get('/xuatexceldongco', async(req, res) => {
         // Thêm dữ liệu vào worksheet
         documents.forEach((document) => {
           worksheet.addRow({ 
+            idthietbi: document.id,
             tenthietbi: document.tenthietbi, 
             loai: document.loai, 
             ngaymua: document.ngaymua, 
