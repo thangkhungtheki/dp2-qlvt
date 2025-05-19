@@ -253,10 +253,10 @@ router.get('/api/capnhatmaqr', async(req, res) => {
     const documents = await xulydongco.doc_dongco();
             // Thêm dữ liệu vào worksheet
     documents.forEach(async(document) => {
-        const qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + document.id
+        let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + document.id
         try {
             // 1. Tải ảnh từ URL
-            if(document.maqr){
+            if(!document.maqr){
                 const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
                 const imageBuffer = response.data;
                 var base64Image = Buffer.from(imageBuffer).toString('base64');
@@ -277,7 +277,7 @@ router.get('/api/capnhatmaqr', async(req, res) => {
                 maqr: base64Image
             }
             let result = await xulydongco.update_dongco(document.id ,docss)
-            console.log(result)
+            console.log(base64Image)
         }catch(e){
             console.log("Loi: ", document.id)
         }
