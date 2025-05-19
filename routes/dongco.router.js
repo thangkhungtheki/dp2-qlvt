@@ -5,6 +5,7 @@ var moment = require('moment')
 const exceljs = require('exceljs');
 const fs = require('fs')
 const ycsc = require('../CRUD/xulyyeucau')
+const axios = require('axios');
 
 // Middleware để thiết lập dữ liệu trong res.locals
 router.use(async (req, res, next) => {
@@ -82,6 +83,7 @@ router.post('/taodongco', async(req, res) => {
     //console.log(doc)
     let result = await xulydongco.tao_dongco(doc)
     if(result){
+        
         req.flash('success','đã thêm thành công ' +  doc.tenthietbi)
         const msg = req.flash('success')
         return res.render('mainSbAdmin/dongco_them',{
@@ -143,53 +145,144 @@ router
 
 router.get('/xuatexceldongco', async(req, res) => {
     try {
-        // Lấy dữ liệu từ MongoDB
-        const documents = await xulydongco.doc_dongco();
-    
-        // Tạo workbook và worksheet của Excel
-        const workbook = new exceljs.Workbook();
-        const worksheet = workbook.addWorksheet('DongcoMayLanh');
-    
-        // Đặt tên các cột
-        worksheet.columns = [
-          { header: 'id', key: 'idthietbi', width: 20 },
-          { header: 'tenthietbi', key: 'tenthietbi', width: 20 },
-          { header: 'loai', key: 'loai', width: 20 },
-          { header: 'ngaymua', key: 'ngaymua', width: 20 },
-          { header: 'ngayhethan', key: 'ngayhethan', width: 20 },
-          { header: 'vitri', key: 'vitri', width: 20 },
-          { header: 'congsuat', key: 'congsuat', width: 20 },
-          { header: 'model', key: 'model', width: 20 },
-          { header: 'dienap', key: 'dienap', width: 20 },
-          { header: 'ghichu', key: 'ghichu', width: 20 },
-        ];
-    
-        // Thêm dữ liệu vào worksheet
-        documents.forEach((document) => {
-          worksheet.addRow({ 
-            idthietbi: document.id,
-            tenthietbi: document.tenthietbi, 
-            loai: document.loai, 
-            ngaymua: document.ngaymua, 
-            ngayhethan: document.ngayhethan, 
-            vitri: document.vitri, 
-            congsuat: document.congsuat, 
-            model: document.model, 
-            dienap: document.dienap, 
-            ghichu: document.ghichu, 
-            
-        });
-        });
-    
-        // Tạo file Excel và gửi về client
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', 'attachment; filename=dongcomaylanh.xlsx');
-        await workbook.xlsx.write(res);
-        res.end();
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+    let documents = await xulydongco.doc_dongco();
+
+    if (!Array.isArray(documents)) {
+      documents = Object.values(documents);
+    }
+
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet('DongcoMayLanh');
+
+    // Định nghĩa các cột và thuộc tính border
+    const columns = [
+      { header: 'ID', key: 'idthietbi', width: 15 },
+      { header: 'Tên Thiết Bị', key: 'tenthietbi', width: 30 },
+      { header: 'Loại', key: 'loai', width: 20 },
+      { header: 'Ngày Mua', key: 'ngaymua', width: 15 },
+      { header: 'Ngày Hết Hạn', key: 'ngayhethan', width: 15 },
+      { header: 'Vị Trí', key: 'vitri', width: 25 },
+      { header: 'Công Suất', key: 'congsuat', width: 15 },
+      { header: 'Model', key: 'model', width: 20 },
+      { header: 'Điện Áp', key: 'dienap', width: 15 },
+      { header: 'Ghi Chú', key: 'ghichu', width: 30 },
+      { header: 'QR Code', key: 'qrcode', width: 20, style: { alignment: { vertical: 'middle', horizontal: 'center' } } },
+    ];
+    worksheet.columns = columns;
+
+    const qrCodeColumnIndex = 10; // Index cột 'QR Code' (0-based)
+    const desiredImageWidth = 80; // Kích thước mong muốn của ảnh trong Excel (pixels)
+    const desiredImageHeight = 80;
+
+    for (const [index, document] of documents.entries()) {
+      const rowNumber = index + 2;
+
+      worksheet.addRow({
+        idthietbi: document.id,
+        tenthietbi: document.tenthietbi,
+        loai: document.loai,
+        ngaymua: document.ngaymua,
+        ngayhethan: document.ngayhethan,
+        vitri: document.vitri,
+        congsuat: document.congsuat,
+        model: document.model,
+        dienap: document.dienap,
+        ghichu: document.ghichu,
+        qrcode: '',
+      });
+
+      if (document.maqr) {
+        try {
+          const base64Data = document.maqr.replace(/^data:image\/\w+;base64,/, '');
+          const imageBuffer = Buffer.from(base64Data, 'base64');
+
+          const imageId = workbook.addImage({
+            buffer: imageBuffer,
+            extension: 'png',
+          });
+
+          const qrCodeCell = worksheet.getCell(rowNumber, qrCodeColumnIndex + 1);
+
+          const topLeft = { col: qrCodeCell.col - 1, row: qrCodeCell.row - 1 };
+
+          worksheet.addImage(imageId, {
+            tl: topLeft,
+            ext: { width: desiredImageWidth, height: desiredImageHeight },
+            editAs: 'oneCell',
+          });
+
+          worksheet.getRow(rowNumber).height = desiredImageHeight * 0.75;
+        } catch (error) {
+          console.error(`Lỗi xử lý QR code cho ${document.tenthietbi}:`, error);
+        }
+      } else {
+        worksheet.getRow(rowNumber).height = 20;
       }
+    }
+
+    // Đóng khung toàn bộ bảng
+    const lastRow = documents.length + 1; // Cộng thêm 1 cho hàng header
+    const lastColumn = columns.length;
+
+    const range = `A1:${String.fromCharCode(64 + lastColumn)}${lastRow}`;
+    const borderStyles = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      row.eachCell((cell, colNumber) => {
+        cell.border = borderStyles;
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=dongcomaylanh.xlsx');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('Lỗi tổng:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+router.get('/api/capnhatmaqr', async(req, res) => {
+    // Lấy dữ liệu từ MongoDB
+    const documents = await xulydongco.doc_dongco();
+            // Thêm dữ liệu vào worksheet
+    documents.forEach(async(document) => {
+        const qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + document.id
+        try {
+            // 1. Tải ảnh từ URL
+            if(document.maqr){
+                const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
+                const imageBuffer = response.data;
+                var base64Image = Buffer.from(imageBuffer).toString('base64');
+            }else{
+                var base64Image = document.maqr
+            }
+            
+            const docss = {
+                tenthietbi: document.tenthietbi,
+                loai: document.loai,
+                ngaymua: document.ngaymua,
+                ngayhethan: document.ngayhethan,
+                vitri: document.vitri,
+                congsuat: document.congsuat,
+                model: document.model,
+                dienap: document.dienap,
+                ghichu: document.ghichu,
+                maqr: base64Image
+            }
+            let result = await xulydongco.update_dongco(document.id ,docss)
+            console.log(result)
+        }catch(e){
+            console.log("Loi: ", document.id)
+        }
+    });
+    res.send('make by thang khung the ki')
 })
 
 module.exports = router

@@ -20,7 +20,7 @@
     <input type="text" class="form-control" value="<%= data.id %>" name="id" hidden>
   </div>
   <div class="form-row col-md-12">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=<%= data.id %>" class="rounded mx-auto d-block" alt="QR code thiet bi">
+    <img src="data:image/png;base64,<%= data.maqr %>" class="rounded mx-auto d-block" alt="QR code thiet bi">
   </div>
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">

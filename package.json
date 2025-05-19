@@ -9,6 +9,7 @@
   "author": "tktk",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.9.0",
     "bcrypt": "^5.0.1",
     "bcrypt-nodejs": "^0.0.3",
     "bootstrap-icons": "^1.11.3",
