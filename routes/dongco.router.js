@@ -239,7 +239,7 @@ router.get('/xuatexceldongco', async(req, res) => {
     });
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=dongcomaylanh.xlsx');
+    res.setHeader('Content-Disposition', 'attachment; filename=dp2.dongcomaylanh.xlsx');
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
