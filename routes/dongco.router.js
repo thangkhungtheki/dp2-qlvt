@@ -285,4 +285,14 @@ router.get('/api/capnhatmaqr', async(req, res) => {
     res.send('make by thang khung the ki')
 })
 
+router.get('/dongcoapi', async(req, res) => {
+  let id = req.query.id 
+  let result = await xulydongco.timdongcotheoID(id)
+  res.json(result)
+})
+
+router.get('/updatedongco/app', async(req, res) => {
+  
+})
+
 module.exports = router
