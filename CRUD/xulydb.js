@@ -331,6 +331,15 @@ async function timUser(users){
     
     return doc
 }
+async function docUseremail(email){
+    let docs = await _user.findOne({email: email})
+    if(docs){
+        return docs
+    }else{
+        return false
+    }
+    
+}
 module.exports = {
     docUser,
     find,
@@ -364,5 +373,6 @@ module.exports = {
     delete_device,
     docdeviceid,
     update_device,
-    timUser
+    timUser,
+    docUseremail
 }

@@ -6,7 +6,9 @@ const schema = new Schema({
     password: {type: String, required: true},
     role:{type: String, required: false},
     bp:{type: String, required: false},
-    mail: {type: String, required: false}
+    mail: {type: String, required: false},
+    ten: {type: String, required: false},
+    congty: {type: String, required: false},
 })
 
 schema.methods.enscryptPassword = (password) => {

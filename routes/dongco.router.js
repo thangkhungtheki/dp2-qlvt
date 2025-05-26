@@ -6,7 +6,7 @@ const exceljs = require('exceljs');
 const fs = require('fs')
 const ycsc = require('../CRUD/xulyyeucau')
 const axios = require('axios');
-
+var xulydbuser = require("../CRUD/xulydb")
 // Middleware để thiết lập dữ liệu trong res.locals
 router.use(async (req, res, next) => {
   let total = await tongsuachuaton()
@@ -293,6 +293,35 @@ router.get('/dongcoapi', async(req, res) => {
 
 router.get('/updatedongco/app', async(req, res) => {
   
+})
+
+router.get('/checkuser', async (req, res) => {
+  let email = req.query.email
+  let result = await xulydbuser.docUseremail(email)
+  if(result){
+    res.json({
+      ten: result.ten,
+      congty: result.congty,
+      phong: result.bp,
+      email: result.mail
+    })
+  }else{
+    try{
+      let respons =  await axios.get('http://file.diamondplace.vn:6868/dongco/checkuser?email=' + email)
+      if(respons.data){
+        res.json({
+          ten: result.ten,
+          congty: result.congty,
+          phong: result.bp,
+          email: result.mail
+        })
+      }else{
+        res.send(false)
+      }
+    }catch(r){
+      res.send('loi server dp1')
+    }
+  }
 })
 
 module.exports = router
