@@ -292,7 +292,14 @@ router.get('/dongcoapi', async(req, res) => {
 })
 
 router.get('/updatedongco/app', async(req, res) => {
-  
+  let id = req.query.id
+  let ghichu = req.query.ghichu
+  let result = await xulydongco.update_dongco_ghichu(id, ghichu)
+  if(result){
+    res.send('ok')
+  }else{
+    res.send('not')
+  }
 })
 
 router.get('/checkuser', async (req, res) => {

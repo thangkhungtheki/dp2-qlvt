@@ -48,11 +48,23 @@ async function timdongcotheoID(id){
     }
 }
 
+async function update_dongco_ghichu(id, ghichu){
+    
+    try{
+        await _dongco.findByIdAndUpdate(id, {ghichu: ghichu})
+        return true
+    }catch(e){
+        return false
+    }
+}
+
+
 module.exports = {
     doc_dongco,
     tao_dongco,
     update_dongco,
     delete_dongco,
     timdongcotheoID,
-    loai_dongco
+    loai_dongco,
+    update_dongco_ghichu
 }
