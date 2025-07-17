@@ -9,8 +9,10 @@ const schema = new Schema({
     congsuat: {type: String, required: false},
     model: {type: String, required: false},
     dienap: {type: String, required: false},
-    ghichu: {type: String, required: false},
-    maqr: {type: String, require: false}
+    mota: {type: String, required: false},
+    lichsu: {type: String, required: false},
+    maqr: {type: String, require: false},
+    maqrcochu: {type: String, require: false}
 })
 
 

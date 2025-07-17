@@ -20,7 +20,7 @@
     <input type="text" class="form-control" value="<%= data.id %>" name="id" hidden>
   </div>
   <div class="form-row col-md-12">
-    <img src="data:image/png;base64,<%= data.maqr %>" class="rounded mx-auto d-block" alt="QR code thiet bi">
+    <img src="data:image/png;base64,<%= data.maqrcochu %>" class="rounded mx-auto d-block" alt="QR code thiet bi">
   </div>
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
@@ -28,6 +28,7 @@
       <select class="custom-select" id="inputGroupSelectheadcount" name="selectloai" required>
         <option value="Động Cơ" <%= data.loai == 'Động Cơ' ? 'selected' : '' %>>Động cơ</option>
         <option value="Máy Lạnh" <%= data.loai == 'Máy Lạnh' ? 'selected' : '' %>>Máy Lạnh</option>
+        <option value="Thiết bị" <%= data.loai == 'Thiết bị' ? 'selected' : '' %>>Thiết bị</option>
       </select>
     </div>
   </div>
@@ -57,17 +58,21 @@
       <input type="text" class="form-control" id="txtdienap" value="<%= data.dienap %>" name="dienap" required>
     </div>
     <div class="form-group col-md-6">
-      <label>6.Ghi chú</label>
-      <textarea class="form-control" rows="8" cols="50" id="areaghichu" name="ghichu"><%= data.ghichu %></textarea>
+      <label>6.Mô Tả</label>
+      <textarea class="form-control" rows="8" cols="50" id="areamota" name="mota"><%= data.mota %></textarea>
     </div>
   </div>
+  <div class="form-group col-md-6">
+      <label>7.Lịch sử</label>
+      <textarea class="form-control" rows="8" cols="50" id="arealichsu" name="lichsu"><%= data.lichsu %></textarea>
+    </div>
   <div class="form-row col-md-12">
     <div class="form-group col-md-6">
-      <label>7.Ngày mua</label>
+      <label>8.Ngày mua</label>
       <input type="date" class="form-control" name="ngaymua" value="<%= data.ngaymua %>" required>
     </div>
     <div class="form-group col-md-6">
-      <label>8.Ngày hết hạn</label>
+      <label>9.Ngày hết hạn</label>
       <input type="date" class="form-control" name="ngayhethan" value="<%= data.ngayhethan %>" required>
     </div>
   </div>

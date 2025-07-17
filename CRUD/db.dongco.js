@@ -57,7 +57,18 @@ async function update_dongco_ghichu(id, ghichu){
         return false
     }
 }
-
+async function xulyupdale_lichsu(id, lichsu){
+    try{
+        const updatedDongco = await _dongco.findByIdAndUpdate(
+            id,
+            { lichsu: lichsu }, // Ghi đè lichsu cũ bằng chuỗi mới đã nối
+            { new: true } // Trả về document đã được cập nhật
+        );
+        return updatedDongco
+    }catch(e){
+        return false
+    }
+}
 
 module.exports = {
     doc_dongco,
@@ -66,5 +77,6 @@ module.exports = {
     delete_dongco,
     timdongcotheoID,
     loai_dongco,
-    update_dongco_ghichu
+    update_dongco_ghichu,
+    xulyupdale_lichsu
 }

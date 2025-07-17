@@ -7,6 +7,9 @@ const fs = require('fs')
 const ycsc = require('../CRUD/xulyyeucau')
 const axios = require('axios');
 var xulydbuser = require("../CRUD/xulydb")
+const path = require('path')
+const { createCanvas, loadImage, registerFont } = require('canvas');
+
 // Middleware để thiết lập dữ liệu trong res.locals
 router.use(async (req, res, next) => {
   let total = await tongsuachuaton()
@@ -78,7 +81,8 @@ router.post('/taodongco', async(req, res) => {
         congsuat: req.body.congsuat,
         model: req.body.model,
         dienap: req.body.dienap,
-        ghichu: req.body.ghichu
+        mota: req.body.mota,
+        lichsu: req.body.lichsu,
     }
     //console.log(doc)
     let result = await xulydongco.tao_dongco(doc)
@@ -132,7 +136,8 @@ router
         congsuat: req.body.congsuat,
         model: req.body.model,
         dienap: req.body.dienap,
-        ghichu: req.body.ghichu
+        mota: req.body.mota,
+        lichsu: req.body.lichsu,
     }
     let id = req.body.id
     let result = await xulydongco.update_dongco(id,doc)
@@ -165,7 +170,8 @@ router.get('/xuatexceldongco', async(req, res) => {
       { header: 'Công Suất', key: 'congsuat', width: 15 },
       { header: 'Model', key: 'model', width: 20 },
       { header: 'Điện Áp', key: 'dienap', width: 15 },
-      { header: 'Ghi Chú', key: 'ghichu', width: 30 },
+      { header: 'Mô tả', key: 'mota', width: 30 },
+      { header: 'Lịch sử', key: 'lichsu', width: 30 },
       { header: 'QR Code', key: 'qrcode', width: 20, style: { alignment: { vertical: 'middle', horizontal: 'center' } } },
     ];
     worksheet.columns = columns;
@@ -187,13 +193,14 @@ router.get('/xuatexceldongco', async(req, res) => {
         congsuat: document.congsuat,
         model: document.model,
         dienap: document.dienap,
-        ghichu: document.ghichu,
+        mota: document.mota,
+        lichsu: document.lichsu,
         qrcode: '',
       });
 
-      if (document.maqr) {
+      if (document.maqrcochu) {
         try {
-          const base64Data = document.maqr.replace(/^data:image\/\w+;base64,/, '');
+          const base64Data = document.maqrcochu.replace(/^data:image\/\w+;base64,/, '');
           const imageBuffer = Buffer.from(base64Data, 'base64');
 
           const imageId = workbook.addImage({
@@ -331,4 +338,223 @@ router.get('/checkuser', async (req, res) => {
   }
 })
 
+router.put('/update-lichsu-string', async (req, res) => {
+  try {
+      let  id  = req.body.id; // Lấy ID của thiết bị từ URL params
+      let  newHistoryEntry  = req.body.lichsu; // Lấy dòng lịch sử mới từ query parameters
+
+      // Kiểm tra xem có dòng lịch sử mới được gửi lên không
+      if (!newHistoryEntry) {
+          return res.status(400).json({ message: 'Dữ liệu lịch sử mới không được cung cấp trong query parameter (newHistoryEntry).' });
+      }
+
+      // Tìm thiết bị để lấy lịch sử cũ
+      const dongcoToUpdate = await xulydongco.timdongcotheoID(id);
+
+      if (!dongcoToUpdate) {
+          return res.status(404).json({ message: 'Không tìm thấy thiết bị với ID này.' });
+      }
+
+      // Tạo dòng lịch sử mới (thêm dấu ngắt dòng hoặc phân cách nếu muốn)
+      let updatedLichsu;
+      const daynow1 = moment().format('DD-MM-YYYY');
+      newHistoryEntry = daynow1 + " " + newHistoryEntry
+      if (dongcoToUpdate.lichsu) {
+          // Nối chuỗi, thêm dấu phẩy và khoảng trắng để phân cách các mục lịch sử
+          // updatedLichsu = `${dongcoToUpdate.lichsu}, ${newHistoryEntry}`;
+          // Hoặc nếu muốn xuống dòng (trong text area chẳng hạn):
+         
+          updatedLichsu = `${dongcoToUpdate.lichsu}\n${newHistoryEntry}`;
+      } else {
+          // Nếu lichsu chưa có gì, thì đây là dòng đầu tiên
+          updatedLichsu = newHistoryEntry;
+      }
+
+      // Cập nhật trường lichsu
+      let updatedDongco = await xulydongco.xulyupdale_lichsu(id, updatedLichsu);
+
+      res.status(200).json({
+          message: 'Cập nhật lịch sử (nối chuỗi) thành công!',
+          dongco: updatedDongco
+      });
+
+  } catch (error) {
+      console.error('Lỗi khi cập nhật lịch sử (nối chuỗi):', error);
+      res.status(500).json({ message: 'Lỗi server nội bộ.', error: error.message });
+  }
+});
+router.get('/generate-device-maqrcochu', async (req, res) => {
+    try {
+        const documents = await xulydongco.doc_dongco();
+        if (!documents || documents.length === 0) {
+            return res.status(404).json({ message: 'No device documents found.' });
+        }
+
+        const docss = documents[0];
+        const defaultImagePath = path.join(__dirname, 'img', 'default-background.png');
+
+        let backgroundImage;
+        try {
+            backgroundImage = await loadImage(defaultImagePath);
+        } catch (err) {
+            console.error('Failed to load background image', err);
+            return res.status(500).json({ message: 'Failed to load background image' });
+        }
+
+        if (!docss || !docss.maqr) {
+            return res.status(400).json({ message: 'Missing QR code or device data.' });
+        }
+
+        const deviceName = docss.tenthietbi || 'Tên thiết bị';
+        const location = docss.vitri || 'Vị trí thiết bị';
+        const qrCodeImageBuffer = Buffer.from(docss.maqr, 'base64');
+        const qrImage = await loadImage(qrCodeImageBuffer);
+
+        // Tạo canvas với kích thước ảnh nền
+        const canvas = createCanvas(backgroundImage.width, backgroundImage.height);
+        const ctx = canvas.getContext('2d');
+
+        // Vẽ nền
+        ctx.drawImage(backgroundImage, 0, 0);
+
+        // Tính vị trí và vẽ QR
+        const qrSize = 200;
+        const qrLeft = (backgroundImage.width - qrSize) / 2;
+        const qrTop = (backgroundImage.height - qrSize) / 2;
+        ctx.drawImage(qrImage, qrLeft, qrTop, qrSize, qrSize);
+
+        // Vẽ TÊN THIẾT BỊ (dòng trên)
+        const fontSizeTop = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeTop}px Arial`;
+        ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const deviceNameY = Math.round(backgroundImage.height * 0.1);
+        ctx.textAlign = 'center';
+        ctx.strokeText(deviceName, backgroundImage.width / 2, deviceNameY);
+        ctx.fillText(deviceName, backgroundImage.width / 2, deviceNameY);
+
+        // Vẽ VỊ TRÍ (dòng dưới)
+        const fontSizeBottom = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeBottom}px Arial`;
+        ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const locationY = Math.round(backgroundImage.height * 0.95);
+        ctx.strokeText(location, backgroundImage.width / 2, locationY);
+        ctx.fillText(location, backgroundImage.width / 2, locationY);
+
+        // Xuất ra base64
+        const finalBuffer = canvas.toBuffer('image/png');
+        const finalBase64 = finalBuffer.toString('base64');
+        res.status(200).json({ imageBase64: finalBase64 });
+
+    } catch (error) {
+        console.error('Lỗi xử lý canvas:', error);
+        res.status(500).json({ message: 'Lỗi tạo ảnh bằng canvas.', error: error.message });
+    }
+    
+})
+
+router.get('/api/capnhatmaqrcochu', async(req, res) => {
+    // Lấy dữ liệu từ MongoDB
+    const documents = await xulydongco.doc_dongco();
+            // Thêm dữ liệu vào worksheet
+    documents.forEach(async(document) => {
+    //console.log(document)
+        let resultmaqrcochu = await maqrcochu(document)
+        try {
+            const docss = {
+                tenthietbi: document.tenthietbi,
+                loai: document.loai,
+                ngaymua: document.ngaymua,
+                ngayhethan: document.ngayhethan,
+                vitri: document.vitri,
+                congsuat: document.congsuat,
+                model: document.model,
+                dienap: document.dienap,
+                mota: document.mota,
+                lichsu: document.lichsu,
+                maqr: document.maqr,
+                maqrcochu: resultmaqrcochu
+                
+            }
+            let result = await xulydongco.update_dongco(document.id ,docss)
+            console.log('Success')
+        }catch(e){
+            console.log("Loi: ", document.id)
+        }
+    });
+    res.send('make by thang khung the ki maqrcochu')
+})
+async function maqrcochu(docs) {
+  try {
+        const documents = docs
+        if (!documents || documents.length === 0) {
+            return res.status(404).json({ message: 'No device documents found.' });
+        }
+
+        const docss = documents
+        const defaultImagePath = path.join(__dirname, 'img', 'default-background.png');
+
+        let backgroundImage;
+        try {
+            backgroundImage = await loadImage(defaultImagePath);
+        } catch (err) {
+            console.log('Failed to load background image', err);
+            // return res.status(500).json({ message: 'Failed to load background image' });
+        }
+
+        if (!docss || !docss.maqr) {
+             console.log('ko co data maqr');
+        }
+        // console.log(docss)
+        const deviceName = docss.tenthietbi || 'Tên thiết bị';
+        const location = docss.vitri || 'Vị trí thiết bị';
+        const qrCodeImageBuffer = Buffer.from(docss.maqr, 'base64');
+        const qrImage = await loadImage(qrCodeImageBuffer);
+
+        // Tạo canvas với kích thước ảnh nền
+        const canvas = createCanvas(backgroundImage.width, backgroundImage.height);
+        const ctx = canvas.getContext('2d');
+
+        // Vẽ nền
+        ctx.drawImage(backgroundImage, 0, 0);
+
+        // Tính vị trí và vẽ QR
+        const qrSize = 200;
+        const qrLeft = (backgroundImage.width - qrSize) / 2;
+        const qrTop = (backgroundImage.height - qrSize) / 2;
+        ctx.drawImage(qrImage, qrLeft, qrTop, qrSize, qrSize);
+
+        // Vẽ TÊN THIẾT BỊ (dòng trên)
+        const fontSizeTop = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeTop}px Arial`;
+        ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const deviceNameY = Math.round(backgroundImage.height * 0.1);
+        ctx.textAlign = 'center';
+        ctx.strokeText(deviceName, backgroundImage.width / 2, deviceNameY);
+        ctx.fillText(deviceName, backgroundImage.width / 2, deviceNameY);
+
+        // Vẽ VỊ TRÍ (dòng dưới)
+        const fontSizeBottom = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeBottom}px Arial`;
+        ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const locationY = Math.round(backgroundImage.height * 0.95);
+        ctx.strokeText(location, backgroundImage.width / 2, locationY);
+        ctx.fillText(location, backgroundImage.width / 2, locationY);
+
+        // Xuất ra base64
+        const finalBuffer = canvas.toBuffer('image/png');
+        const finalBase64 = finalBuffer.toString('base64');
+        return finalBase64
+    } catch (error) {
+        console.log('Lỗi xử lý canvas: ', error);
+        
+    }
+}
 module.exports = router
