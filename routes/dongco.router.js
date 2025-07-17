@@ -488,6 +488,26 @@ router.get('/api/capnhatmaqrcochu', async(req, res) => {
     res.send('make by thang khung the ki maqrcochu')
 })
 async function maqrcochu(docs) {
+  // const canvas = createCanvas(360, 360);
+  // const ctx = canvas.getContext('2d');
+
+  // // Vẽ nền trắng
+  // ctx.fillStyle = '#ffffff';
+  // ctx.fillRect(0, 0, 360, 360);
+
+  // // Lưu file ảnh
+  // const outPath = path.join(__dirname, 'img', 'default-background.png');
+  // const buffer = canvas.toBuffer('image/png');
+  // fs.writeFileSync(outPath, buffer);
+  // // Logo
+  // const logoPath = path.join(__dirname, 'img', 'logo.png');
+  // // Load logo
+  // let logoImage;
+  // try {
+  //   logoImage = await loadImage(logoPath);
+  // } catch (err) {
+  //   console.log('Lỗi tải ảnh logo:', err);
+  // }
   try {
         const documents = docs
         if (!documents || documents.length === 0) {
@@ -524,7 +544,7 @@ async function maqrcochu(docs) {
         // Tính vị trí và vẽ QR
         const qrSize = 200;
         const qrLeft = (backgroundImage.width - qrSize) / 2;
-        const qrTop = (backgroundImage.height - qrSize) / 2;
+        const qrTop = (backgroundImage.height - qrSize) / 2 + 10;
         ctx.drawImage(qrImage, qrLeft, qrTop, qrSize, qrSize);
 
         // Vẽ TÊN THIẾT BỊ (dòng trên)
@@ -533,7 +553,7 @@ async function maqrcochu(docs) {
         ctx.fillStyle = 'yellow';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
-        const deviceNameY = Math.round(backgroundImage.height * 0.1);
+        const deviceNameY = Math.round( backgroundImage.height * 0.168 + 10 );
         ctx.textAlign = 'center';
         ctx.strokeText(deviceName, backgroundImage.width / 2, deviceNameY);
         ctx.fillText(deviceName, backgroundImage.width / 2, deviceNameY);
@@ -544,10 +564,19 @@ async function maqrcochu(docs) {
         ctx.fillStyle = 'yellow';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
-        const locationY = Math.round(backgroundImage.height * 0.95);
+        const locationY = Math.round(backgroundImage.height * 0.868 + 15);
         ctx.strokeText(location, backgroundImage.width / 2, locationY);
         ctx.fillText(location, backgroundImage.width / 2, locationY);
 
+        // Vẽ logo nào
+        if (logoImage) {
+          const logox = 50; // chiều dài logo ko có xài
+          const logoy = 50 // chiều cao logo
+          const qrLeft = (backgroundImage.width - qrSize) / 2; // canh giữa 
+          const qrTop = 0 ;
+          ctx.drawImage(logoImage, qrLeft, qrTop, qrSize, logoy);
+          
+        }
         // Xuất ra base64
         const finalBuffer = canvas.toBuffer('image/png');
         const finalBase64 = finalBuffer.toString('base64');
@@ -557,4 +586,6 @@ async function maqrcochu(docs) {
         
     }
 }
+
+
 module.exports = router
