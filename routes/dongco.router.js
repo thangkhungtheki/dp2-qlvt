@@ -488,26 +488,26 @@ router.get('/api/capnhatmaqrcochu', async(req, res) => {
     res.send('make by thang khung the ki maqrcochu')
 })
 async function maqrcochu(docs) {
-  // const canvas = createCanvas(360, 360);
-  // const ctx = canvas.getContext('2d');
+  const canvas = createCanvas(360, 360);
+  const ctx = canvas.getContext('2d');
 
-  // // Vẽ nền trắng
-  // ctx.fillStyle = '#ffffff';
-  // ctx.fillRect(0, 0, 360, 360);
+  // Vẽ nền trắng
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 360, 360);
 
-  // // Lưu file ảnh
-  // const outPath = path.join(__dirname, 'img', 'default-background.png');
-  // const buffer = canvas.toBuffer('image/png');
-  // fs.writeFileSync(outPath, buffer);
-  // // Logo
-  // const logoPath = path.join(__dirname, 'img', 'logo.png');
-  // // Load logo
-  // let logoImage;
-  // try {
-  //   logoImage = await loadImage(logoPath);
-  // } catch (err) {
-  //   console.log('Lỗi tải ảnh logo:', err);
-  // }
+  // Lưu file ảnh
+  const outPath = path.join(__dirname, 'img', 'default-background.png');
+  const buffer = canvas.toBuffer('image/png');
+  fs.writeFileSync(outPath, buffer);
+  // Logo
+  const logoPath = path.join(__dirname, 'img', 'logo.png');
+  // Load logo
+  let logoImage;
+  try {
+    logoImage = await loadImage(logoPath);
+  } catch (err) {
+    console.log('Lỗi tải ảnh logo:', err);
+  }
   try {
         const documents = docs
         if (!documents || documents.length === 0) {
