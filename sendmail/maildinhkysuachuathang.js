@@ -55,7 +55,7 @@ async function sendmail(data){
             from: process.env.emailFrom,
             to: process.env.mailList,
             //bcc: 'it@diamondplace.com.vn',
-            subject: "DP1 SỬA CHỮA ĐỊNH KỲ THÁNG " + thang,
+            subject: "DP2 SỬA CHỮA ĐỊNH KỲ THÁNG " + thang,
             //text: 'Your text is here',//Thường thi mình không dùng cái này thay vào đó mình sử dụng html để dễ edit hơn
             html: content ,//Nội dung html mình đã tạo trên kia :)),
             
