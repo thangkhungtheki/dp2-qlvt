@@ -1,6 +1,6 @@
 const modembaotrisua = require("../model/baotrisuachua")
-async function doc_suachua(){
-    let docs = await modembaotrisua.find()
+async function doc_suachua(query){
+    let docs = await modembaotrisua.find(query)
     return docs
 }
 

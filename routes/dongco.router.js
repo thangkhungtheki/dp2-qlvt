@@ -9,7 +9,7 @@ const axios = require('axios');
 var xulydbuser = require("../CRUD/xulydb")
 const path = require('path')
 const { createCanvas, loadImage, registerFont } = require('canvas');
-
+const maildinhky = require('../sendmail/maildinhkysuachuathang')
 const baotrisuachua = require("../CRUD/baotrisuachua")
 
 // Middleware để thiết lập dữ liệu trong res.locals
@@ -606,6 +606,32 @@ async function maqrcochu(docs) {
         
     }
 }
+async function guimailsuachuathang() {
+  var daynow = moment().format('DD-MM-YYYY'); // Lấy ngày hiện tại, ví dụ: '20-10-2025'
+    
+    // 1. Lấy chuỗi "Tháng-Năm" hiện tại: 'MM-YYYY'
+  var thangnamhientai = moment().format('MM-YYYY'); 
+  // Kết quả cho tháng 10/2025 sẽ là: '10-2025'
 
+  // 2. Xây dựng truy vấn dùng $regex
+  // Mẫu regex: Khớp với bất kỳ chuỗi nào kết thúc bằng '-Thang-Nam' (ví dụ: '.*-10-2025')
+  var query = {
+      // "ngay": { 
+      //     $regex: new RegExp(`-${thangnamhientai}$`) 
+      // }
+      "ngay": new RegExp(`-${thangnamhientai}$`) 
+      // "ngay": "11-10-2025"
+  };
+  let result = await baotrisuachua.doc_suachua(query)
+  // console.log(result)
+  return (result)
+  
+}
+router.put('/guimailsuachuathang', async (req, res) => {
+  let result = await guimailsuachuathang()
+  
+  maildinhky.sendmail(result)
+  res.send('ok')
+}) 
 
 module.exports = router
