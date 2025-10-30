@@ -33,10 +33,21 @@ async function delete_suachua (id){
         
     }
 }
-
+async function update_many(query, update) {
+    try {
+        // Sử dụng phương thức updateMany của Mongoose Model
+        // 'query' là điều kiện lọc ({_id: {$in: [...]}}), 'update' là giá trị cần set ({{$set: {check: 'x'}}})
+        const result = await modembaotrisua.updateMany(query, update);
+        return result; 
+    } catch (e) {
+        console.error('Lỗi trong hàm update_many của module baotrisuachua:', e);
+        throw e; // Ném lỗi để hàm gọi nó (guimailsuachuathang) có thể bắt
+    }
+}
 module.exports = {
     doc_suachua,
     create_suachua,
     update_suachua,
-    delete_suachua
+    delete_suachua,
+    update_many
 }

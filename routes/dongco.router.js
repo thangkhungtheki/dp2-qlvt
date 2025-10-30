@@ -628,10 +628,75 @@ async function guimailsuachuathang() {
   
 }
 router.put('/guimailsuachuathang', async (req, res) => {
-  let result = await guimailsuachuathang()
-  
+  // let result = await guimailsuachuathang()
+  let result = await guimailsuachuathangcocheckx()
   maildinhky.sendmail(result)
   res.send('ok')
 }) 
+async function guimailsuachuathangcocheckx() {
+    // 1. Lấy chuỗi "Tháng-Năm" hiện tại và tháng trước
+    
+    // Ví dụ: Hôm nay 29/10/2025
+    const thangnamhientai = moment().format('MM-YYYY'); 
+    const thangnamthangtruoc = moment().subtract(1, 'months').format('MM-YYYY'); 
+    
+    // Xây dựng regex cho cả hai tháng
+    const regexThangHienTaiVaTruoc = new RegExp(`-(${thangnamhientai}|${thangnamthangtruoc})$`);
 
+    // 2. Xây dựng truy vấn để LỌC các bản ghi CHƯA được gửi mail ('check' != 'x')
+    const query = {
+        // Lọc theo trường "ngay" kết thúc bằng tháng hiện tại HOẶC tháng trước
+        "ngay": {
+            $regex: regexThangHienTaiVaTruoc
+        },
+        // Lọc các bản ghi CHƯA được đánh dấu 'x'
+        "check": {
+             $ne: 'x' 
+        }
+    };
+    
+    // Giả định hàm doc_suachua() của anh là một wrapper cho Model.find(query)
+    // Hoặc anh có thể gọi trực tiếp: let listBaoTriChuaGui = await SuaChuaModel.find(query);
+    let listBaoTriChuaGui = await baotrisuachua.doc_suachua(query); 
+    
+    
+    // 3. Đánh dấu 'check' = 'x' cho tất cả các bản ghi vừa được lấy ra
+    
+    if (listBaoTriChuaGui && listBaoTriChuaGui.length > 0) {
+        
+        // Lấy ra danh sách các _id của bản ghi cần cập nhật
+        const listIdsToUpdate = listBaoTriChuaGui.map(item => item._id);
+        
+        // Điều kiện cập nhật (tìm theo _id)
+        const updateQuery = {
+            _id: { $in: listIdsToUpdate } 
+        };
+        
+        // Giá trị cần cập nhật (set 'check' = 'x')
+        const updateOperation = {
+            $set: { check: 'x' } 
+        };
+
+        // *** THỰC HIỆN CẬP NHẬT HÀNG LOẠT BẰNG MONGOOSE ***
+        try {
+            // Thay SuaChuaModel bằng tên Model Mongoose thực tế của anh
+            const SuaChuaModel = baotrisuachua.model // Giả sử model được lưu trong object baotrisuachua
+            // HOẶC dùng trực tiếp: 
+            // const updateResult = await SuaChuaModel.updateMany(updateQuery, updateOperation).exec();
+            
+            // Giả định baotrisuachua có hàm update_many đã được custom:
+            const updateResult = await baotrisuachua.update_many(updateQuery, updateOperation);
+            
+            console.log(`Đã đánh dấu 'check = x' cho ${updateResult.modifiedCount || updateResult.nModified || listIdsToUpdate.length} bản ghi.`);
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trường 'check' bằng Mongoose:", error);
+            // Tiếp tục trả về danh sách để gửi mail ngay cả khi đánh dấu bị lỗi (tùy vào yêu cầu nghiệp vụ)
+        }
+    } else {
+        console.log("Không có bản ghi nào cần gửi mail trong tháng hiện tại và tháng trước.");
+    }
+    
+    // 4. Trả về danh sách để module maildinhky.sendmail(result) xử lý gửi mail
+    return listBaoTriChuaGui;
+}
 module.exports = router
