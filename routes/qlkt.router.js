@@ -371,7 +371,7 @@ router.get('/printyeucau',authenticated, async (req, res) => {
   var tentruongphong = ''
   switch (doc[0].bophan) {
     case "fb":
-      tentruongphong = 'Nguyễn Thái Bình'
+      tentruongphong = 'Nguyễn Thế Quy'
       break;
     case "bep":
       tentruongphong = 'Phan Bảo Toàn'
@@ -389,7 +389,7 @@ router.get('/printyeucau',authenticated, async (req, res) => {
       tentruongphong = 'Phạm Khắc Quy'
       break;
     case "nhansu":  
-      tentruongphong = 'Trần Thị Bích Dung'
+      tentruongphong = 'Tô Quốc Trung'
       break;
     case "baove":
       tentruongphong = 'Nguyễn Hoàng Phương'

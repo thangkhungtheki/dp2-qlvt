@@ -12,7 +12,7 @@ function sendmail(params){
             emailpb = " , nt.dung@diamondplace.com.vn"
             break;
         case "fb":
-            emailpb = " , fb.manager.dp2@diamondplace.com.vn"
+            emailpb = " , fbmanager.dp2@diamondplace.com.vn , fb.sup@diamondplace.com.vn"
             break;
         case "ketoan":
             emailpb = " , Chiefaccountant.dp2@diamondplace.com.vn"
@@ -30,7 +30,7 @@ function sendmail(params){
             emailpb = " , sec.ma@diamondplace.com.vn"
             break;
         case "nhansu":
-            emailpb = " , tb.dung@diamondplace.com.vn"
+            emailpb = " , nhansu01.dp2@diamondplace.com.vn , tq.trung@diamondplace.com.vn"
             break;        
         default:
             break;
