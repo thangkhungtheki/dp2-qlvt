@@ -1,176 +1,100 @@
-<% var ngayHienTai = new Date() %>
-<% var nam = ngayHienTai.getFullYear() %>
-<% var thang = ('0' + (ngayHienTai.getMonth() + 1)).slice(-2) %>
-<% var ngay = ('0' + ngayHienTai.getDate()).slice(-2) %>
-<% var ngayHienTaiFormatted = nam + '-' + thang + '-' + ngay %>
-<div style="margin-bottom:20px; color: rgb(148, 11, 239); position: relative; bottom: auto;">
-  <h3>FORM NHẬP CÔNG VIỆC ĐỊNH KỲ</h3>
-</div>
-<form action="/house/themhouse" method="post">
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Ngày hiện tại</label>
-      <input type="date" class="form-control" id="txtngayhientai" name="ngayhientai" readonly value="<%= ngayHienTaiFormatted %>">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Tên Công Việc</label>
-      <input type="text" class="form-control" id="txttencv" placeholder="Tên Công Việc" name="tencv">
-    </div>
-    <div class="form-group col-md-6">
-      <label>Vị Trí/Ngày thực hiện</label>
-      <input type="text" class="form-control" id="txtvitricv" placeholder="Vị trí" name="vitricv">
-      <!-- <select class="form-control" id="txtvitri" name="vitri">
-            <option value="" selected disabled hidden>Choose here ...</option>
-            <option value="ruby1">Ruby1</option>
-            <option value="ruby2">Ruby2</option>
-            <option value="diamond1">Diamond1</option>
-            <option value="diamond2">Diamond2</option>
-            <option value="saphia">Shapia</option>
-          </select> -->
-    </div>
-    <!-- <div class="form-group col-md-6">
-      <label>Đơn vị tính</label>
-      <input type="text" class="form-control" id="txtdvt" placeholder="Đơn vị tính" name="dvt">
-    </div> -->
-    <!-- <div class="form-group col-md-6">
-      <label>Số Lượng</label>
-      <input type="number" class="form-control" id="txtsl" placeholder="Số Lượng" name="soluong">
-    </div> -->
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Ngày bắt đầu</label>
-      <input type="date" class="form-control" id="txtngaybatdau"  name="ngaybatdau" value="<%= ngayHienTaiFormatted %>" onchange="fn_ngayconlai()" >
-    </div>
-    <div class="form-group col-md-6">
-      <label>step begin-end - số ngày</label>
-      <input type="number" class="form-control" id="txttimehethan" placeholder="Time hết hạn - số ngày" name="timehethan" readonly>
-    </div>
+<% 
+  var ngayHienTai = new Date();
+  var ngayHienTaiFormatted = ngayHienTai.toISOString().split('T')[0];
+%>
 
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-plus-circle"></i> THÊM CÔNG VIỆC ĐỊNH KỲ MỚI</h6>
   </div>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Ngày kết thúc</label>
-      <input type="date" class="form-control" id="txtngaykethuc"  name="ngayketthuc" onchange="fn_ngayconlai()">
-    </div>
-    <div class="form-group col-md-6">
-      <label>Số ngày gửi mail</label>
-      <input type="number" class="form-control" id="txtngayguimail" placeholder="Số ngày gửi mail" name="ngayguimail">
-    </div>
-  </div>
-  <!-- <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Tên NCC</label>
-      <input type="test" class="form-control" id="txttenncc" placeholder="Tên NCC" name="tenncc">
-    </div>
-    <div class="form-group col-md-6">
-      <label>SĐT NCC</label>
-      <input type="test" class="form-control" id="txtsdtncc" placeholder="Số ĐT NCC" name="sdtncc">
-    </div>
-  </div> -->
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label>Số ngày còn lại-(tính từ ngày hiện tại)</label>
-      <input type="text" class="form-control" id="txtsongayconlai" name="ngayconlai" readonly>
-    </div>
-    <div class="form-group col-md-6">
-      <label>Lặp lại theo step begin-end</label>
-      <div class="customdiv">
-        <input class="form-check-input" type="checkbox" id="idcheckbox" name="name_checkbox" value="yes">
-      </div>
-    </div>
-  </div>
-  <div class="form-row col-md-6">
-    <!-- <div class="form-group col-md-6">
-          <label>Tình trạng</label>
-          <select class="form-control" id="txttinhtrang" name="tinhtrang">
-            <option value="" selected disabled hidden>Choose here ...</option>
-            <option value="bt">Bình Thường</option>
-            <option value="hu">Hư hỏng</option>
-            <option value="tl">Thanh Lý</option>
-            
+  <div class="card-body">
+    <form action="/house/cv/create" method="POST">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label><b>Tên Công Việc</b></label>
+          <input type="text" class="form-control" name="tencv" placeholder="VD: Vệ sinh máy lạnh" required>
+        </div>
+        <div class="form-group col-md-6">
+          <label><b>Vị Trí / Khu vực</b></label>
+          <input type="text" class="form-control" name="vitri" placeholder="VD: Tầng 1 - Ruby">
+        </div>
+
+        <div class="form-group col-md-4">
+          <label><b>Loại định kỳ</b></label>
+          <select name="loai_dinh_ky" id="selLoai" class="form-control" onchange="toggleFields()">
+            <option value="tuan">Hàng Tuần</option>
+            <option value="thang">Hàng Tháng</option>
+            <option value="quy">Hàng Quý</option>
+            <option value="custom">Tùy chỉnh</option>
           </select>
-        </div> -->
+        </div>
 
-    <div class="form-group col-md-12">
-      <label>Ghi chú</label>
-      <textarea class="form-control" id="txtghichu" placeholder="Ghi chú / Vị trí" name="ghichu" rows="5"></textarea>
-    </div>
+        <div class="form-group col-md-4" id="divThu">
+          <label>Thứ trong tuần (VD: 2,4,6)</label>
+          <input type="text" class="form-control" name="thu_trong_tuan" placeholder="2,4,6">
+        </div>
+
+        <div class="form-group col-md-4" id="divNgay" style="display:none;">
+          <label>Ngày trong tháng (VD: 1,15)</label>
+          <input type="text" class="form-control" name="ngay_trong_thang" placeholder="1,15,30">
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Mức độ</label>
+          <select name="muc_do" class="form-control">
+            <option value="trung_binh">Trung bình</option>
+            <option value="thap">Thấp</option>
+            <option value="cao">Cao 🔥</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label>Số ngày thực hiện (Thời hạn)</label>
+          <input type="number" class="form-control" name="so_ngay_thuc_hien" value="1">
+        </div>
+        <div class="form-group col-md-4">
+          <label>Nhắc trước (Số ngày gửi mail)</label>
+          <input type="number" class="form-control" name="so_ngay_nhac_truoc" value="3">
+        </div>
+        <div class="form-group col-md-4">
+          <label>Người phụ trách</label>
+          <input type="text" class="form-control" name="nguoi_phu_trach" placeholder="Tên nhân viên">
+        </div>
+
+        <div class="form-group col-md-12">
+          <label>Ghi chú / Mô tả chi tiết</label>
+          <textarea class="form-control" name="mo_ta" rows="3"></textarea>
+        </div>
+
+        <div class="form-group col-md-6">
+          <div class="custom-control custom-switch mt-2">
+            <input type="checkbox" class="custom-control-input" id="swLap" name="laplai" value="true" checked>
+            <label class="custom-control-label" for="swLap">Tự động lặp lại khi hết hạn</label>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary shadow-sm"><i class="fas fa-save"></i> LƯU CÔNG VIỆC</button>
+        <button type="button" class="btn btn-secondary shadow-sm" onclick="window.location.href='/house/cv'"><i class="fas fa-list"></i> XEM DANH SÁCH</button>
+      </div>
+    </form>
   </div>
-
-  <div class="form-group">
-    <button type="submit" class="btn btn-primary float-left" id="btncreatetb">THÊM CÔNG VIỆC</button>
-    <button type="button" class="btn btn-info float-right" id="btnxemcv" onclick="ClickXem()">XEM CÔNG VIỆC</button>
-  </div>
-
-
-</form>
+</div>
 
 <script>
-  function ClickXem() {
-    window.location.href = '/house/xemcongviecdinhky'
-  }
+  function toggleFields() {
+    var loai = document.getElementById('selLoai').value;
+    var dThu = document.getElementById('divThu');
+    var dNgay = document.getElementById('divNgay');
 
-  function tinhNgayKetThuc(ngayBatDau, soNgayBuoc) {
-    var ngay = new Date(ngayBatDau);
-    //console.log(ngay)
-    ngay.setDate(ngay.getDate() + soNgayBuoc);
-    // var ngayKetThuc = ('0' + ngay.getDate()).slice(-2) + '-' + ('0' + (ngay.getMonth() + 1)).slice(-2) + '-' + ngay.getFullYear();
-    var ngayKetThuc = ngay.getFullYear() + '-' + ('0' + (ngay.getMonth() + 1)).slice(-2) + '-' + ('0' + ngay.getDate()).slice(-2);
-
-    return ngayKetThuc;
-  }
-
-  // function TinhNgayKetThuc() {
-  //   var ngayBatDau = $('#txtngaybatdau').val() // Thay đổi ngày bắt đầu tại đây
-  //   var soNgayBuoc = $('#txttimehethan').val() * 1 // Thay đổi số ngày bước tại đây
-  //   //console.log(soNgayBuoc)
-  //   var ngayKetThuc = tinhNgayKetThuc(ngayBatDau, soNgayBuoc);
-  //   //console.log(ngayKetThuc)
-  //   $('#txtngaykethuc').val(ngayKetThuc)
-  //   fn_ngayconlai()
-  // }
-
-  function fn_ngayconlai() {
-    var ngay1 = $('#txtngaykethuc').val(); // Định dạng: yyyy-mm-dd
-    var ngay2 = $('#txtngayhientai').val(); // Định dạng: yyyy-mm-dd
-    var soNgay2 = tinhSoNgay(ngay1, ngay2);
-    //console.log(soNgay2)
-    $('#txtsongayconlai').val(soNgay2)
-    fn_tinhbuoctimehethan()
-    // $('#txttimehethan').val(soNgay)
-  }
-
-  function tinhSoNgay(ngay1, ngay2) {
-    // Chuyển hai ngày vào đối tượng Date
-    var date1 = new Date(ngay1);
-    var date2 = new Date(ngay2);
-
-    // Tính số miligiây giữa hai ngày và chuyển thành số ngày
-    var soMiligiay = date1 - date2;
-    var soNgay1 = Math.floor(soMiligiay / (1000 * 60 * 60 * 24));
-    console.log('>>>somiligiay', soMiligiay)
-    return soNgay1;
-  }
-  function fn_tinhbuoctimehethan() {
-    var ngay1 = $('#txtngaykethuc').val(); // Định dạng: yyyy-mm-dd
-    var ngay2 = $('#txtngaybatdau').val(); // Định dạng: yyyy-mm-dd
-    var soNgay = tinhSoNgay(ngay1, ngay2);
-    // console.log(soNgay)
-    
-    $('#txttimehethan').val(soNgay)
+    if (loai === 'tuan') {
+      dThu.style.display = 'block';
+      dNgay.style.display = 'none';
+    } else {
+      dThu.style.display = 'none';
+      dNgay.style.display = 'block';
+    }
   }
 </script>
-<style>
-  .form-check-input{
-
-    height: 1.5rem;
-    width: 1.5rem;
-  }
-  .customdiv{
-    margin-left: 1.5rem;
-    margin-bottom: 2rem;
-  }
-</style>

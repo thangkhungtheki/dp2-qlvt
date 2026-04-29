@@ -1,0 +1,111 @@
+<div class="card shadow mb-4">
+  <div class="card-header py-3 bg-primary text-white">
+    <h6 class="m-0 font-weight-bold">Thêm công việc định kỳ</h6>
+  </div>
+  <div class="card-body">
+    <form id="form-them-cv" method="POST">
+
+      <!-- Khu vực -->
+      <div class="form-group">
+        <label for="khuvuc"><strong>Khu vực</strong></label>
+        <select class="form-control" id="khuvuc" name="khuvuc" required>
+          <option value="">-- Chọn khu vực --</option>
+          <option value="sanhtiec">Sảnh</option>
+          <option value="vanphong">Văn Phòng</option>
+          <option value="khungoai">Khu Ngoài</option>
+          <option value="khutiepthuc">Khu Tiếp Thực</option>
+          <option value="toiletkhach">Toilet Khách</option>
+          <option value="phongcodau">Phòng Cô Dâu</option>
+        </select>
+      </div>
+       <!-- Tên công việc -->
+      <div class="form-group">
+        <label for="vitri"><strong>Vị trí</strong></label>
+        <input type="text" class="form-control" id="vitri" name="vitri" placeholder="Nhập vị trí">
+      </div>
+      <!-- Tên công việc -->
+      <div class="form-group">
+        <label for="tencv"><strong>Tên công việc</strong></label>
+        <input type="text" class="form-control" id="tencv" name="tencv" placeholder="Nhập tên công việc">
+      </div>
+      <!-- Theo tháng -->
+      <div class="form-group">
+        <label for="congviectheothang"><strong>Theo Tháng</strong></label>
+        <select class="form-control" id="congviectheothang" name="congviectheothang" required>
+          <option value="">-- Chọn tháng --</option>
+          <option value="0">Trong tháng</option>
+          <option value="2">2 tháng</option>
+          <option value="3">3 tháng</option>
+          <option value="4">4 tháng</option>
+          <option value="5">5 tháng</option>
+          <option value="6">6 tháng</option>
+        </select>
+      </div>
+      <!-- Ngày bắt đầu và kết thúc -->
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="ngaybatdau"><strong>Ngày bắt đầu</strong></label>
+          <input type="date" class="form-control" id="ngaybatdau" name="ngaybatdau">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="ngayketthuc"><strong>Ngày kết thúc</strong></label>
+          <input type="date" class="form-control" id="ngayketthuc" name="ngayketthuc">
+        </div>
+      </div>
+
+
+      <!-- Số lần làm -->
+      <div class="form-group">
+        <label for="solanlam"><strong>Số lần làm</strong></label>
+        <input type="number" class="form-control" id="solanlam" name="solanlam" placeholder="Nhập số lần thực hiện">
+      </div>
+
+      <!-- Thời gian -->
+      <div class="form-group">
+        <label for="thoigian"><strong>Thời gian</strong></label>
+        <input type="text" class="form-control" id="thoigian" name="thoigian" placeholder="VD: 08:00 - 10:00">
+      </div>
+
+      <!-- Số ngày nhắc thông báo -->
+      <div class="form-group">
+        <label for="songaynhacthongbao"><strong>Số ngày nhắc thông báo</strong></label>
+        <input type="number" class="form-control" id="songaynhacthongbao" name="songaynhacthongbao" placeholder="Nhập số ngày nhắc">
+      </div>
+      <!-- Mô tả công việc -->
+      <div class="form-group">
+        <label for="motacongviec"><strong>Mô tả công việc</strong></label>
+        <textarea class="form-control" id="motacongviec" name="motacongviec" rows="5" placeholder="Nhập mô tả công việc"></textarea>
+      </div>
+      <!-- Lịch sử công việc -->
+      <div class="form-group">
+        <label for="lichsucv"><strong>Lịch sử công việc</strong></label>
+        <textarea class="form-control" id="lichsucv" name="lichsucv" rows="5" placeholder="Ghi chú chi tiết lịch sử công việc"></textarea>
+      </div>
+      <!-- Lịch sử kiểm tra -->
+          <div class="form-group">
+            <label for="edit_lichsukiemtra"><strong>Lịch sử kiểm tra</strong></label>
+            <textarea class="form-control" id="edit_lichsukiemtra" name="lichsukiemtra" rows="4"></textarea>
+          </div>
+      <hr>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success px-4">Lưu công việc</button>
+        <button type="reset" class="btn btn-secondary px-4 ml-2">Làm mới</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  $('#form-them-cv').on('submit', function (e) {
+    e.preventDefault();
+    const data = $(this).serialize();
+
+    $.post('/housetask/api/congviec/them', data, function (res) {
+      alert('✅ Đã thêm công việc định kỳ thành công!');
+      $('#form-them-cv')[0].reset();
+    }).fail(() => {
+      alert('❌ Lỗi khi lưu công việc!');
+    });
+  });
+</script>

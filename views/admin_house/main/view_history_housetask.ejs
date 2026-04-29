@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<% var _username = _username || 'Admin' %> 
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Lịch sử công việc - SB Admin</title>
+
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+  <div id="wrapper">
+
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3"><%= _username %></div>
+      </a>
+
+      <hr class="sidebar-divider my-0">
+
+      <%- include('./left-sites.ejs') %>
+
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <div id="content">
+
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><strong><%= _username %></strong></span>
+                <img class="img-profile rounded-circle" src="/img/undraw_posting_photo.svg">
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div class="container-fluid">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 text-gray-800">
+                📜 Lịch sử thực hiện: <span class="text-primary"><%= task.tencv %></span>
+                </h1>
+                <a href="/housetask/api/view" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                </a>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-info text-white">
+                <h6 class="m-0 font-weight-bold">Nhật ký thực hiện chi tiết</h6>
+                </div>
+
+                <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="dataTableHistory" width="100%">
+                    <thead class="thead-light">
+                        <tr class="text-center">
+                        <th>Ngày thực hiện</th>
+                        <th>Người làm</th>
+                        <th>Phòng / Vị trí</th>
+                        <th>Nội dung công việc</th>
+                        <th>Hình ảnh</th>
+                        <th>Người kiểm tra</th>
+                        <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (data && data.length > 0) { %>
+                        <% data.forEach((item, index) => { %>
+                            <tr>
+                            <td class="text-center font-weight-bold">
+                                <%= item.ngay %>
+                            </td>
+
+                            <td><%= item.nguoithuchien %></td>
+                            <td><%= item.phong %></td>
+                            <td><%= item.noidung %></td>
+
+                            <td class="text-center">
+                                <% if (item.imgthuchien && item.imgthuchien.length > 0) { %>
+                                <button class="btn btn-sm btn-primary" 
+                                        onclick="xemAnhChiTiet('<%= JSON.stringify(item.imgthuchien) %>')">
+                                    <i class="fas fa-images"></i> Xem (<%= item.imgthuchien.length %>)
+                                </button>
+                                <% } else { %>
+                                <span class="text-muted small">Không có ảnh</span>
+                                <% } %>
+                            </td>
+
+                            <td>
+                                <% if (item.nguoikiemtra && item.nguoikiemtra !== 'chưa kiểm tra') { %>
+                                    <span class="text-success font-weight-bold"><i class="fas fa-check-circle"></i> <%= item.nguoikiemtra %></span>
+                                <% } else { %>
+                                    <span class="text-warning">Chưa kiểm tra</span>
+                                <% } %>
+                            </td>
+
+                            <td class="text-center">
+                                <% if (item.check === 'x') { %>
+                                    <span class="badge badge-success">Đã hoàn thành</span>
+                                <% } else { %>
+                                    <span class="badge badge-secondary">Đang xử lý</span>
+                                <% } %>
+                            </td>
+                            </tr>
+                        <% }) %>
+                        <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                            Chưa có lịch sử thực hiện nào cho công việc này.
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+
+        </div>
+        </div>
+      <%- include('./footer.ejs') %>
+      </div>
+    </div>
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <div class="modal fade" id="modalXemAnh" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">📷 Hình ảnh thực tế</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center bg-dark">
+          <div id="carouselImages" class="carousel slide" data-ride="carousel">
+              <div class="carousel-inner" id="carousel-inner-container">
+                  </div>
+              <a class="carousel-control-prev" href="#carouselImages" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Trước</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselImages" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Sau</span>
+              </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel1">Bạn chắc chắn muốn thoát?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Lựa chọn "Logout" chúng tôi sẽ xóa session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" type="button" id="btnlogout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <script src="/js/sb-admin-2.min.js"></script>
+
+  <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  
+  <script src="/xulylogoutdp2.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      // Khởi tạo DataTables
+      $('#dataTableHistory').DataTable({
+        "pageLength": 25,
+        "order": [[ 0, "desc" ]],
+        "language": {
+              "search": "Tìm kiếm:",
+              "lengthMenu": "Hiển thị _MENU_ dòng",
+              "info": "Đang hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+              "paginate": { "first": "Đầu", "last": "Cuối", "next": "Tiếp", "previous": "Trước" },
+              "emptyTable": "Không có dữ liệu lịch sử"
+          }
+      });
+    });
+  
+    // Hàm hiển thị ảnh trong Modal (ĐÃ FIX LỖI forEach)
+    // Hàm hiển thị ảnh trong Modal (ĐÃ FIX LỖI data:image/jpeg;base64,[ )
+  function xemAnhChiTiet(dataImages) {
+        const container = $('#carousel-inner-container');
+        container.empty(); // Xóa ảnh cũ
+
+        let imagesArray = [];
+
+        // 1. Nếu dữ liệu là NULL hoặc UNDEFINED
+        if (!dataImages) {
+            alert("Không có dữ liệu ảnh");
+            return;
+        } 
+
+        // 2. Nếu nó ĐÃ LÀ MẢNG (Array) thì dùng luôn
+        if (Array.isArray(dataImages)) {
+            imagesArray = dataImages;
+        } 
+        // 3. Nếu nó là CHUỖI (String) -> Cần xử lý kỹ
+        else if (typeof dataImages === 'string') {
+            // Xóa khoảng trắng thừa 2 đầu
+            let cleanStr = dataImages.trim();
+
+            // Kiểm tra xem có phải là mảng bị biến thành chuỗi không (Bắt đầu bằng [ và kết thúc bằng ])
+            if (cleanStr.startsWith('[') && cleanStr.endsWith(']')) {
+                try {
+                    // Thử Parse JSON chuẩn (dấu ngoặc kép)
+                    imagesArray = JSON.parse(cleanStr);
+                } catch (e) {
+                    try {
+                        // Nếu lỗi do dùng dấu nháy đơn ('), thay thành nháy kép (") rồi parse lại
+                        let validJson = cleanStr.replace(/'/g, '"');
+                        imagesArray = JSON.parse(validJson);
+                    } catch (e2) {
+                        // Nếu vẫn lỗi, dùng cách thủ công: Bỏ 2 dấu ngoặc đi rồi cắt dấu phẩy
+                        let content = cleanStr.slice(1, -1); // Bỏ [ và ]
+                        if (content.trim() !== "") {
+                            imagesArray = content.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, ''));
+                        }
+                    }
+                }
+            } else {
+                // Nếu không có dấu [], thì nó là 1 ảnh duy nhất dạng chuỗi
+                imagesArray = [cleanStr];
+            }
+        }
+
+        // 4. Kiểm tra lại lần cuối
+        if (!Array.isArray(imagesArray) || imagesArray.length === 0) {
+            console.error("Dữ liệu không xử lý được:", dataImages);
+            alert("Lỗi định dạng ảnh!");
+            return;
+        }
+
+        // 5. Render ảnh
+        imagesArray.forEach((imgBase64, index) => {
+            // Bỏ qua nếu chuỗi rỗng
+            if (!imgBase64 || imgBase64.length < 10) return;
+
+            // Kiểm tra và thêm prefix nếu thiếu
+            let imgSrc = imgBase64.startsWith('data:image') ? imgBase64 : `data:image/jpeg;base64,${imgBase64}`;
+            
+            let activeClass = index === 0 ? 'active' : '';
+            
+            let html = `
+                <div class="carousel-item ${activeClass}">
+                    <img src="${imgSrc}" class="d-block w-100" style="max-height: 500px; object-fit: contain;" alt="Ảnh thực hiện">
+                </div>
+            `;
+            container.append(html);
+        });
+
+        $('#modalXemAnh').modal('show');
+    }
+  </script>
+
+</body>
+
+</html>

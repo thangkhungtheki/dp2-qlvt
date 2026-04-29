@@ -1,0 +1,270 @@
+<!-- Page Heading -->
+
+<div class="container-fluid">
+  <h1 class="h3 mb-2 text-gray-800">Xem Công Việc Định Kỳ</h1>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+      <thead>
+        <tr class="table-success">
+          <th>Control</th>
+          <th>STT</th>
+          <th>Tên</th>
+          <th>VịTrí/Ngày thực hiện</th>
+          <th>StartDay</th>
+          <th>EndDay</th>
+          <th>chekemail</th>
+          <th>hoanthanh</th>
+          <th>laplai</th>
+          <th>Ghichu</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr class="table-success">
+          <th>Control</th>
+          <th>STT</th>
+          <th>Tên</th>
+          <th>VịTrí/Ngày thực hiện</th>
+          <th>Ngàybắtđầu</th>
+          <th>ngàyhethan</th>
+          <th>chekemail</th>
+          <th>hoanthanh</th>
+          <th>laplai</th>
+          <th>Ghichu</th>
+        </tr>
+      </tfoot>
+
+      <tbody>
+        <% var stt = 0 %>
+        <% data.forEach((data)=>{ %>
+        <% var bien = data._id %>
+        <% var dataObject = JSON.stringify(data) %>
+        <% stt += 1 %>
+        <tr>
+          <td>
+            <div>
+              <div class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#idsua" onclick="sua('<%= bien %>', '<%= dataObject %>')">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="btn btn-danger btn-circle btn-sm" data-toggle="modal" data-target="#idxoa" onclick="sua('<%= bien %>', '<%= dataObject %>')">
+                <i class="fas fa-trash">
+                </i>
+              </div>
+              <div class="btn btn-success btn-circle btn-sm" data-toggle="modal" data-target="#idhoanthanh" onclick="sua('<%= bien %>', '<%= dataObject %>')">
+                <i class="fa fa-check">
+                </i>
+              </div>
+            </div>
+            
+          </td>
+          <td>
+            <%= stt %>
+          </td>
+          <td>
+            <%= data.tencv %>
+          </td>
+          <td>
+            <%= data.vitricv %>
+          </td>
+          <td>
+            <%= data.ngaybatdau %>
+          </td>
+          <td>
+            <%= data.ngayketthuc %>
+          </td>
+          <td>
+            <%= data.ngayguimail %>
+          </td>
+          <td>
+            <%= data.hoanthanh || 'no' %>
+          </td>
+          <td>
+            <%= data.laplai || 'no' %>
+          </td>
+          <td>
+            <%= data.ghichu %>
+          </td>
+         
+          
+        </tr>
+
+
+        <% }) %>
+
+
+      </tbody>
+    </table>
+  </div>
+  <!-- </div>
+    </div> -->
+</div>
+
+<!-- Logout Modal-->
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Bạn chắc chắn muốn thoát?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Lựa chọn "Logout" chúng tôi sẽ xóa session.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnlogout">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Xoa User Modal-->
+<div class="modal fade" id="idsua" tabindex="0" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thông Báo</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="bodysuacongviec">Sửa Công Việc</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" type="button" id="btnsuacv" onclick="suacv()">SỬA</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- xxxxxxxxxxx -->
+
+<div class="modal fade" id="idxoa" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel2">Thông báo</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="bodyxoacongviec">Xoá Công Việc</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <!-- <form action="searcheditdp2" method="post"> -->
+          <!-- <input type="text" id="txtid" name="txtsearch" value="" hidden="true" /> -->
+          <button class="btn btn-danger" type="button" id="btnxoacv" onclick="xoacv()">Thực hiện Xoá</button>
+
+        <!-- </form> -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="idhoanthanh" tabindex="3" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">Thông Báo</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" id="bodyhoanthanh"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-success" type="button" id="btnhoanthanh" onclick="fn_hoanthanh()">Hoàn Thành</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script>
+  function fn_hoanthanh(){
+    var mas = $('#btnhoanthanh').val()
+    //alert(mas)
+    $.ajax({
+        method: "POST",
+        url: "/house/hoanthanhcv",
+        data: {id: mas},
+      })
+      .done(function(msg) {
+        alert(msg)
+        window.location.href = "/house/xemcongviecdinhky"
+      });
+
+  }
+
+  function btnclick(ma) {
+
+    window.location.href = '/qlkt/info?mayeucau=' + ma
+  }
+
+  function sua(ma, doc) {
+    var _obj = JSON.parse(doc)
+    var mass = ma
+    $('#btnsuacv').val(mass)
+    $('#btnxoacv').val(mass)
+    $('#btnhoanthanh').val(mass)
+    
+    $('#bodysuacongviec').html(
+      `Tên CV: ` + _obj.tencv + `<br>` +
+      `<strong>Bạn chắc chắn muốn SỬA Công việc này</strong>`
+
+    )
+    $('#bodyxoacongviec').html(
+      `Tên CV: ` + _obj.tencv + `<br>` +
+      `<strong>Bạn chắc chắn muốn Xoá</strong>`
+    )
+
+    $('#bodyhoanthanh').html(
+      // `Id: ` + _obj._id + `<br>` +
+      `Tên CV: ` + _obj.tencv + `<br>` +
+      `Ngày bắt đầu: ` + _obj.ngaybatdau + `<br>` +
+      `Ngày kết thúc: ` + _obj.ngayketthuc + `<br>` +
+      `Step-Begin-End Số ngày: ` + _obj.timehethan + `<br>` +
+      `Số ngày gửi mail: ` + _obj.ngayguimail + `<br>` +
+      `Tình trạng hoàn thành: ` + _obj.hoanthanh + `<br>` 
+    )
+    //alert(mass)
+  }
+
+  function suacv() {
+    var mas = $('#btnsuacv').val()
+    window.location.href = "/house/suacongviecdinhky?id=" + mas
+    // alert(mas)
+    // $.ajax({
+    //     method: "POST",
+    //     url: "/qlkt/updatettbp",
+    //     data: {mayeucau: mas},
+    //   })
+    //   .done(function(msg) {
+    //     alert('Đã duyệt !!!')
+    //     window.location.href = "/qlkt"
+    //   });
+    
+  }
+
+  function xoacv() {
+    var mes = $('#btnxoacv').val()
+    $.ajax({
+        method: "POST",
+        url: "/house/delcvdinhky",
+        data: {id: mes},
+      })
+      .done(function(msg) {
+        alert('Đã xoá !!!')
+        window.location.href = "/house/xemcongviecdinhky"
+      });
+  }
+</script>
+<script>
+  $(document).ready(function() {
+    $.noConflict();
+    var table = $('#dataTable').DataTable({
+      "pageLength": 50
+    });
+
+    
+
+  });
+</script>

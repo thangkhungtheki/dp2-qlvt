@@ -1,0 +1,53 @@
+<div class="table-responsive">
+  <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+    <thead class="bg-<%= color %> text-white">
+      <tr>
+        <th>Tên CV / Vị trí</th>
+        <th>Cấu hình lịch</th>
+        <th>Phụ trách</th>
+        <th>Mức độ</th>
+        <th class="text-center">Xong</th>
+        <th class="text-center">Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (data && data.length > 0) { %>
+        <% data.forEach(x => { %>
+          <tr>
+            <td>
+              <div class="font-weight-bold"><%= x.tencv %></div>
+              <small class="text-muted"><i class="fas fa-map-marker-alt"></i> <%= x.vitri %></small>
+            </td>
+            <td>
+              <% if(x.loai_dinh_ky === 'tuan') { %>
+                <span class="badge badge-pill badge-light">Thứ: <%= x.thu_trong_tuan.join(',') %></span>
+              <% } else { %>
+                <span class="badge badge-pill badge-light">Ngày: <%= x.ngay_trong_thang.join(',') %></span>
+              <% } %>
+            </td>
+            <td><%= x.nguoi_phu_trach || '-' %></td>
+            <td>
+              <% var mudo = x.muc_do === 'cao' ? 'danger' : (x.muc_do === 'trung_binh' ? 'warning' : 'info') %>
+              <span class="badge badge-<%= mudo %> text-uppercase"><%= x.muc_do %></span>
+            </td>
+            <td class="text-center">
+              <i class="fas <%= x.hoanthanh ? 'fa-check-circle text-success' : 'fa-circle text-gray-300' %>"></i>
+            </td>
+            <td class="text-center">
+              <div style="display: flex; gap: 5px; justify-content: center;">
+                <a href="/house/cv/edit/<%= x._id %>" class="btn btn-sm btn-warning">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <form action="/house/cv/delete/<%= x._id %>" method="POST" onsubmit="return confirm('Anh muốn xóa CV này?')">
+                  <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="6" class="text-center">Không có dữ liệu</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
