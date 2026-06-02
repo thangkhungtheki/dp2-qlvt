@@ -30,7 +30,7 @@ function sendmail(params){
             emailpb = " , sec.ma@diamondplace.com.vn"
             break;
         case "nhansu":
-            emailpb = " , nhansu01.dp2@diamondplace.com.vn , tq.trung@diamondplace.com.vn"
+            emailpb = " , nhansu01.dp2@diamondplace.com.vn , hr@diamondplace.com.vn"
             break;        
         default:
             break;
