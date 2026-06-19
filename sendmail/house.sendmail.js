@@ -88,7 +88,7 @@ function sendmail(data) {
         var mailOptions = {
             from: `"DiamondPlace Housekeeping" <${process.env.HouseFrom}>`,
             to: process.env.HouseEmailTo,
-            subject: `[LỊCH LÀM VIỆC] - NGÀY ${daynow}`,
+            subject: `[LỊCH LÀM VIỆC] DP2 - NGÀY ${daynow}`,
             html: fullTemplate
         }
 
@@ -119,7 +119,7 @@ function sendMailComplete(taskData) {
         const timeNow = moment().format('HH:mm DD-MM-YYYY');
         
         let htmlContent = `
-            <h3 style="color: #2c3e50;">✅ Báo cáo hoàn thành công việc</h3>
+            <h3 style="color: #2c3e50;">✅ DP2 - Báo cáo hoàn thành công việc</h3>
             <p><b>Thời gian:</b> ${timeNow}</p>
             <p><b>Người thực hiện:</b> ${taskData.nguoithuchien}</p>
             <hr>
@@ -150,7 +150,7 @@ function sendMailComplete(taskData) {
 
         var mailOptions = {
             from: process.env.HouseFrom,
-            to: process.env.HouseEmailTo,
+            to: process.env.HouseEmailToComplete,
             subject: `[Đã xong] ${taskData.nguoithuchien} - ${taskData.tencv}`,
             html: htmlContent,
             attachments: attachments
