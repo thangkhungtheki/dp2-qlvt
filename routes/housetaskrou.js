@@ -13,11 +13,11 @@ const mailer = require("../sendmail/house.sendmail");
 
 // --- CÁC HÀM HỖ TRỢ XỬ LÝ (HELPER FUNCTIONS) ---
 
-// Hàm xử lý tạo ảnh QR có chữ (Tách ra để tái sử dụng)
+// Hàm xử lý tạo ảnh QR có chữ (Đã tối ưu hóa canvas)
 async function generateQrWithText(doc) {
     try {
         if (!doc || !doc.maqr) {
-            // console.log(`[Warning] Không có data maqr gốc cho: ${doc.tencv}`);
+            console.log(`[Warning] Không có data maqr cho công việc: ${doc?.tencv || 'Không tên'}`);
             return null;
         }
 
@@ -26,13 +26,16 @@ async function generateQrWithText(doc) {
         try {
             backgroundImage = await loadImage(defaultImagePath);
         } catch (err) {
-            console.log('Failed to load background image', err);
+            console.error('Failed to load background image:', err.message);
             return null;
         }
 
         const deviceName = doc.tencv || 'Tên Công Việc';
         const location = doc.vitri || 'Vị trí công việc';
-        const qrCodeImageBuffer = Buffer.from(doc.maqr, 'base64');
+        
+        // Xử lý chuỗi base64 phòng trường hợp có hoặc không có prefix data:image
+        const qrBase64Clean = doc.maqr.replace(/^data:image\/\w+;base64,/, '');
+        const qrCodeImageBuffer = Buffer.from(qrBase64Clean, 'base64');
         const qrImage = await loadImage(qrCodeImageBuffer);
 
         const canvas = createCanvas(backgroundImage.width, backgroundImage.height);
@@ -53,7 +56,7 @@ async function generateQrWithText(doc) {
         ctx.fillStyle = 'lime';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
-        const deviceNameY = Math.round(backgroundImage.height * 0.1);
+        const deviceNameY = Math.round(backgroundImage.height * 0.15); // Hạ thấp xuống một chút tránh mất chữ biên
         ctx.textAlign = 'center';
         ctx.strokeText(deviceName, backgroundImage.width / 2, deviceNameY);
         ctx.fillText(deviceName, backgroundImage.width / 2, deviceNameY);
@@ -64,49 +67,54 @@ async function generateQrWithText(doc) {
         ctx.fillStyle = 'yellow';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2;
-        const locationY = Math.round(backgroundImage.height * 0.95);
+        const locationY = Math.round(backgroundImage.height * 0.90); // Đẩy lên một chút cho đẹp bố cục
         ctx.strokeText(location, backgroundImage.width / 2, locationY);
         ctx.fillText(location, backgroundImage.width / 2, locationY);
 
         return canvas.toBuffer('image/png').toString('base64');
     } catch (error) {
-        console.log('Lỗi xử lý canvas: ', error);
+        console.error('Lỗi xử lý canvas chi tiết: ', error);
         return null;
     }
 }
 
-// Hàm cập nhật QR gốc (gọi API ngoài) và QR có chữ
+// Hàm cập nhật QR gốc và QR có chữ (Đã fix triệt để bất đồng bộ và update text mới)
 async function updateFullQRCode(docId) {
     try {
-        // 1. Lấy dữ liệu mới nhất
+        // 1. Lấy dữ liệu mới nhất từ DB bằng docId chính xác
         let docs = await xuly.docs({ _id: docId });
-        let document = docs[0];
-        if (!document) return;
-
-        // 2. Tạo/Cập nhật mã QR gốc (Base64)
-        let base64Image = document.maqr;
-        if (!base64Image) {
-             // Chỉ gọi API tạo QR nếu chưa có hoặc muốn reset (ở đây logic anh là chưa có mới tạo)
-            let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + document.id;
-            const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
-            base64Image = Buffer.from(response.data).toString('base64');
+        let document = docs && docs[0];
+        if (!document) {
+            console.log(`[Error] Không tìm thấy bản ghi với ID: ${docId} để update QR`);
+            return;
         }
 
-        // 3. Tạo mã QR có chữ (Canvas)
-        // Tạo object tạm để truyền vào hàm generate
-        const tempDoc = { ...document, maqr: base64Image };
+        const currentId = document._id || document.id;
+
+        // 2. Tạo/Cập nhật mã QR gốc (Luôn tạo mới dựa trên ID chuẩn để tránh lệch dữ liệu)
+        let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + currentId.toString();
+        const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
+        let base64Image = Buffer.from(response.data).toString('base64');
+
+        // 3. Tạo mã QR có chữ với thông tin Text mới nhất vừa cập nhật
+        const tempDoc = { 
+            tencv: document.tencv, 
+            vitri: document.vitri, 
+            maqr: base64Image 
+        };
         const maqrcochu = await generateQrWithText(tempDoc);
 
-        // 4. Update vào DB
+        // 4. Update đồng bộ lại vào DB
         const updateBody = {
             maqr: base64Image,
             maqrcochu: maqrcochu
         };
-        await xuly.updates(document.id, updateBody);
-        console.log(`Đã cập nhật QR cho ID: ${document.id}`);
+        
+        await xuly.updates(currentId.toString(), updateBody);
+        console.log(`[Success] Đã tái tạo thành công QR Code mới cho ID: ${currentId}`);
 
     } catch (e) {
-        console.error("Lỗi updateFullQRCode: ", e);
+        console.error("❌ Lỗi hệ thống tại updateFullQRCode: ", e.message);
     }
 }
 
@@ -143,7 +151,6 @@ router.get('/api/xuatexcel', async function (req, res) {
         const desiredImageWidth = 80;
         const desiredImageHeight = 80;
 
-        // Dùng for...of để an toàn với async
         for (const [index, document] of documents.entries()) {
             const rowNumber = index + 2;
 
@@ -163,7 +170,6 @@ router.get('/api/xuatexcel', async function (req, res) {
 
             if (document.maqrcochu) {
                 try {
-                    // Loại bỏ prefix nếu có (ví dụ data:image/png;base64,)
                     const base64Data = document.maqrcochu.replace(/^data:image\/\w+;base64,/, '');
                     const imageBuffer = Buffer.from(base64Data, 'base64');
 
@@ -172,7 +178,6 @@ router.get('/api/xuatexcel', async function (req, res) {
                         extension: 'png',
                     });
 
-                    // Tính toán ô để đặt ảnh
                     const qrCodeCell = worksheet.getCell(rowNumber, qrCodeColumnIndex + 1);
                     const topLeft = { col: qrCodeCell.col - 1, row: qrCodeCell.row - 1 };
 
@@ -184,25 +189,21 @@ router.get('/api/xuatexcel', async function (req, res) {
 
                     worksheet.getRow(rowNumber).height = desiredImageHeight * 0.75;
                 } catch (error) {
-                    console.error(`Lỗi xử lý QR code cho ${document.tencv}:`, error);
+                    console.error(`Lỗi xuất QR excel cho ${document.tencv}:`, error.message);
                 }
             } else {
                 worksheet.getRow(rowNumber).height = 20;
             }
         }
 
-        const lastRow = documents.length + 1;
-        const lastColumn = columns.length;
-        const borderStyles = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' }
-        };
-
         worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
             row.eachCell((cell, colNumber) => {
-                cell.border = borderStyles;
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
             });
         });
 
@@ -239,6 +240,7 @@ router.get('/app/house/congviec', async (req, res) => {
     res.json(docs[0]);
 });
 
+// ROUTE SỬA (CẬP NHẬT) CÔNG VIỆC
 router.post('/api/congviec/update', async (req, res) => {
     try {
         let id = req.body._id;
@@ -259,9 +261,9 @@ router.post('/api/congviec/update', async (req, res) => {
 
         let result = await xuly.updates(id, body);
         
-        // Tối ưu: Gọi hàm trực tiếp, không gọi qua axios (tránh loop request)
         if (result) {
-            await updateFullQRCode(id); // Gọi hàm update QR background
+            // Chờ cập nhật xong toàn bộ QR Code chữ mới lưu hành tiếp
+            await updateFullQRCode(id); 
             res.redirect('/housetask/api/view');
         } else {
             res.send('Cập nhật không thành công');
@@ -272,6 +274,7 @@ router.post('/api/congviec/update', async (req, res) => {
     }
 });
 
+// ROUTE TẠO MỚI CÔNG VIỆC
 router.post('/api/congviec/them', async (req, res) => {
     try {
         let body = {
@@ -291,12 +294,12 @@ router.post('/api/congviec/them', async (req, res) => {
 
         let result = await xuly.create(body);
         
-        // Tối ưu: Gọi hàm trực tiếp
         if (result) {
-            // result thường trả về object vừa tạo, lấy ID từ đó
-            const newId = result._id || result.id; // Tùy thuộc vào hàm create trả về gì
-            if(newId) await updateFullQRCode(newId);
-            
+            // Đảm bảo lấy đúng trường ID từ object vừa tạo trong Mongoose
+            const newId = result._id || result.id; 
+            if (newId) {
+                await updateFullQRCode(newId.toString());
+            }
             res.redirect('/housetask/api/view');
         } else {
             res.send('Thêm công việc không thành công');
@@ -317,14 +320,13 @@ router.post('/api/congviec/delete', async (req, res) => {
     }
 });
 
-// API này dùng để chạy thủ công tất cả nếu cần reset
 router.get('/api/capnhatmaqr', async (req, res) => {
     try {
         const documents = await xuly.docs({});
-        // Sử dụng for...of để đợi xử lý tuần tự (async/await trong forEach không hoạt động như mong đợi)
         for (const document of documents) {
             try {
-                let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + document.id;
+                const currentId = document._id || document.id;
+                let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + currentId.toString();
                 let base64Image;
 
                 if (!document.maqr) {
@@ -334,11 +336,10 @@ router.get('/api/capnhatmaqr', async (req, res) => {
                     base64Image = document.maqr;
                 }
 
-                // Cập nhật lại chỉ maqr
-                await xuly.updates(document.id, { maqr: base64Image });
+                await xuly.updates(currentId.toString(), { maqr: base64Image });
                 console.log("Updated QR Base for:", document.tencv);
             } catch (e) {
-                console.log("Lỗi chi tiết ID: ", document.id, e.message);
+                console.log("Lỗi chi tiết ID: ", document._id, e.message);
             }
         }
         res.send('Đã cập nhật xong mã QR gốc');
@@ -348,22 +349,19 @@ router.get('/api/capnhatmaqr', async (req, res) => {
     }
 });
 
-// API chạy thủ công tạo ảnh canvas hàng loạt
 router.get('/api/capnhatmaqrcochu', async (req, res) => {
     try {
         const documents = await xuly.docs({});
-        
         for (const document of documents) {
             try {
-                // Tạo ảnh canvas
+                const currentId = document._id || document.id;
                 let resultmaqrcochu = await generateQrWithText(document);
-                
                 if (resultmaqrcochu) {
-                     await xuly.updates(document.id, { maqrcochu: resultmaqrcochu });
+                     await xuly.updates(currentId.toString(), { maqrcochu: resultmaqrcochu });
                      console.log('Success co chu:', document.tencv);
                 }
             } catch (e) {
-                console.log("Lỗi canvas ID: ", document.id, e);
+                console.log("Lỗi canvas ID: ", document._id, e.message);
             }
         }
         res.send('Đã cập nhật xong QR có chữ');
@@ -377,7 +375,6 @@ router.put('/api/upload-thuchien', async (req, res) => {
     try {
         const { idcongviec, phong, noidung, nguoithuchien, imgthuchien } = req.body;
         
-        // Sử dụng moment để lấy giờ hiện tại chuẩn xác và dễ đọc
         const now = moment().utcOffset(7); 
         const ngayGioUTC7 = now.format('DD-MM-YYYY HH:mm:ss');
         
@@ -387,42 +384,28 @@ router.put('/api/upload-thuchien', async (req, res) => {
             phong: phong,
             noidung: noidung,
             nguoithuchien: nguoithuchien,
-            imgthuchien: imgthuchien, // Mảng base64 từ client
+            imgthuchien: imgthuchien, 
             nguoikiemtra: 'chưa kiểm tra',
         };
 
         let docss = await xuly.docs({ _id: idcongviec });
+        let dongMoi = `${ngayGioUTC7} ${noidung}`;
+        let lichsucv = (docss[0] && docss[0].lichsucv) ? `${docss[0].lichsucv}\n${dongMoi}` : dongMoi;
         
-        let dongMoi = `${ngayGioUTC7} ${newRecord.noidung}`;
-        let lichsucv;
-        
-        // Kiểm tra tồn tại để nối chuỗi
-        if (docss[0] && docss[0].lichsucv) {
-            lichsucv = docss[0].lichsucv + `\n${dongMoi}`;
-        } else {
-            lichsucv = dongMoi;
-        }
-        // Chuẩn bị dữ liệu để gửi mail (Lấy tên công việc từ docss đã query ở trên)
-       const mailData = {
-            // Lấy thông tin từ Công việc gốc (docss[0])
+        const mailData = {
             tencv: docss[0] ? docss[0].tencv : 'Công việc không tên',
-            khuvuc: docss[0] ? docss[0].khuvuc : 'Chưa xác định', // ✅ Thêm Khu vực
-            vitri: docss[0] ? docss[0].vitri : 'Chưa xác định',   // ✅ Thêm Vị trí gốc
-            
-            // Thông tin người thực hiện gửi lên
+            khuvuc: docss[0] ? docss[0].khuvuc : 'Chưa xác định', 
+            vitri: docss[0] ? docss[0].vitri : 'Chưa xác định',   
             nguoithuchien: nguoithuchien,
-            phong: phong, // (Có thể là vị trí chi tiết lúc làm, nếu có thì mình hiển thị kèm)
+            phong: phong, 
             noidung: noidung,
             imgthuchien: imgthuchien
         };
-        // Thực hiện lưu song song để tối ưu thời gian
+
         await Promise.all([
             xuly.xulyupdate_lichsucv(idcongviec, lichsucv),
             taskkiemtradinhky.creates(newRecord),
-            // --------------------------------------------------
-            // chỗ này có thể thao tác send email hoặc thông báo nếu cần
             mailer.sendMailComplete(mailData) 
-            // --------------------------------------------------
         ]);
 
         res.send("Tải ảnh và lưu dữ liệu thành công!");
@@ -435,83 +418,62 @@ router.put('/api/upload-thuchien', async (req, res) => {
 router.get('/app/house/kiemtra', async (req, res) => {
     let idcongviec = req.query.idcongviec;
     let today = moment().format('DD-MM-YYYY');
-    
-    // RegExp để tìm đúng ngày bắt đầu
     let docs = await taskkiemtradinhky.docs({ idcongviec: idcongviec, ngay: { $regex: `^${today}` } });
     res.send(docs);
 });
 
 router.put('/api/kiemtra/update', async (req, res) => {
     try {
-        // Lấy dữ liệu từ App gửi lên
         const { _id, nguoikiemtra, idcongviec } = req.body;
 
         if (!_id || !nguoikiemtra) {
             return res.status(400).send("Thiếu ID hoặc tên người kiểm tra");
         }
         
-        // Lấy giờ hiện tại chuẩn UTC+7
         const timeCheck = moment().utcOffset(7).format('DD-MM-YYYY HH:mm:ss');
 
-        // 1. CẬP NHẬT BẢN GHI THỰC HIỆN (HOUSE_CV_DINHKY)
-        // Quan trọng: Phải update thêm 'check': 'x' thì App mới đổi màu xanh
         const updateBody = {
             nguoikiemtra: nguoikiemtra,
             check: 'x' 
         };
         
-        // Sử dụng hàm updates (thay vì updateoneset) để update được nhiều trường cùng lúc
         await taskkiemtradinhky.updates(_id, updateBody);
         
-        // 2. CẬP NHẬT LỊCH SỬ VÀO CÔNG VIỆC GỐC (HOUSETASK)
         if (idcongviec) {
-            // Tìm công việc gốc
             let parentTask = await xuly.docs({ _id: idcongviec });
-            
             if (parentTask && parentTask.length > 0) {
                 let currentHistory = parentTask[0].lichsukiemtra || '';
-                // Thêm dòng lịch sử mới vào
                 let newHistoryLine = `${timeCheck} Đã kiểm tra bởi: ${nguoikiemtra}`;
-                
-                // Nối chuỗi (xử lý xuống dòng nếu đã có lịch sử cũ)
                 let finalHistory = currentHistory ? (currentHistory + '\n' + newHistoryLine) : newHistoryLine;
                 
-                // Update vào DB
                 await xuly.xulyupdate_lichsukiemtra(idcongviec, finalHistory);
             }
         }
 
         res.status(200).send('Cập nhật kiểm tra thành công');
-
     } catch (error) {
         console.error("Lỗi update kiểm tra:", error);
         res.status(500).send("Lỗi server: " + error.message);
     }
 });
-// Route xem lịch sử chi tiết của một công việc
+
 router.get('/api/history/:id', async (req, res) => {
     try {
         let idcongviec = req.params.id;
-
-        // 1. Lấy thông tin công việc gốc (để hiện tên công việc trên tiêu đề)
         let congviec = await xuly.docs({_id: idcongviec});
-        
-        // 2. Lấy danh sách lịch sử từ model 'house_cv_dinhky'
         let history = await taskkiemtradinhky.docs({idcongviec: idcongviec});
 
-        // 3. Sắp xếp lịch sử: Mới nhất lên đầu (dựa vào createdAt do anh đã bật timestamps: true)
         history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        // 4. Render view
         res.render('admin_house/main/view_history_housetask', { 
-            task: congviec[0] || { tencv: 'Không xác định' }, // Phòng hờ nếu xóa công việc gốc
+            task: congviec[0] || { tencv: 'Không xác định' }, 
             data: history, 
             moment: moment 
         });
-
     } catch (error) {
         console.error("Lỗi xem lịch sử:", error);
         res.status(500).send("Lỗi tải lịch sử công việc");
     }
 });
+
 module.exports = router;

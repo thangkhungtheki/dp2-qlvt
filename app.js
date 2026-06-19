@@ -24,6 +24,7 @@ var qltkRouter = require('./routes/qlkt.router')
 var userktRouter = require('./routes/user.kt')
 // dùng router house
 var houseRouter = require('./routes/house.router')
+var houseTaskRouter = require('./routes/housetaskrou')
 
 const ycsc = require('./CRUD/xulyyeucau')
 // path database 
@@ -79,6 +80,7 @@ app.use('/hopdong/', routerhopdong)
 app.use('/qlkt/', qltkRouter);
 app.use('/user/' ,userktRouter )
 app.use('/house/', houseRouter)
+app.use('/housetask/', houseTaskRouter)
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
