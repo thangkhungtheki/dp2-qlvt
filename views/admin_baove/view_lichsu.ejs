@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch Sử Tuần Tra An Ninh</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        .selfie-img { width: 45px; height: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #2563eb; }
+        .details-box { background-color: #f8fafc; border-radius: 6px; padding: 15px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+<div class="container-fluid mt-4">
+    <h2 class="text-primary mb-4">📜 LỊCH SỬ TUẦN TRA AN NINH</h2>
+    
+    <!-- THANH TÌM KIẾM THEO NGÀY & TÊN -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body bg-light">
+            <form action="/baove/lichsu" method="GET" class="form-inline">
+                <label class="font-weight-bold mr-2">📅 Chọn Ngày:</label>
+                <input type="date" name="date" class="form-control mr-4" value="<%= searchDate %>">
+                
+                <label class="font-weight-bold mr-2">👤 Tên Bảo Vệ:</label>
+                <input type="text" name="guardName" class="form-control mr-4" placeholder="Nhập tên..." value="<%= searchName %>">
+                
+                <button type="submit" class="btn btn-primary px-4">🔍 Tìm Kiếm</button>
+                <a href="/baove/lichsu" class="btn btn-secondary ml-2">Làm mới</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- BẢNG KẾT QUẢ -->
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>STT</th>
+                <th>Ảnh Nhận Ca</th>
+                <th>Người Tuần Tra</th>
+                <th>Giờ Bắt Đầu</th>
+                <th>Giờ Kết Thúc</th>
+                <th>Số Chốt Quét</th>
+                <th>Ngày Ghi Nhận</th>
+                <th>Chi Tiết</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if(data.length === 0) { %>
+                <tr><td colspan="8" class="text-center text-danger font-weight-bold">Không tìm thấy ca trực nào phù hợp.</td></tr>
+            <% } %>
+
+            <% data.forEach(function(item, index) { %>
+            <tr>
+                <td class="align-middle"><%= index + 1 %></td>
+                <td class="align-middle text-center">
+                    <img src="<%= item.selfie %>" class="selfie-img" alt="Selfie">
+                </td>
+                <td class="align-middle font-weight-bold text-primary"><%= item.guardName %> <br> <small class="text-muted"><%= item.guardCode %></small></td>
+                <td class="align-middle text-success font-weight-bold"><%= item.startTime %></td>
+                <td class="align-middle text-danger font-weight-bold"><%= item.endTime %></td>
+                <td class="align-middle">
+                    <span class="badge badge-info" style="font-size:14px;"><%= item.totalPoints %> chốt</span>
+                </td>
+                <td class="align-middle"><%= moment(item.createdAt).format('DD-MM-YYYY') %></td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-sm btn-outline-dark" onclick="toggleDetails('details_<%= item._id %>')">Xem Hành Trình</button>
+                </td>
+            </tr>
+            
+            <!-- Vùng hiển thị chi tiết (Ẩn mặc định, bấm nút sẽ xổ ra ngay dưới dòng) -->
+            <tr id="details_<%= item._id %>" style="display:none; background-color:#f8fafc;">
+                <td colspan="8">
+                    <div class="row px-3">
+                        <% item.checkpoints.forEach(function(point) { %>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 shadow-sm border-left-primary">
+                                    <div class="card-body p-2">
+                                        <b class="text-dark">📍 <%= point.checkpointName %></b> <span class="float-right text-muted"><%= point.time %></span>
+                                        <p class="mb-1 text-danger small"><%= point.comment ? 'Ghi chú: ' + point.comment : '' %></p>
+                                        <hr class="my-1">
+                                        <ul class="pl-3 mb-0" style="font-size:12px;">
+                                            <% if(point.congviec) { %>
+                                                <% point.congviec.forEach(function(cv) { %>
+                                                    <li><%= cv.isDone ? '✅' : '⬛' %> <%= cv.name %></li>
+                                                <% }) %>
+                                            <% } %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Hàm bật/tắt hiển thị hành trình chi tiết của ca trực
+    function toggleDetails(rowId) {
+        var row = document.getElementById(rowId);
+        if (row.style.display === "none") {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>

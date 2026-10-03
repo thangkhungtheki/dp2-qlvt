@@ -156,4 +156,41 @@ router.post('/baove/chottuantra/xoa', async (req, res) => {
     }
 });
 
+// GET: Lịch sử tuần tra (Có bộ lọc)
+router.get('/baove/lichsu', async (req, res) => {
+    try {
+        let { date, guardName } = req.query;
+        let queryCondition = {};
+
+        // Lọc theo ngày (Tìm từ 00:00:00 đến 23:59:59 của ngày được chọn)
+        if (date) {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            queryCondition.createdAt = { $gte: startOfDay, $lte: endOfDay };
+        }
+
+        // Lọc theo tên bảo vệ (Tìm gần đúng, không phân biệt hoa thường)
+        if (guardName) {
+            queryCondition.guardName = { $regex: guardName, $options: 'i' };
+        }
+
+        // Lấy danh sách, sắp xếp ca mới nhất lên đầu
+        const histories = await Patrol.find(queryCondition).sort({ createdAt: -1 });
+
+        res.render('admin_baove/view_lichsu', { 
+            data: histories, 
+            searchDate: date || '', 
+            searchName: guardName || '',
+            moment: require('moment') // Truyền thư viện moment ra view để format giờ
+        });
+    } catch (error) {
+        console.error("Lỗi xem lịch sử:", error);
+        res.status(500).send("Lỗi tải lịch sử hệ thống");
+    }
+});
+
 module.exports = router;
