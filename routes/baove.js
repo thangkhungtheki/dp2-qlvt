@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Guard = require('../models/Guard');
-const Patrol = require('../models/Patrol');
+const Guard = require('../model/Guard');
+const Patrol = require('../model/Patrol');
 
 // ==========================================
 // 1. GET /api/dp3/baove/guards
