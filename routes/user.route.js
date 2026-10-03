@@ -60,11 +60,39 @@ router.get('/.well-known/pki-validation/32E58AB3EEC936EDF6D79C8FD615AC68.txt' , 
 	return res.sendfile('public/32E58AB3EEC936EDF6D79C8FD615AC68.txt')
 })
  
-router.post("/signin",
-    passport.authenticate('local.signin', { successRedirect: '/qlkt',
-                                  failureRedirect: '/signin',
-                                  failureFlash: true })
-);
+// --- THAY THẾ CỤC NÀY ---
+router.post("/signin", function(req, res, next) {
+    passport.authenticate('local.signin', function(err, user, info) {
+        if (err) { return next(err); }
+        
+        // Nếu sai user/pass -> Báo lỗi và quay lại trang đăng nhập
+        if (!user) { 
+            req.flash('error', info.message); // Lưu câu báo lỗi từ passport
+            return res.redirect('/signin'); 
+        }
+        
+        // Nếu đúng user/pass -> Tiến hành đăng nhập (tạo session)
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            
+            // XỬ LÝ ĐIỀU HƯỚNG TÙY THEO PHÒNG BAN (TỪ DB USER)
+            // Giả sử database User của anh có trường 'phong' (ví dụ: 'BAOVE', 'HOUSE', 'KYTHUAT'...)
+            const phongBan = user.phong || ''; 
+
+            if (phongBan.toUpperCase() === 'BAOVE') {
+                return res.redirect('/baove/chottuantra');
+                
+            } else if (phongBan.toUpperCase() === 'HOUSE') {
+                return res.redirect('/housetask/api/view');
+                
+            } else {
+                // Mặc định (như Kỹ thuật hoặc các user cũ) thì bay về /qlkt
+                return res.redirect('/qlkt');
+            }
+        });
+    })(req, res, next);
+});
+// -----------------------
 
 router.post("/signup", 
 passport.authenticate('local.signup', { successRedirect: '/signin',

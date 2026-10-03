@@ -1,178 +1,143 @@
 ﻿require('dotenv').config()
 const cors = require('cors');
-
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var session = require('express-session')
-//var logger = require('morgan');
+var session = require('express-session');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
+const jwt = require('jsonwebtoken'); // [FIXED] Bổ sung thư viện JWT
+
 var app = express();
+
+// =====================================
+// 1. IMPORT CÁC ROUTER
+// =====================================
 var indexRouter = require('./routes/user.route');
+const routerLogin = require('./routes/login.router');
+const routercheckip = require('./routes/checkip.router');
+const routerdongco = require('./routes/dongco.router');
+const routerhopdong = require('./routes/hopdong.router');
+var qltkRouter = require('./routes/qlkt.router');
+var userktRouter = require('./routes/user.kt');
+var houseRouter = require('./routes/house.router');
+var houseTaskRouter = require('./routes/housetaskrou');
+const baoveRoutes = require('./routes/baove'); // Mang router bảo vệ xuống chung cho đồng bộ
+const ycsc = require('./CRUD/xulyyeucau');
 
-const routerLogin = require('./routes/login.router')
-
-const routercheckip = require('./routes/checkip.router')
-
-const routerdongco = require('./routes/dongco.router')
-
-const routerhopdong = require('./routes/hopdong.router')
-var qltkRouter = require('./routes/qlkt.router')
-var userktRouter = require('./routes/user.kt')
-// dùng router house
-var houseRouter = require('./routes/house.router')
-var houseTaskRouter = require('./routes/housetaskrou')
-
-const ycsc = require('./CRUD/xulyyeucau')
-// path database 
+// =====================================
+// 2. KẾT NỐI DATABASE & CẤU HÌNH CƠ BẢN
+// =====================================
 mongoose.connect(process.env.DATABASE_URL);
-// mongoose.set('strictQuery', false)
 
-// const mongooseOptions = {
-//   // ...
-//   useUnifiedTopology: true,
-//   useNewUrlParser:true
-//   // ...
-// };
+require('./config/passport'); // Vượt qua passport config
 
-// mongoose.connect(process.env.DATABASE_URL, mongooseOptions);
+app.use(cors());
+app.use(cors({ origin: ['https://h5.zdn.vn', 'zbrowser://h5.zdn.vn'] }));
 
-// Kích hoạt Router API Bảo Vệ
-const baoveRoutes = require('./routes/baove');
-app.use('/api/dp3/baove', baoveRoutes);
-
-require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
-
-app.use(cors())
-
-app.use(cors({
-  origin: ['https://h5.zdn.vn', 'zbrowser://h5.zdn.vn']
-  }));
-
-app.use(session({
-  secret: 'thangkhungtheki',
-  resave: false,
-  saveUninitialized: false,
-}))
-app.use(flash());
-app.use(passport.initialize())
-app.use(passport.session());
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-//app.use(logger('dev'));
+// [FIXED QUAN TRỌNG] Body Parser PHẢI nằm trên các Router để đọc được ảnh Base64 50MB
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-app.use(cookieParser());
+// View engine setup & Static files
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'multer-upload/uploads')));
-app.use('/', indexRouter);
+app.use(cookieParser());
 
-app.use('/api/login/', routerLogin)
+// Cấu hình Session & Passport
+app.use(session({
+    secret: 'thangkhungtheki',
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use('/ip',routercheckip )
-
-app.use('/dongco/', routerdongco)
-
-app.use('/hopdong/', routerhopdong)
-
-app.use('/qlkt/', qltkRouter);
-app.use('/user/' ,userktRouter )
-app.use('/house/', houseRouter)
-app.use('/housetask/', houseTaskRouter)
-
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
-// Middleware để lấy địa chỉ IP và user-agent
+// =====================================
+// 3. MIDDLEWARE XỬ LÝ CHUNG (IP, JWT, TỔNG)
+// =====================================
 app.use((req, res, next) => {
-  // Lấy địa chỉ IP của client
-  const ip = req.ip;
-
-  // Lấy user-agent của client
-  const userAgent = req.get('User-Agent');
-
-  // Gán vào req để truy cập từ các route hoặc view
-  req.clientIP = ip;
-  req.useragent = userAgent;
-
-  // Tiếp tục xử lý các middleware hoặc route khác
-  next();
-});
-
-app.use((req, res, next) => {
-	res.status(404).redirect("/signin");
+    req.clientIP = req.ip;
+    req.useragent = req.get('User-Agent');
+    next();
 });
 
 app.use(async (req, res, next) => {
+    try {
+        // [FIXED] Chỉ check Token nếu client có gửi kèm Header (Dành cho API Mobile/Frontend)
+        // Nếu dùng trình duyệt truy cập EJS thì bỏ qua không bị lỗi crash app
+        if (req.headers && req.headers['authorization']) {
+            const token = req.headers['authorization'].split(' ')[1];
+            const decoded = jwt.verify(token, 'taolathangkhungtheki');
+            req.user = req.user || {}; // Đảm bảo object user tồn tại
+            req.user.userId = decoded.uid; 
+        }
 
-  const token = req.headers['authorization'].split(' ')[1];
-
-  // Verify JWT
-  const decoded = jwt.verify(token, 'taolathangkhungtheki');
-
-  // Lấy thông tin user ID
-  const userId = decoded.uid; 
-
-  // Lưu userId vào req
-  req.user.userId = userId;
-  let total = await tongsuachuaton()
-  res.locals.arrayTong = total
-  next();
-
+        // Lấy dữ liệu global đưa ra Views EJS
+        let total = await tongsuachuaton();
+        res.locals.arrayTong = total;
+        next();
+    } catch (error) {
+        console.error("JWT/Middleware Error:", error.message);
+        next(); // Vẫn gọi next() để trình duyệt tiếp tục load trang thay vì bị treo trắng
+    }
 });
 
-// Middleware để thiết lập dữ liệu trong res.locals
-// app.use(async (req, res, next) => {
-//   let total = await tongsuachuaton()
-//   res.locals.arrayTong = total
-//   next();
-// });
+// =====================================
+// 4. KHAI BÁO CÁC ROUTERS
+// =====================================
+app.use('/', indexRouter);
+app.use('/api/login/', routerLogin);
+app.use('/ip', routercheckip);
+app.use('/dongco/', routerdongco);
+app.use('/hopdong/', routerhopdong);
+app.use('/qlkt/', qltkRouter);
+app.use('/user/', userktRouter);
+app.use('/house/', houseRouter);
+app.use('/housetask/', houseTaskRouter);
+app.use('/api/dp3/baove', baoveRoutes); // [FIXED] Đặt ở đây mới đọc được Payload ảnh!
 
+// =====================================
+// 5. MIDDLEWARE BẮT LỖI CUỐI CÙNG (404)
+// =====================================
+// [FIXED] Đã chuyển xuống tận cùng. Chỉ những link không có ở trên mới bị đẩy về signin
+app.use((req, res, next) => {
+    res.status(404).redirect("/signin");
+});
+
+
+// =====================================
+// HÀM BỔ TRỢ
+// =====================================
 async function tongsuachuaton() {
-  let bep = await ycsc.timyctheobophan('bep')
-  let sales = await ycsc.timyctheobophan('sales')
-  let mar = await ycsc.timyctheobophan('marketing')
-  let fb = await ycsc.timyctheobophan('fb')
-  let ketoan = await ycsc.timyctheobophan('ketoan')
-  let av = await ycsc.timyctheobophan('avtrangtri')
-  let house = await ycsc.timyctheobophan('house')
-  let nhansu = await ycsc.timyctheobophan('nhansu')
-  let baove = await ycsc.timyctheobophan('baove')
-  let khac = await ycsc.timyctheobophan('khac')
-  let total = {
-    bep: bep.length,
-    sales: sales.length,
-    mar: mar.length,
-    fb: fb.length,
-    ketoan: ketoan.length,
-    av: av.length,
-    house: house.length,
-    nhansu: nhansu.length,
-    baove: baove.length,
-    khac: khac.length
-  }
-  return total
+    let bep = await ycsc.timyctheobophan('bep');
+    let sales = await ycsc.timyctheobophan('sales');
+    let mar = await ycsc.timyctheobophan('marketing');
+    let fb = await ycsc.timyctheobophan('fb');
+    let ketoan = await ycsc.timyctheobophan('ketoan');
+    let av = await ycsc.timyctheobophan('avtrangtri');
+    let house = await ycsc.timyctheobophan('house');
+    let nhansu = await ycsc.timyctheobophan('nhansu');
+    let baove = await ycsc.timyctheobophan('baove');
+    let khac = await ycsc.timyctheobophan('khac');
+    let total = {
+        bep: bep.length,
+        sales: sales.length,
+        mar: mar.length,
+        fb: fb.length,
+        ketoan: ketoan.length,
+        av: av.length,
+        house: house.length,
+        nhansu: nhansu.length,
+        baove: baove.length,
+        khac: khac.length
+    }
+    return total;
 }
-// // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
-
-// app.listen(process.env.PORT || 3000,()=>{
-//     console.log("App chay port 3000")
-// })
 
 module.exports = app;

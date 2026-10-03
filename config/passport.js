@@ -1,79 +1,87 @@
 // config/passport.js
-// load các module
 var passport = require("passport");
-// load user model
-var User = require("../model/user.model");
+// Lưu ý: Sửa thành 'model' (không có s) theo đúng chuẩn anh em mình vừa thống nhất
+var User = require("../model/user.model"); 
 var LocalStrategy = require("passport-local").Strategy;
+
 // passport session setup
-// used to serialize the user for the session
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
+
 // used to deserialize the user
-passport.deserializeUser(function (id, done) {
-  User.findById(id, function (err, user) {
-    done(err, user);
-  });
+passport.deserializeUser(async function (id, done) {
+  try {
+    // Dùng await thay cho callback cũ
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
 });
-// local sign-up
+
+// =========================================================================
+// LOCAL SIGN-UP (ĐĂNG KÝ)
+// =========================================================================
 passport.use(
   "local.signup",
   new LocalStrategy(
     {
-      // mặc định local strategy sử dụng username và password
-      //chúng ta có thể cấu hình lại
       usernameField: "username",
       passwordField: "password",
-      passReqToCallback: true, // cho phép chúng ta gửi reqest lại hàm callback
+      passReqToCallback: true, 
     },
-    function (req, username, password, done) {
-      // Tìm một user theo username
-      // chúng ta kiểm tra xem user đã tồn tại hay không
-      User.findOne({ username: username }, function (err, user) {
-        if (err) {
-          return done(err);
-        }
+    async function (req, username, password, done) {
+      try {
+        // Tìm user bằng await
+        const user = await User.findOne({ username: username });
+        
         if (user) {
           return done(null, false, { message: "username is already in use." });
         }
-        // Nếu chưa user nào sử dụng username này
-        // tạo mới user
+        
         var newUser = new User();
-        // lưu thông tin cho tài khoản local
         newUser.username = username;
-        newUser.password = newUser.enscryptPassword(password);
-        // lưu user
-        newUser.save(function (err, result) {
-          if (err) {
-            return done(err);
-          }
-          return done(null, newUser);
-        });
-      });
+        newUser.password = newUser.enscryptPassword(password); // Giữ nguyên tên hàm mã hóa của anh
+        
+        await newUser.save();
+        return done(null, newUser);
+      } catch (err) {
+        return done(err);
+      }
     }
   )
 );
 
-passport.use('local.signin',new LocalStrategy({
-    usernameField:'username',
-    passwordField:'password',
-    passReqToCallback:true
- },function(req, username, password,done) {
-   
-  User.findOne({ 'username': username }, function(err, user) {
-        //console.log(user)
-        if (err) { return done(err); }
+// =========================================================================
+// LOCAL SIGN-IN (ĐĂNG NHẬP)
+// =========================================================================
+passport.use(
+  'local.signin',
+  new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password',
+      passReqToCallback: true
+    },
+    async function(req, username, password, done) {
+      try {
+        const user = await User.findOne({ username: username });
+        
         if (!user) {
-          return done(null, false, { message : 'Not user found'})
+          return done(null, false, { message: 'Not user found' });
         }
-        if(!user.validPassword(password, user.password)){
-       
-            return done(null,false,{message:'Wrong password'})
+        
+        if (!user.validPassword(password, user.password)) {
+          return done(null, false, { message: 'Wrong password' });
         }
-         return done(null, user);
-     
-      }).clone;
+        
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
     }
-  ));
+  )
+);
 
-module.exports = passport
+module.exports = passport;
