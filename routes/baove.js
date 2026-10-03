@@ -87,7 +87,7 @@ async function generateQrWithText(doc) {
 // ==========================================================
 // 1. API CHO APP MOBILE (Khi quét QR sẽ gọi API này)
 // ==========================================================
-router.get('/api/dp3/baove/chot/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const chot = await PointBaove.findById(req.params.id);
         if (!chot) return res.status(404).json({ message: 'Không tìm thấy chốt' });
@@ -102,7 +102,7 @@ router.get('/api/dp3/baove/chot/:id', async (req, res) => {
 // ==========================================================
 
 // Giao diện View danh sách chốt
-router.get('/baove/chottuantra', async (req, res) => {
+router.get('/chottuantra', async (req, res) => {
     try {
         let docs = await PointBaove.find().sort({ createdAt: -1 });
         res.render('admin_baove/view_chottuantra', { data: docs });
@@ -112,7 +112,7 @@ router.get('/baove/chottuantra', async (req, res) => {
 });
 
 // Thêm chốt mới
-router.post('/baove/chottuantra/them', async (req, res) => {
+router.post('/chottuantra/them', async (req, res) => {
     try {
         // Chuyển string công việc (xuống dòng) thành mảng array
         let congviecArray = req.body.congviec.split('\n').map(item => item.trim()).filter(item => item);
@@ -139,7 +139,7 @@ router.post('/baove/chottuantra/them', async (req, res) => {
         // Cập nhật lại vào DB
         await PointBaove.findByIdAndUpdate(currentId, { maqr: base64Image, maqrcochu: maqrcochu });
 
-        res.redirect('/baove/chottuantra');
+        res.redirect('/api/dp3/baove/chottuantra');
     } catch (error) {
         console.error("Lỗi thêm chốt:", error);
         res.status(500).send("Lỗi hệ thống");
@@ -147,7 +147,7 @@ router.post('/baove/chottuantra/them', async (req, res) => {
 });
 
 // Xóa chốt
-router.post('/baove/chottuantra/xoa', async (req, res) => {
+router.post('/chottuantra/xoa', async (req, res) => {
     try {
         await PointBaove.findByIdAndDelete(req.body._id);
         res.redirect('/baove/chottuantra');
@@ -157,7 +157,7 @@ router.post('/baove/chottuantra/xoa', async (req, res) => {
 });
 
 // GET: Lịch sử tuần tra (Có bộ lọc)
-router.get('/baove/lichsu', async (req, res) => {
+router.get('/lichsu', async (req, res) => {
     try {
         let { date, guardName } = req.query;
         let queryCondition = {};
