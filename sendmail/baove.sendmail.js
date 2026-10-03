@@ -3,14 +3,14 @@ const moment = require('moment');
 
 async function sendPatrolReport(patrolData) {
     try {
-        // Tận dụng chung cấu hình SMTP hiện có của anh (hoặc đổi thành config riêng nếu cần)
+        // 1. Cấu hình transporter với mail gửi riêng của Bảo vệ
         var transporter = nodemailer.createTransport({
-            host: process.env.HouseHostMail,
-            port: process.env.HousePort,
+            host: process.env.HouseHostMail, // Dùng chung Host Server Mail
+            port: process.env.HousePort,     // Dùng chung Port
             secure: true,
             auth: {
-                user: process.env.HouseFrom,
-                pass: process.env.HousePass,
+                user: process.env.BaoveFrom, // Lấy mail gửi của Bảo Vệ
+                pass: process.env.BaovePass, // Pass của mail Bảo Vệ
             },
             tls: { rejectUnauthorized: false },
         });
@@ -88,11 +88,11 @@ async function sendPatrolReport(patrolData) {
             </div>
         `;
 
-        // 4. Lấy config từ ENV và Gửi
+        // 2. Cấu hình người gửi và người nhận
         var mailOptions = {
-            from: `"Hệ thống An Ninh" <${process.env.HouseFrom}>`,
-            to: process.env.BAOVE_EMAIL_TO,
-            cc: process.env.BAOVE_EMAIL_CC, // Gửi CC lấy từ ENV
+            from: `"An Ninh DP2" <${process.env.BaoveFrom}>`, // Tên hiển thị người gửi
+            to: process.env.BaoveEmailTo,                     // Gửi đến (To)
+            cc: process.env.BaoveEmailCC,                     // Đồng kính gửi (CC)
             subject: `[BÁO CÁO TUẦN TRA] Ca trực của ${patrolData.guardName} - Ngày ${timeNow}`,
             html: htmlContent,
             attachments: attachments
