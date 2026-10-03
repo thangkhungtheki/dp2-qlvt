@@ -80,7 +80,7 @@ router.post("/signin", function(req, res, next) {
             const phongBan = user.phong || ''; 
 
             if (phongBan.toUpperCase() === 'BAOVE') {
-                return res.redirect('/baove/chottuantra');
+                return res.redirect('/api/dp3/baove/chottuantra');
                 
             } else if (phongBan.toUpperCase() === 'HOUSE') {
                 return res.redirect('/housetask/api/view');
