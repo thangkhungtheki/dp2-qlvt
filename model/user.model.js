@@ -9,6 +9,7 @@ const schema = new Schema({
     mail: {type: String, required: false},
     ten: {type: String, required: false},
     congty: {type: String, required: false},
+    phong: {type: String, required: false},
 })
 
 schema.methods.enscryptPassword = (password) => {
