@@ -2,68 +2,203 @@ const express = require('express');
 const router = express.Router();
 const Guard = require('../model/Guard');
 const Patrol = require('../model/Patrol');
-var axios = require('axios');
-var PointBaove = require('../model/PointBaove');
+const PointBaove = require('../model/PointBaove');
+const axios = require('axios');
+const path = require('path');
+const { createCanvas, loadImage } = require('canvas'); // Thư viện vẽ chữ lên ảnh
+const baoveMailer = require('../sendmail/baove.sendmail');
+const moment = require('moment');
 
-// ==========================================
-// 1. GET /api/dp3/baove/guards
-// Lấy danh sách bảo vệ để hiển thị lên App
-// ==========================================
+// ==========================================================
+// HÀM HỖ TRỢ: VẼ CHỮ LÊN ẢNH QR CODE (Tái sử dụng từ House)
+// ==========================================================
+async function generateQrWithText(doc) {
+    try {
+        if (!doc || !doc.maqr) return null;
+
+        // Lưu ý: Đảm bảo đường dẫn tới ảnh nền default-background-1.png là chính xác
+        const defaultImagePath = path.join(__dirname, '../img', 'default-background-1.png');
+        let backgroundImage;
+        try {
+            backgroundImage = await loadImage(defaultImagePath);
+        } catch (err) {
+            console.error('Không tìm thấy ảnh nền Canvas:', err.message);
+            return null;
+        }
+
+        const deviceName = doc.tencv || 'Chốt Tuần Tra';
+        const location = doc.vitri || 'Vị trí';
+        
+        const qrBase64Clean = doc.maqr.replace(/^data:image\/\w+;base64,/, '');
+        const qrCodeImageBuffer = Buffer.from(qrBase64Clean, 'base64');
+        const qrImage = await loadImage(qrCodeImageBuffer);
+
+        const canvas = createCanvas(backgroundImage.width, backgroundImage.height);
+        const ctx = canvas.getContext('2d');
+
+        ctx.drawImage(backgroundImage, 0, 0);
+
+        const qrSize = 200;
+        const qrLeft = (backgroundImage.width - qrSize) / 2;
+        const qrTop = (backgroundImage.height - qrSize) / 2;
+        ctx.drawImage(qrImage, qrLeft, qrTop, qrSize, qrSize);
+
+        const fontSizeTop = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeTop}px Arial`;
+        ctx.fillStyle = 'lime';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const deviceNameY = Math.round(backgroundImage.height * 0.15);
+        ctx.textAlign = 'center';
+        ctx.strokeText(deviceName, backgroundImage.width / 2, deviceNameY);
+        ctx.fillText(deviceName, backgroundImage.width / 2, deviceNameY);
+
+        const fontSizeBottom = Math.round(backgroundImage.width * 0.05);
+        ctx.font = `bold ${fontSizeBottom}px Arial`;
+        ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        const locationY = Math.round(backgroundImage.height * 0.90);
+        ctx.strokeText(location, backgroundImage.width / 2, locationY);
+        ctx.fillText(location, backgroundImage.width / 2, locationY);
+
+        return canvas.toBuffer('image/png').toString('base64');
+    } catch (error) {
+        console.error('Lỗi xử lý canvas: ', error);
+        return null;
+    }
+}
+
+// ==========================================================
+// PHẦN 1: ROUTE TĨNH CHO WEB ADMIN (PHẢI ĐẶT LÊN TRÊN CÙNG)
+// ==========================================================
+
+// 1.1 Giao diện View danh sách chốt
+router.get('/chottuantra', async (req, res) => {
+    try {
+        let docs = await PointBaove.find().sort({ createdAt: -1 });
+        res.render('admin_baove/view_chottuantra', { data: docs });
+    } catch (error) {
+        res.status(500).send("Lỗi server");
+    }
+});
+
+// 1.2 Thêm chốt mới
+router.post('/chottuantra/them', async (req, res) => {
+    try {
+        let congviecArray = req.body.congviec.split('\n').map(item => item.trim()).filter(item => item);
+
+        let newPoint = new PointBaove({
+            khuvuc: req.body.khuvuc,
+            vitri: req.body.vitri,
+            tencv: req.body.tencv,
+            congviec: congviecArray
+        });
+
+        let savedDoc = await newPoint.save();
+        const currentId = savedDoc._id.toString();
+        let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + currentId;
+        const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
+        let base64Image = Buffer.from(response.data).toString('base64');
+
+        const tempDoc = { tencv: savedDoc.tencv, vitri: savedDoc.vitri, maqr: base64Image };
+        let maqrcochu = await generateQrWithText(tempDoc);
+
+        await PointBaove.findByIdAndUpdate(currentId, { maqr: base64Image, maqrcochu: maqrcochu });
+
+        // [FIXED] Redirect đúng full path
+        res.redirect('/api/dp3/baove/chottuantra');
+    } catch (error) {
+        console.error("Lỗi thêm chốt:", error);
+        res.status(500).send("Lỗi hệ thống");
+    }
+});
+
+// 1.3 Xóa chốt
+router.post('/chottuantra/xoa', async (req, res) => {
+    try {
+        await PointBaove.findByIdAndDelete(req.body._id);
+        // [FIXED] Redirect đúng full path
+        res.redirect('/api/dp3/baove/chottuantra');
+    } catch (error) {
+        res.status(500).send("Lỗi xóa chốt");
+    }
+});
+
+// 1.4 GET: Lịch sử tuần tra
+router.get('/lichsu', async (req, res) => {
+    try {
+        let { date, guardName } = req.query;
+        let queryCondition = {};
+
+        if (date) {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+            queryCondition.createdAt = { $gte: startOfDay,$lte: endOfDay };
+        }
+
+        if (guardName) {
+            queryCondition.guardName = { $regex: guardName,$options: 'i' };
+        }
+
+        const histories = await Patrol.find(queryCondition).sort({ createdAt: -1 });
+
+        res.render('admin_baove/view_lichsu', { 
+            data: histories, 
+            searchDate: date || '', 
+            searchName: guardName || '',
+            moment: moment 
+        });
+    } catch (error) {
+        console.error("Lỗi xem lịch sử:", error);
+        res.status(500).send("Lỗi tải lịch sử hệ thống");
+    }
+});
+
+
+// ==========================================================
+// PHẦN 2: ROUTE ĐỘNG CHO APP MOBILE (PHẢI ĐẶT DƯỚI CÙNG)
+// ==========================================================
+
+// 2.1 GET Lấy danh sách bảo vệ
 router.get('/guards', async (req, res) => {
     try {
         const guards = await Guard.find({ isActive: true }).select('-__v');
         res.status(200).json(guards);
     } catch (error) {
-        console.error("Lỗi lấy danh sách bảo vệ:", error);
         res.status(500).json({ message: "Lỗi server", error: error.message });
     }
 });
 
-// ==========================================
-// 2. POST /api/dp3/baove/patrols
-// Lưu dữ liệu ca tuần tra từ App gửi lên
-// ==========================================
+// 2.2 POST Nộp báo cáo tuần tra
 router.post('/patrols', async (req, res) => {
     try {
-        const { 
-            guardId, guardCode, guardName, selfie, 
-            startTime, endTime, totalPoints, checkpoints, createdAt 
-        } = req.body;
+        const { guardId, guardCode, guardName, selfie, startTime, endTime, totalPoints, checkpoints, createdAt } = req.body;
 
-        // Lưu trực tiếp vào MongoDB
-        // Lưu ý: Đang lưu Base64 trực tiếp. Ở bản Production thực tế, 
-        // anh nên viết thêm hàm decode Base64 thành file .jpg lưu vào ổ cứng/S3 rồi mới lưu link vào DB.
         const newPatrol = new Patrol({
-            guardId,
-            guardCode,
-            guardName,
-            selfie,
-            startTime,
-            endTime,
-            totalPoints,
-            checkpoints,
+            guardId, guardCode, guardName, selfie, startTime, endTime, totalPoints, checkpoints,
             createdAt: createdAt || new Date()
         });
 
         const savedPatrol = await newPatrol.save();
-        const baoveMailer = require('../sendmail/baove.sendmail');
-        baoveMailer.sendPatrolReport(req.body); // Gọi hàm gửi mail báo cáo
+        
+        // Gọi hàm gửi mail báo cáo
+        baoveMailer.sendPatrolReport(req.body); 
+        
         res.status(201).json({ 
             success: true, 
             message: "Đã lưu ca tuần tra thành công!",
             data: savedPatrol._id
         });
-
     } catch (error) {
         console.error("Lỗi lưu ca tuần tra:", error);
         res.status(500).json({ message: "Lỗi server khi lưu báo cáo", error: error.message });
     }
 });
 
-// ==========================================
-// 3. POST /api/dp3/baove/guards/seed (API ẨN)
-// Dùng để tạo nhanh vài dữ liệu bảo vệ mẫu (Chạy 1 lần qua Postman)
-// ==========================================
+// 2.3 POST Tạo data bảo vệ mẫu
 router.post('/guards/seed', async (req, res) => {
     try {
         const guards = [
@@ -78,118 +213,14 @@ router.post('/guards/seed', async (req, res) => {
     }
 });
 
-// --- HÀM HỖ TRỢ TẠO QR CÓ CHỮ (Anh copy nguyên hàm generateQrWithText của anh vào đây) ---
-async function generateQrWithText(doc) {
-    // ... (Giữ nguyên code canvas của anh ở phần trước) ...
-    // Trả về Base64
-}
-
-// ==========================================================
-// 1. API CHO APP MOBILE (Khi quét QR sẽ gọi API này)
-// ==========================================================
-router.get('/:id', async (req, res) => {
+// 2.4 GET Kéo thông tin chốt khi quét QR (ĐÃ ĐỔI THÀNH /chot/:id CHO AN TOÀN)
+router.get('/chot/:id', async (req, res) => {
     try {
         const chot = await PointBaove.findById(req.params.id);
         if (!chot) return res.status(404).json({ message: 'Không tìm thấy chốt' });
         res.status(200).json(chot);
     } catch (error) {
         res.status(500).json({ error: error.message });
-    }
-});
-
-// ==========================================================
-// 2. API CHO WEB ADMIN (VIEW, THÊM, SỬA, XÓA)
-// ==========================================================
-
-// Giao diện View danh sách chốt
-router.get('/chottuantra', async (req, res) => {
-    try {
-        let docs = await PointBaove.find().sort({ createdAt: -1 });
-        res.render('admin_baove/view_chottuantra', { data: docs });
-    } catch (error) {
-        res.status(500).send("Lỗi server");
-    }
-});
-
-// Thêm chốt mới
-router.post('/chottuantra/them', async (req, res) => {
-    try {
-        // Chuyển string công việc (xuống dòng) thành mảng array
-        let congviecArray = req.body.congviec.split('\n').map(item => item.trim()).filter(item => item);
-
-        let newPoint = new PointBaove({
-            khuvuc: req.body.khuvuc,
-            vitri: req.body.vitri,
-            tencv: req.body.tencv,
-            congviec: congviecArray
-        });
-
-        let savedDoc = await newPoint.save();
-
-        // Tự động sinh QR sau khi có ID
-        const currentId = savedDoc._id.toString();
-        let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + currentId;
-        const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
-        let base64Image = Buffer.from(response.data).toString('base64');
-
-        // Tạo QR có chữ
-        const tempDoc = { tencv: savedDoc.tencv, vitri: savedDoc.vitri, maqr: base64Image };
-        let maqrcochu = await generateQrWithText(tempDoc); // Anh nhớ import hàm Canvas
-
-        // Cập nhật lại vào DB
-        await PointBaove.findByIdAndUpdate(currentId, { maqr: base64Image, maqrcochu: maqrcochu });
-
-        res.redirect('/api/dp3/baove/chottuantra');
-    } catch (error) {
-        console.error("Lỗi thêm chốt:", error);
-        res.status(500).send("Lỗi hệ thống");
-    }
-});
-
-// Xóa chốt
-router.post('/chottuantra/xoa', async (req, res) => {
-    try {
-        await PointBaove.findByIdAndDelete(req.body._id);
-        res.redirect('/baove/chottuantra');
-    } catch (error) {
-        res.status(500).send("Lỗi xóa chốt");
-    }
-});
-
-// GET: Lịch sử tuần tra (Có bộ lọc)
-router.get('/lichsu', async (req, res) => {
-    try {
-        let { date, guardName } = req.query;
-        let queryCondition = {};
-
-        // Lọc theo ngày (Tìm từ 00:00:00 đến 23:59:59 của ngày được chọn)
-        if (date) {
-            const startOfDay = new Date(date);
-            startOfDay.setHours(0, 0, 0, 0);
-            
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
-
-            queryCondition.createdAt = { $gte: startOfDay, $lte: endOfDay };
-        }
-
-        // Lọc theo tên bảo vệ (Tìm gần đúng, không phân biệt hoa thường)
-        if (guardName) {
-            queryCondition.guardName = { $regex: guardName, $options: 'i' };
-        }
-
-        // Lấy danh sách, sắp xếp ca mới nhất lên đầu
-        const histories = await Patrol.find(queryCondition).sort({ createdAt: -1 });
-
-        res.render('admin_baove/view_lichsu', { 
-            data: histories, 
-            searchDate: date || '', 
-            searchName: guardName || '',
-            moment: require('moment') // Truyền thư viện moment ra view để format giờ
-        });
-    } catch (error) {
-        console.error("Lỗi xem lịch sử:", error);
-        res.status(500).send("Lỗi tải lịch sử hệ thống");
     }
 });
 
