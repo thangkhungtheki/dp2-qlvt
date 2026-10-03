@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản Lý Chốt Tuần Tra</title>
+    <!-- Thêm Bootstrap 4/5 tùy hệ thống anh đang dùng -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container-fluid mt-4">
+    <h2 class="text-primary mb-4">🛡️ QUẢN LÝ CHỐT TUẦN TRA (BẢO VỆ)</h2>
+    
+    <!-- Nút mở Modal thêm chốt -->
+    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addPointModal">
+        + Thêm Chốt Tuần Tra Mới
+    </button>
+
+    <!-- Bảng danh sách chốt -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>STT</th>
+                <th>Tên Chốt</th>
+                <th>Khu Vực</th>
+                <th>Vị Trí</th>
+                <th>Checklist Công Việc</th>
+                <th>QR Code</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach(function(item, index) { %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td class="font-weight-bold"><%= item.tencv %></td>
+                <td><%= item.khuvuc %></td>
+                <td><%= item.vitri %></td>
+                <td>
+                    <ul class="pl-3 mb-0">
+                        <% item.congviec.forEach(function(cv) { %>
+                            <li><%= cv %></li>
+                        <% }) %>
+                    </ul>
+                </td>
+                <td class="text-center">
+                    <% if(item.maqrcochu) { %>
+                        <img src="data:image/png;base64,<%= item.maqrcochu %>" width="100" alt="QR">
+                        <br>
+                        <a href="data:image/png;base64,<%= item.maqrcochu %>" download="<%= item.tencv %>.png" class="badge badge-primary mt-1">Tải ảnh in</a>
+                    <% } else { %>
+                        <span class="text-muted">Chưa có QR</span>
+                    <% } %>
+                </td>
+                <td>
+                    <!-- Nút Xóa (Dùng form post) -->
+                    <form action="/baove/chottuantra/xoa" method="POST" onsubmit="return confirm('Anh có chắc muốn xóa chốt này?');">
+                        <input type="hidden" name="_id" value="<%= item._id %>">
+                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Thêm Chốt Mới -->
+<div class="modal fade" id="addPointModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/baove/chottuantra/them" method="POST">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Tạo Chốt Tuần Tra Mới</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên Chốt (VD: Chốt Sảnh Lễ Tân):</label>
+                        <input type="text" name="tencv" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Khu Vực (VD: Tầng Trệt):</label>
+                        <input type="text" name="khuvuc" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Vị Trí (VD: Cửa chính):</label>
+                        <input type="text" name="vitri" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Danh sách Checklist cần kiểm tra:</label>
+                        <!-- Textarea, mỗi công việc enter xuống dòng -->
+                        <textarea name="congviec" class="form-control" rows="4" placeholder="Kiểm tra hệ thống đèn&#10;Kiểm tra khóa cửa an toàn&#10;Ghi nhận bình cứu hỏa" required></textarea>
+                        <small class="text-danger">* Mỗi công việc <b>ENTER</b> xuống 1 dòng.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu & Sinh Mã QR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

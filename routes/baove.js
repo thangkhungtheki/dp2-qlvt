@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Guard = require('../model/Guard');
 const Patrol = require('../model/Patrol');
+var axios = require('axios');
+var PointBaove = require('../model/PointBaove');
 
 // ==========================================
 // 1. GET /api/dp3/baove/guards
@@ -44,7 +46,8 @@ router.post('/patrols', async (req, res) => {
         });
 
         const savedPatrol = await newPatrol.save();
-
+        const baoveMailer = require('../sendmail/baove.sendmail');
+        baoveMailer.sendPatrolReport(req.body); // Gọi hàm gửi mail báo cáo
         res.status(201).json({ 
             success: true, 
             message: "Đã lưu ca tuần tra thành công!",
@@ -72,6 +75,84 @@ router.post('/guards/seed', async (req, res) => {
         res.json({ message: "Đã tạo dữ liệu bảo vệ mẫu thành công!" });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// --- HÀM HỖ TRỢ TẠO QR CÓ CHỮ (Anh copy nguyên hàm generateQrWithText của anh vào đây) ---
+async function generateQrWithText(doc) {
+    // ... (Giữ nguyên code canvas của anh ở phần trước) ...
+    // Trả về Base64
+}
+
+// ==========================================================
+// 1. API CHO APP MOBILE (Khi quét QR sẽ gọi API này)
+// ==========================================================
+router.get('/api/dp3/baove/chot/:id', async (req, res) => {
+    try {
+        const chot = await PointBaove.findById(req.params.id);
+        if (!chot) return res.status(404).json({ message: 'Không tìm thấy chốt' });
+        res.status(200).json(chot);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ==========================================================
+// 2. API CHO WEB ADMIN (VIEW, THÊM, SỬA, XÓA)
+// ==========================================================
+
+// Giao diện View danh sách chốt
+router.get('/baove/chottuantra', async (req, res) => {
+    try {
+        let docs = await PointBaove.find().sort({ createdAt: -1 });
+        res.render('admin_baove/view_chottuantra', { data: docs });
+    } catch (error) {
+        res.status(500).send("Lỗi server");
+    }
+});
+
+// Thêm chốt mới
+router.post('/baove/chottuantra/them', async (req, res) => {
+    try {
+        // Chuyển string công việc (xuống dòng) thành mảng array
+        let congviecArray = req.body.congviec.split('\n').map(item => item.trim()).filter(item => item);
+
+        let newPoint = new PointBaove({
+            khuvuc: req.body.khuvuc,
+            vitri: req.body.vitri,
+            tencv: req.body.tencv,
+            congviec: congviecArray
+        });
+
+        let savedDoc = await newPoint.save();
+
+        // Tự động sinh QR sau khi có ID
+        const currentId = savedDoc._id.toString();
+        let qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + currentId;
+        const response = await axios.get(qrCodeUrl, { responseType: 'arraybuffer' });
+        let base64Image = Buffer.from(response.data).toString('base64');
+
+        // Tạo QR có chữ
+        const tempDoc = { tencv: savedDoc.tencv, vitri: savedDoc.vitri, maqr: base64Image };
+        let maqrcochu = await generateQrWithText(tempDoc); // Anh nhớ import hàm Canvas
+
+        // Cập nhật lại vào DB
+        await PointBaove.findByIdAndUpdate(currentId, { maqr: base64Image, maqrcochu: maqrcochu });
+
+        res.redirect('/baove/chottuantra');
+    } catch (error) {
+        console.error("Lỗi thêm chốt:", error);
+        res.status(500).send("Lỗi hệ thống");
+    }
+});
+
+// Xóa chốt
+router.post('/baove/chottuantra/xoa', async (req, res) => {
+    try {
+        await PointBaove.findByIdAndDelete(req.body._id);
+        res.redirect('/baove/chottuantra');
+    } catch (error) {
+        res.status(500).send("Lỗi xóa chốt");
     }
 });
 
