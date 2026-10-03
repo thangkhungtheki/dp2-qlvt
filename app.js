@@ -40,6 +40,9 @@ mongoose.connect(process.env.DATABASE_URL);
 
 // mongoose.connect(process.env.DATABASE_URL, mongooseOptions);
 
+// Kích hoạt Router API Bảo Vệ
+const baoveRoutes = require('./routes/baove');
+app.use('/api/dp3/baove', baoveRoutes);
 
 require('./config/passport'); //vượt qua passport để config trang đăng nhâp/đăng ký
 
