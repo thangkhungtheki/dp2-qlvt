@@ -29,13 +29,13 @@ async function sendPatrolReport(patrolData) {
             }
 
             // Xử lý ảnh minh họa của chốt (Gắn Base64 vào file đính kèm dạng cid)
-            // FIX: Giảm max-width từ 150px xuống 90px
             let imageHtml = '';
             if (p.anhthuchien && p.anhthuchien.length > 0) {
                 imageHtml = '<div style="margin-top:5px;">';
                 p.anhthuchien.forEach((imgBase64, imgIdx) => {
                     let cid = `point_${index}_img_${imgIdx}@baove`;
-                    imageHtml += `<img src="cid:${cid}" style="max-width:90px; margin-right:5px; border-radius:4px; border:1px solid #ddd;">`;
+                    // Ép cứng width="90" trực tiếp để Outlook không phóng to
+                    imageHtml += `<img src="cid:${cid}" width="90" style="width:90px; max-width:90px; margin-right:5px; border-radius:4px; border:1px solid #ddd; display:inline-block;">`;
                     attachments.push({
                         filename: `chot_${index}_anh_${imgIdx}.jpg`,
                         path: imgBase64,
@@ -58,11 +58,12 @@ async function sendPatrolReport(patrolData) {
         }).join('');
 
         // 2. Xử lý ảnh Selfie nhận ca
-        // FIX: Giảm kích thước avatar từ 120px xuống 80px
+        // 2. Xử lý ảnh Selfie nhận ca
         let selfieHtml = '';
         if (patrolData.selfie) {
             attachments.push({ filename: 'selfie.jpg', path: patrolData.selfie, cid: 'selfie_guard' });
-            selfieHtml = `<img src="cid:selfie_guard" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #2563eb;">`;
+            // Ép cứng width="80" height="80"
+            selfieHtml = `<img src="cid:selfie_guard" width="80" height="80" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #2563eb; display:block;">`;
         }
 
         // 3. Khung HTML Tổng
