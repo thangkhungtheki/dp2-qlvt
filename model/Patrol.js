@@ -3,14 +3,17 @@ const mongoose = require('mongoose');
 const checkpointSchema = new mongoose.Schema({
     qrCode: { type: String },
     checkpointName: { type: String },
-    image: { type: String }, // Lưu chuỗi Base64 hoặc đường dẫn ảnh
+    
+    // ĐỔI TÊN thành anhthuchien và khai báo dạng mảng chứa chuỗi (Array of Strings)
+    anhthuchien: [{ type: String }], 
+    
     time: { type: String },
     comment: { type: String, default: "" },
     timestamp: { type: Date }
 });
 
 const patrolSchema = new mongoose.Schema({
-    guardId: { type: String }, // Có thể đổi thành mongoose.Schema.Types.ObjectId nếu cần
+    guardId: { type: String },
     guardCode: { type: String, required: true },
     guardName: { type: String, required: true },
     selfie: { type: String },  // Ảnh nhận ca
