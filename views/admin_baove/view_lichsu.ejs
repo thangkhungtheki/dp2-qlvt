@@ -7,6 +7,17 @@
     <style>
         .selfie-img { width: 45px; height: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #2563eb; }
         .details-box { background-color: #f8fafc; border-radius: 6px; padding: 15px; margin-top: 10px; display: none; }
+        /* Thêm style cho ảnh thu nhỏ ở chốt */
+        .patrol-thumb { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            border: 1px solid #cbd5e1; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+        }
+        .patrol-thumb:hover { transform: scale(1.1); border-color: #2563eb; }
     </style>
 </head>
 <body>
@@ -23,7 +34,7 @@
                 <label class="font-weight-bold mr-2">👤 Tên Bảo Vệ:</label>
                 <input type="text" name="guardName" class="form-control mr-4" placeholder="Nhập tên..." value="<%= searchName %>">
                 
-               <button type="submit" class="btn btn-primary px-4 font-weight-bold">🔍 Tìm Kiếm</button>
+                <button type="submit" class="btn btn-primary px-4 font-weight-bold">🔍 Tìm Kiếm</button>
                 <a href="/api/dp3/baove/lichsu" class="btn btn-secondary ml-2 font-weight-bold">Làm mới</a>
                 
                 <!-- Menu điều hướng ngang -->
@@ -60,7 +71,8 @@
             <tr>
                 <td class="align-middle"><%= index + 1 %></td>
                 <td class="align-middle text-center">
-                    <img src="<%= item.selfie %>" class="selfie-img" alt="Selfie">
+                    <!-- Ảnh Selfie cũng có thể click để xem to -->
+                    <img src="<%= item.selfie %>" class="selfie-img" style="cursor: pointer;" alt="Selfie" onclick="showImageModal('<%= item.selfie %>')">
                 </td>
                 <td class="align-middle font-weight-bold text-primary"><%= item.guardName %> <br> <small class="text-muted"><%= item.guardCode %></small></td>
                 <td class="align-middle text-success font-weight-bold"><%= item.startTime %></td>
@@ -74,10 +86,10 @@
                 </td>
             </tr>
             
-            <!-- Vùng hiển thị chi tiết (Ẩn mặc định, bấm nút sẽ xổ ra ngay dưới dòng) -->
+            <!-- Vùng hiển thị chi tiết -->
             <tr id="details_<%= item._id %>" style="display:none; background-color:#f8fafc;">
                 <td colspan="8">
-                    <div class="row px-3">
+                    <div class="row px-3 pt-2">
                         <% item.checkpoints.forEach(function(point) { %>
                             <div class="col-md-4 mb-3">
                                 <div class="card h-100 shadow-sm border-left-primary">
@@ -85,13 +97,25 @@
                                         <b class="text-dark">📍 <%= point.checkpointName %></b> <span class="float-right text-muted"><%= point.time %></span>
                                         <p class="mb-1 text-danger small"><%= point.comment ? 'Ghi chú: ' + point.comment : '' %></p>
                                         <hr class="my-1">
-                                        <ul class="pl-3 mb-0" style="font-size:12px;">
+                                        
+                                        <!-- Danh sách công việc -->
+                                        <ul class="pl-3 mb-2" style="font-size:12px;">
                                             <% if(point.congviec) { %>
                                                 <% point.congviec.forEach(function(cv) { %>
                                                     <li><%= cv.isDone ? '✅' : '⬛' %> <%= cv.name %></li>
                                                 <% }) %>
                                             <% } %>
                                         </ul>
+
+                                        <!-- Render Hình ảnh tuần tra tại chốt -->
+                                        <% if(point.anhthuchien && point.anhthuchien.length > 0) { %>
+                                            <div class="mt-2 pt-2 border-top">
+                                                <% point.anhthuchien.forEach(function(imgBase64) { %>
+                                                    <img src="<%= imgBase64 %>" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgBase64 %>')" title="Click để phóng to">
+                                                <% }) %>
+                                            </div>
+                                        <% } %>
+
                                     </div>
                                 </div>
                             </div>
@@ -104,8 +128,28 @@
     </table>
 </div>
 
+<!-- Modal để hiển thị ảnh phóng to -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center pt-0 pb-3">
+                <img id="enlargedImg" src="" class="img-fluid rounded shadow-sm" style="max-height: 80vh;" alt="Ảnh Tuần Tra Phóng To">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script cần thiết cho Modal Bootstrap hoạt động -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // Hàm bật/tắt hiển thị hành trình chi tiết của ca trực
+    // Hàm bật/tắt hiển thị hành trình
     function toggleDetails(rowId) {
         var row = document.getElementById(rowId);
         if (row.style.display === "none") {
@@ -113,6 +157,12 @@
         } else {
             row.style.display = "none";
         }
+    }
+
+    // Hàm gắn link ảnh vào Modal và hiển thị Modal
+    function showImageModal(imgSrc) {
+        document.getElementById('enlargedImg').src = imgSrc;
+        $('#imageModal').modal('show');
     }
 </script>
 </body>
