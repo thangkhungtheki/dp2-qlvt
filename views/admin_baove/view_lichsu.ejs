@@ -16,15 +16,23 @@
     <!-- THANH TÌM KIẾM THEO NGÀY & TÊN -->
     <div class="card mb-4 shadow-sm">
         <div class="card-body bg-light">
-            <form action="/baove/lichsu" method="GET" class="form-inline">
+            <form action="/api/dp3/baove/lichsu" method="GET" class="form-inline">
                 <label class="font-weight-bold mr-2">📅 Chọn Ngày:</label>
                 <input type="date" name="date" class="form-control mr-4" value="<%= searchDate %>">
                 
                 <label class="font-weight-bold mr-2">👤 Tên Bảo Vệ:</label>
                 <input type="text" name="guardName" class="form-control mr-4" placeholder="Nhập tên..." value="<%= searchName %>">
                 
-                <button type="submit" class="btn btn-primary px-4">🔍 Tìm Kiếm</button>
-                <a href="/baove/lichsu" class="btn btn-secondary ml-2">Làm mới</a>
+               <button type="submit" class="btn btn-primary px-4 font-weight-bold">🔍 Tìm Kiếm</button>
+                <a href="/api/dp3/baove/lichsu" class="btn btn-secondary ml-2 font-weight-bold">Làm mới</a>
+                
+                <!-- Menu điều hướng ngang -->
+                <a href="/api/dp3/baove/chottuantra" class="btn btn-warning ml-3 font-weight-bold">
+                    📍 Quản Lý Chốt
+                </a>
+                <a href="/api/dp3/baove/nhanvien" class="btn btn-success ml-2 font-weight-bold">
+                    👮 Quản Lý Nhân Viên
+                </a>
             </form>
         </div>
     </div>

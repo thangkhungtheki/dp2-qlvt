@@ -10,10 +10,20 @@
 <div class="container-fluid mt-4">
     <h2 class="text-primary mb-4">🛡️ QUẢN LÝ CHỐT TUẦN TRA (BẢO VỆ)</h2>
     
-    <!-- Nút mở Modal thêm chốt -->
-    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addPointModal">
-        + Thêm Chốt Tuần Tra Mới
-    </button>
+    <!-- Cụm Nút chức năng -->
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-success font-weight-bold" data-toggle="modal" data-target="#addPointModal">
+            + Thêm Chốt Tuần Tra Mới
+        </button>
+        <div>
+            <a href="/api/dp3/baove/nhanvien" class="btn btn-primary mr-2 font-weight-bold">
+                👮 Quản Lý Nhân Viên
+            </a>
+            <a href="/api/dp3/baove/lichsu" class="btn btn-info font-weight-bold">
+                📜 Xem Lịch Sử Ca Trực
+            </a>
+        </div>
+    </div>
 
     <!-- Bảng danh sách chốt -->
     <table class="table table-bordered table-striped">
@@ -46,19 +56,65 @@
                     <% if(item.maqrcochu) { %>
                         <img src="data:image/png;base64,<%= item.maqrcochu %>" width="100" alt="QR">
                         <br>
-                        <a href="data:image/png;base64,<%= item.maqrcochu %>" download="<%= item.tencv %>.png" class="badge badge-primary mt-1">Tải ảnh in</a>
+                        <a href="data:image/png;base64,<%= item.maqrcochu %>" download="<%= item.tencv %>.png" class="badge badge-primary mt-1 p-2">Tải ảnh in</a>
                     <% } else { %>
                         <span class="text-muted">Chưa có QR</span>
                     <% } %>
                 </td>
                 <td>
-                    <!-- Nút Xóa (Dùng form post) -->
-                    <form action="/baove/chottuantra/xoa" method="POST" onsubmit="return confirm('Anh có chắc muốn xóa chốt này?');">
-                        <input type="hidden" name="_id" value="<%= item._id %>">
-                        <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-                    </form>
+                    <div class="d-flex flex-column align-items-center">
+                        <!-- Nút Sửa -->
+                        <button class="btn btn-sm btn-warning mb-2 w-100 font-weight-bold" data-toggle="modal" data-target="#editPointModal_<%= item._id %>">Sửa</button>
+                        
+                        <!-- Nút Xóa (Dùng form post) -->
+                        <form action="/api/dp3/baove/chottuantra/xoa" method="POST" onsubmit="return confirm('Anh có chắc muốn xóa chốt này?');" class="w-100">
+                            <input type="hidden" name="_id" value="<%= item._id %>">
+                            <button type="submit" class="btn btn-sm btn-danger w-100">Xóa</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
+
+            <!-- Modal Sửa Chốt (Nằm lồng trong vòng lặp để lấy đúng data từng item) -->
+            <div class="modal fade" id="editPointModal_<%= item._id %>" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="/api/dp3/baove/chottuantra/sua" method="POST">
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title font-weight-bold">Sửa Chốt Tuần Tra</h5>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="_id" value="<%= item._id %>">
+                                
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Tên Chốt:</label>
+                                    <input type="text" name="tencv" class="form-control" value="<%= item.tencv %>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Khu Vực:</label>
+                                    <input type="text" name="khuvuc" class="form-control" value="<%= item.khuvuc %>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Vị Trí:</label>
+                                    <input type="text" name="vitri" class="form-control" value="<%= item.vitri %>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Danh sách Checklist cần kiểm tra:</label>
+                                    <textarea name="congviec" class="form-control" rows="5" required><%= item.congviec.join('\n') %></textarea>
+                                    <small class="text-danger">* Mỗi công việc <b>ENTER</b> xuống 1 dòng.</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-warning font-weight-bold">Cập Nhật</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Kết thúc Modal Sửa -->
+
             <% }) %>
         </tbody>
     </table>
@@ -68,34 +124,33 @@
 <div class="modal fade" id="addPointModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="/baove/chottuantra/them" method="POST">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Tạo Chốt Tuần Tra Mới</h5>
+            <form action="/api/dp3/baove/chottuantra/them" method="POST">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title font-weight-bold">Tạo Chốt Tuần Tra Mới</h5>
                     <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên Chốt (VD: Chốt Sảnh Lễ Tân):</label>
+                        <label class="font-weight-bold">Tên Chốt (VD: Chốt Sảnh Lễ Tân):</label>
                         <input type="text" name="tencv" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Khu Vực (VD: Tầng Trệt):</label>
+                        <label class="font-weight-bold">Khu Vực (VD: Tầng Trệt):</label>
                         <input type="text" name="khuvuc" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Vị Trí (VD: Cửa chính):</label>
+                        <label class="font-weight-bold">Vị Trí (VD: Cửa chính):</label>
                         <input type="text" name="vitri" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Danh sách Checklist cần kiểm tra:</label>
-                        <!-- Textarea, mỗi công việc enter xuống dòng -->
+                        <label class="font-weight-bold">Danh sách Checklist cần kiểm tra:</label>
                         <textarea name="congviec" class="form-control" rows="4" placeholder="Kiểm tra hệ thống đèn&#10;Kiểm tra khóa cửa an toàn&#10;Ghi nhận bình cứu hỏa" required></textarea>
                         <small class="text-danger">* Mỗi công việc <b>ENTER</b> xuống 1 dòng.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Lưu & Sinh Mã QR</button>
+                    <button type="submit" class="btn btn-success font-weight-bold">Lưu & Sinh Mã QR</button>
                 </div>
             </form>
         </div>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Nhân Viên Bảo Vệ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container-fluid mt-4">
+    <h2 class="text-success mb-4">👮 QUẢN LÝ NHÂN VIÊN BẢO VỆ</h2>
+    
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-success" data-toggle="modal" data-target="#addGuardModal">
+            + Thêm Nhân Viên Mới
+        </button>
+        <div>
+            <a href="/api/dp3/baove/chottuantra" class="btn btn-primary mr-2">📍 Đi tới Quản lý Chốt</a>
+            <a href="/api/dp3/baove/lichsu" class="btn btn-info">📜 Xem Lịch Sử</a>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách nhân viên -->
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>STT</th>
+                <th>Mã NV</th>
+                <th>Họ và Tên</th>
+                <th>Chức Vụ</th>
+                <th>Trạng Thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach(function(item, index) { %>
+            <tr>
+                <td class="align-middle"><%= index + 1 %></td>
+                <td class="align-middle font-weight-bold"><%= item.code %></td>
+                <td class="align-middle text-primary font-weight-bold"><%= item.name %></td>
+                <td class="align-middle"><%= item.role %></td>
+                <td class="align-middle">
+                    <span class="badge <%= item.isActive ? 'badge-success' : 'badge-secondary' %> p-2">
+                        <%= item.isActive ? 'Đang làm việc' : 'Đã nghỉ' %>
+                    </span>
+                </td>
+                <td class="align-middle text-center">
+                    <form action="/api/dp3/baove/nhanvien/xoa" method="POST" onsubmit="return confirm('Xóa nhân viên này khỏi danh sách trực?');">
+                        <input type="hidden" name="_id" value="<%= item._id %>">
+                        <button type="submit" class="btn btn-sm btn-danger font-weight-bold">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Thêm Nhân Viên Mới -->
+<div class="modal fade" id="addGuardModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/api/dp3/baove/nhanvien/them" method="POST">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title font-weight-bold">Thêm Nhân Viên Bảo Vệ</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Mã Nhân Viên (Bắt buộc, không trùng):</label>
+                        <input type="text" name="code" class="form-control" placeholder="VD: BV-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Họ và Tên:</label>
+                        <input type="text" name="name" class="form-control" placeholder="Nguyễn Văn A" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-bold">Chức vụ / Ca trực:</label>
+                        <input type="text" name="role" class="form-control" placeholder="VD: Ca Sáng / Ca Đêm / Đội trưởng" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success font-weight-bold">Lưu Nhân Viên</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

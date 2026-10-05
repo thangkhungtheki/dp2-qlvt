@@ -17,7 +17,7 @@ async function generateQrWithText(doc) {
         if (!doc || !doc.maqr) return null;
 
         // Lưu ý: Đảm bảo đường dẫn tới ảnh nền default-background-1.png là chính xác
-        const defaultImagePath = path.join(__dirname, '../img', 'default-background-1.png');
+        const defaultImagePath = path.join(__dirname, './img', 'default-background-1.png');
         let backgroundImage;
         try {
             backgroundImage = await loadImage(defaultImagePath);
@@ -124,7 +124,85 @@ router.post('/chottuantra/xoa', async (req, res) => {
         res.status(500).send("Lỗi xóa chốt");
     }
 });
+// Bổ sung API Sửa chốt trong routes/baove.js
+router.post('/chottuantra/sua', async (req, res) => {
+    try {
+        let congviecArray = req.body.congviec.split('\n').map(item => item.trim()).filter(item => item);
+        const currentId = req.body._id;
 
+        // Lấy thông tin chốt hiện tại
+        const currentPoint = await PointBaove.findById(currentId);
+
+        if (!currentPoint) {
+            return res.status(404).send("Không tìm thấy chốt.");
+        }
+
+        // Cập nhật thông tin cơ bản
+        const updateData = {
+            khuvuc: req.body.khuvuc,
+            vitri: req.body.vitri,
+            tencv: req.body.tencv,
+            congviec: congviecArray
+        };
+
+        // Kiểm tra xem tên hoặc vị trí có thay đổi không, nếu có thì cần tạo lại QR có chữ
+        if (currentPoint.tencv !== req.body.tencv || currentPoint.vitri !== req.body.vitri) {
+            const tempDoc = { 
+                tencv: req.body.tencv, 
+                vitri: req.body.vitri, 
+                maqr: currentPoint.maqr // Dùng lại mã QR gốc
+            };
+            updateData.maqrcochu = await generateQrWithText(tempDoc);
+        }
+
+        await PointBaove.findByIdAndUpdate(currentId, updateData);
+
+        res.redirect('/api/dp3/baove/chottuantra');
+    } catch (error) {
+        console.error("Lỗi sửa chốt:", error);
+        res.status(500).send("Lỗi hệ thống khi sửa chốt.");
+    }
+});
+// ==========================================================
+// QUẢN LÝ NHÂN VIÊN BẢO VỆ (WEB ADMIN)
+// ==========================================================
+
+// Giao diện danh sách nhân viên
+router.get('/nhanvien', async (req, res) => {
+    try {
+        let guards = await Guard.find().sort({ createdAt: -1 });
+        res.render('admin_baove/view_nhanvien', { data: guards });
+    } catch (error) {
+        res.status(500).send("Lỗi tải danh sách nhân viên");
+    }
+});
+
+// Thêm nhân viên mới
+router.post('/nhanvien/them', async (req, res) => {
+    try {
+        const newGuard = new Guard({
+            code: req.body.code,
+            name: req.body.name,
+            role: req.body.role || 'Bảo vệ',
+            isActive: true
+        });
+        await newGuard.save();
+        res.redirect('/api/dp3/baove/nhanvien');
+    } catch (error) {
+        console.error("Lỗi thêm nhân viên:", error);
+        res.status(500).send("Lỗi thêm nhân viên (Có thể trùng mã nhân viên)");
+    }
+});
+
+// Xóa nhân viên
+router.post('/nhanvien/xoa', async (req, res) => {
+    try {
+        await Guard.findByIdAndDelete(req.body._id);
+        res.redirect('/api/dp3/baove/nhanvien');
+    } catch (error) {
+        res.status(500).send("Lỗi xóa nhân viên");
+    }
+});
 // 1.4 GET: Lịch sử tuần tra
 router.get('/lichsu', async (req, res) => {
     try {
