@@ -108,11 +108,26 @@
                                         </ul>
 
                                         <!-- Render Hình ảnh tuần tra tại chốt -->
-                                        <% if(point.anhthuchien && point.anhthuchien.length > 0) { %>
+                                        <% 
+                                            // Tự động tìm mảng ảnh dù anh đặt tên biến là gì trong DB
+                                            let pImages = point.anhthuchien || point.images || point.image || point.anh || point.anhChot || [];
+                                        %>
+                                        
+                                        <% if(pImages && pImages.length > 0) { %>
                                             <div class="mt-2 pt-2 border-top">
-                                                <% point.anhthuchien.forEach(function(imgBase64) { %>
-                                                    <img src="<%= imgBase64 %>" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgBase64 %>')" title="Click để phóng to">
+                                                <% pImages.forEach(function(img) { 
+                                                    // Đảm bảo ảnh base64 luôn có đúng tiền tố để hiển thị được trên web
+                                                    let imgSrc = (img.startsWith('data:image') || img.startsWith('http')) ? img : 'data:image/jpeg;base64,' + img;
+                                                %>
+                                                    <img src="<%= imgSrc %>" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgSrc %>')" title="Click để phóng to">
                                                 <% }) %>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="mt-2 pt-1 small text-secondary">
+                                                <i>(Không tìm thấy ảnh tuần tra)</i>
+                                                <br>
+                                                <!-- Dòng này giúp anh xem DB đang trả ra các trường dữ liệu tên là gì để sửa lại cho đúng -->
+                                                <span style="font-size: 10px; color: #ccc;">[Debug Keys: <%= Object.keys(point).join(', ') %>]</span>
                                             </div>
                                         <% } %>
 
