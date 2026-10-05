@@ -29,12 +29,13 @@ async function sendPatrolReport(patrolData) {
             }
 
             // Xử lý ảnh minh họa của chốt (Gắn Base64 vào file đính kèm dạng cid)
+            // FIX: Giảm max-width từ 150px xuống 90px
             let imageHtml = '';
             if (p.anhthuchien && p.anhthuchien.length > 0) {
                 imageHtml = '<div style="margin-top:5px;">';
                 p.anhthuchien.forEach((imgBase64, imgIdx) => {
                     let cid = `point_${index}_img_${imgIdx}@baove`;
-                    imageHtml += `<img src="cid:${cid}" style="max-width:150px; margin-right:5px; border-radius:4px; border:1px solid #ddd;">`;
+                    imageHtml += `<img src="cid:${cid}" style="max-width:90px; margin-right:5px; border-radius:4px; border:1px solid #ddd;">`;
                     attachments.push({
                         filename: `chot_${index}_anh_${imgIdx}.jpg`,
                         path: imgBase64,
@@ -57,10 +58,11 @@ async function sendPatrolReport(patrolData) {
         }).join('');
 
         // 2. Xử lý ảnh Selfie nhận ca
+        // FIX: Giảm kích thước avatar từ 120px xuống 80px
         let selfieHtml = '';
         if (patrolData.selfie) {
             attachments.push({ filename: 'selfie.jpg', path: patrolData.selfie, cid: 'selfie_guard' });
-            selfieHtml = `<img src="cid:selfie_guard" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid #2563eb;">`;
+            selfieHtml = `<img src="cid:selfie_guard" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #2563eb;">`;
         }
 
         // 3. Khung HTML Tổng
@@ -70,7 +72,7 @@ async function sendPatrolReport(patrolData) {
                 
                 <table style="width:100%; margin-bottom:20px;">
                     <tr>
-                        <td style="width:150px; text-align:center;">${selfieHtml}</td>
+                        <td style="width:100px; text-align:center; padding-right:15px;">${selfieHtml}</td>
                         <td style="line-height:1.6;">
                             <p><b>Nhân viên trực:</b> <span style="color:#2563eb; font-size:16px;">${patrolData.guardName} (${patrolData.guardCode})</span></p>
                             <p><b>Thời gian tuần tra:</b> ${patrolData.startTime} - ${patrolData.endTime}</p>
@@ -90,9 +92,9 @@ async function sendPatrolReport(patrolData) {
 
         // 2. Cấu hình người gửi và người nhận
         var mailOptions = {
-            from: `"An Ninh DP2" <${process.env.BaoveFrom}>`, // Tên hiển thị người gửi
-            to: process.env.BaoveEmailTo,                     // Gửi đến (To)
-            cc: process.env.BaoveEmailCC,                     // Đồng kính gửi (CC)
+            from: `"Bảo Vệ DP3" <${process.env.BaoveFrom}>`, // Tên hiển thị người gửi
+            to: process.env.BaoveEmailTo,                    // Gửi đến (To)
+            cc: process.env.BaoveEmailCC,                    // Đồng kính gửi (CC)
             subject: `[BÁO CÁO TUẦN TRA] Ca trực của ${patrolData.guardName} - Ngày ${timeNow}`,
             html: htmlContent,
             attachments: attachments
