@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Lịch Sử Tuần Tra An Ninh</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
-        .selfie-img { width: 45px; height: 45px; object-fit: cover; border-radius: 50%; border: 2px solid #2563eb; }
-        .details-box { background-color: #f8fafc; border-radius: 6px; padding: 15px; margin-top: 10px; display: none; }
-        /* Thêm style cho ảnh thu nhỏ ở chốt */
+        .selfie-img { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; border: 2px solid #2563eb; cursor: pointer; }
         .patrol-thumb { 
-            width: 60px; 
-            height: 60px; 
+            width: 58px; 
+            height: 58px; 
             object-fit: cover; 
             border-radius: 4px; 
             border: 1px solid #cbd5e1; 
             cursor: pointer; 
-            transition: transform 0.2s;
+            transition: transform 0.15s;
         }
         .patrol-thumb:hover { transform: scale(1.1); border-color: #2563eb; }
+        .card-abnormal { border: 1px solid #fca5a5 !important; background-color: #fef2f2; }
     </style>
 </head>
 <body>
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 mb-5">
     <h2 class="text-primary mb-4">📜 LỊCH SỬ TUẦN TRA AN NINH</h2>
     
     <!-- THANH TÌM KIẾM THEO NGÀY & TÊN -->
@@ -38,7 +37,7 @@
                 <a href="/api/dp3/baove/lichsu" class="btn btn-secondary ml-2 font-weight-bold">Làm mới</a>
                 
                 <!-- Menu điều hướng ngang -->
-                <a href="/api/dp3/baove/chottuantra" class="btn btn-warning ml-3 font-weight-bold">
+                <a href="/api/dp3/baove/chottuantra" class="btn btn-warning ml-auto font-weight-bold">
                     📍 Quản Lý Chốt
                 </a>
                 <a href="/api/dp3/baove/nhanvien" class="btn btn-success ml-2 font-weight-bold">
@@ -52,85 +51,110 @@
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
-                <th>STT</th>
-                <th>Ảnh Nhận Ca</th>
+                <th style="width: 50px;">STT</th>
+                <th style="width: 90px;" class="text-center">Ảnh Ca</th>
                 <th>Người Tuần Tra</th>
                 <th>Giờ Bắt Đầu</th>
                 <th>Giờ Kết Thúc</th>
-                <th>Số Chốt Quét</th>
+                <th>Tổng Quan Chốt</th>
                 <th>Ngày Ghi Nhận</th>
-                <th>Chi Tiết</th>
+                <th style="width: 150px;" class="text-center">Chi Tiết</th>
             </tr>
         </thead>
         <tbody>
-            <% if(data.length === 0) { %>
+            <% if(!data || data.length === 0) { %>
                 <tr><td colspan="8" class="text-center text-danger font-weight-bold">Không tìm thấy ca trực nào phù hợp.</td></tr>
             <% } %>
 
-            <% data.forEach(function(item, index) { %>
+            <% data.forEach(function(item, index) { 
+                let checkpoints = item.checkpoints || [];
+                let abnormalCount = checkpoints.filter(function(cp) { return cp.comment && cp.comment.trim() !== ''; }).length;
+                let selfieSrc = '';
+                if (item.selfie) {
+                    selfieSrc = (item.selfie.startsWith('data:image') || item.selfie.startsWith('http')) ? item.selfie : 'data:image/jpeg;base64,' + item.selfie;
+                }
+            %>
             <tr>
-                <td class="align-middle"><%= index + 1 %></td>
+                <td class="align-middle text-center"><%= index + 1 %></td>
                 <td class="align-middle text-center">
-                    <!-- Ảnh Selfie cũng có thể click để xem to -->
-                    <img src="<%= item.selfie %>" class="selfie-img" style="cursor: pointer;" alt="Selfie" onclick="showImageModal('<%= item.selfie %>')">
+                    <% if(selfieSrc) { %>
+                        <img src="<%= selfieSrc %>" loading="lazy" class="selfie-img" alt="Selfie" onclick="showImageModal('<%= selfieSrc %>')">
+                    <% } else { %>
+                        <span class="text-muted small">Không ảnh</span>
+                    <% } %>
                 </td>
-                <td class="align-middle font-weight-bold text-primary"><%= item.guardName %> <br> <small class="text-muted"><%= item.guardCode %></small></td>
+                <td class="align-middle font-weight-bold text-primary">
+                    <%= item.guardName %> <br> 
+                    <small class="text-muted"><%= item.guardCode %></small>
+                </td>
                 <td class="align-middle text-success font-weight-bold"><%= item.startTime %></td>
                 <td class="align-middle text-danger font-weight-bold"><%= item.endTime %></td>
                 <td class="align-middle">
-                    <span class="badge badge-info" style="font-size:14px;"><%= item.totalPoints %> chốt</span>
+                    <span class="badge badge-info p-2" style="font-size:13px;"><%= item.totalPoints || checkpoints.length %> chốt</span>
+                    <% if(abnormalCount > 0) { %>
+                        <span class="badge badge-danger p-2 ml-1" style="font-size:13px;">⚠️ <%= abnormalCount %> bất thường</span>
+                    <% } %>
                 </td>
-                <td class="align-middle"><%= moment(item.createdAt).format('DD-MM-YYYY') %></td>
+                <td class="align-middle"><%= moment(item.createdAt).format('DD-MM-YYYY HH:mm') %></td>
                 <td class="align-middle text-center">
-                    <button class="btn btn-sm btn-outline-dark" onclick="toggleDetails('details_<%= item._id %>')">Xem Hành Trình</button>
+                    <button class="btn btn-sm btn-outline-primary font-weight-bold" onclick="toggleDetails('details_<%= item._id %>')">
+                        Xem Hành Trình (<%= checkpoints.length %>)
+                    </button>
                 </td>
             </tr>
             
-            <!-- Vùng hiển thị chi tiết -->
-            <tr id="details_<%= item._id %>" style="display:none; background-color:#f8fafc;">
+            <!-- Vùng hiển thị chi tiết (Tối ưu cho 30-40 chốt, 5 ảnh/chốt) -->
+            <tr id="details_<%= item._id %>" style="display:none; background-color:#f1f5f9;">
                 <td colspan="8">
-                    <div class="row px-3 pt-2">
-                        <% item.checkpoints.forEach(function(point) { %>
+                    <div class="row px-2 pt-2">
+                        <% checkpoints.forEach(function(point, pIdx) { 
+                            let hasComment = point.comment && point.comment.trim() !== '';
+                            let pImages = point.anhthuchien || point.images || point.image || point.anh || point.anhChot || [];
+                        %>
                             <div class="col-md-4 mb-3">
-                                <div class="card h-100 shadow-sm border-left-primary">
-                                    <div class="card-body p-2">
-                                        <b class="text-dark">📍 <%= point.checkpointName %></b> <span class="float-right text-muted"><%= point.time %></span>
-                                        <p class="mb-1 text-danger small"><%= point.comment ? 'Ghi chú: ' + point.comment : '' %></p>
+                                <div class="card h-100 shadow-sm <%= hasComment ? 'card-abnormal' : '' %>">
+                                    <div class="card-body p-2 d-flex flex-column">
+                                        <div>
+                                            <b class="text-dark">📍 <%= pIdx + 1 %>. <%= point.checkpointName %></b>
+                                            <span class="float-right badge badge-success"><%= point.time %></span>
+                                        </div>
+                                        <div class="text-muted small font-italic mb-1">
+                                            Khu vực: <%= point.khuvuc || '-' %> | Vị trí: <%= point.vitri || '-' %>
+                                        </div>
+
+                                        <% if(hasComment) { %>
+                                            <p class="mb-1 text-danger small font-weight-bold">⚠️ Ghi chú: <%= point.comment %></p>
+                                        <% } else { %>
+                                            <p class="mb-1 text-secondary small">Ghi chú: Bình thường</p>
+                                        <% } %>
                                         <hr class="my-1">
                                         
                                         <!-- Danh sách công việc -->
                                         <ul class="pl-3 mb-2" style="font-size:12px;">
-                                            <% if(point.congviec) { %>
+                                            <% if(point.congviec && point.congviec.length > 0) { %>
                                                 <% point.congviec.forEach(function(cv) { %>
                                                     <li><%= cv.isDone ? '✅' : '⬛' %> <%= cv.name %></li>
                                                 <% }) %>
+                                            <% } else { %>
+                                                <li class="text-muted font-italic">Không có checklist</li>
                                             <% } %>
                                         </ul>
 
-                                        <!-- Render Hình ảnh tuần tra tại chốt -->
-                                        <% 
-                                            // Tự động tìm mảng ảnh dù anh đặt tên biến là gì trong DB
-                                            let pImages = point.anhthuchien || point.images || point.image || point.anh || point.anhChot || [];
-                                        %>
-                                        
-                                        <% if(pImages && pImages.length > 0) { %>
-                                            <div class="mt-2 pt-2 border-top">
-                                                <% pImages.forEach(function(img) { 
-                                                    // Đảm bảo ảnh base64 luôn có đúng tiền tố để hiển thị được trên web
-                                                    let imgSrc = (img.startsWith('data:image') || img.startsWith('http')) ? img : 'data:image/jpeg;base64,' + img;
-                                                %>
-                                                    <img src="<%= imgSrc %>" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgSrc %>')" title="Click để phóng to">
-                                                <% }) %>
-                                            </div>
-                                        <% } else { %>
-                                            <div class="mt-2 pt-1 small text-secondary">
-                                                <i>(Không tìm thấy ảnh tuần tra)</i>
-                                                <br>
-                                                <!-- Dòng này giúp anh xem DB đang trả ra các trường dữ liệu tên là gì để sửa lại cho đúng -->
-                                                <span style="font-size: 10px; color: #ccc;">[Debug Keys: <%= Object.keys(point).join(', ') %>]</span>
-                                            </div>
-                                        <% } %>
-
+                                        <!-- Render tối đa 5 Hình ảnh tuần tra tại chốt -->
+                                        <div class="mt-auto pt-2 border-top">
+                                            <% if(pImages && pImages.length > 0) { %>
+                                                <div class="d-flex flex-wrap">
+                                                    <% pImages.forEach(function(img) { 
+                                                        if (!img) return;
+                                                        let imgSrc = (img.startsWith('data:image') || img.startsWith('http')) ? img : 'data:image/jpeg;base64,' + img;
+                                                    %>
+                                                        <img src="<%= imgSrc %>" loading="lazy" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgSrc %>')" title="Bấm để phóng to">
+                                                    <% }) %>
+                                                </div>
+                                            <% } else { %>
+                                                <span class="small text-secondary font-italic">(Không chụp ảnh hiện trường)</span>
+                                            <% } %>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -147,24 +171,23 @@
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
+            <div class="modal-header py-2">
+                <a id="openOriginalLink" href="#" target="_blank" class="btn btn-sm btn-primary font-weight-bold">🔍 Mở ảnh gốc tab mới</a>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
                 </button>
             </div>
-            <div class="modal-body text-center pt-0 pb-3">
+            <div class="modal-body text-center pt-2 pb-3 bg-dark">
                 <img id="enlargedImg" src="" class="img-fluid rounded shadow-sm" style="max-height: 80vh;" alt="Ảnh Tuần Tra Phóng To">
             </div>
         </div>
     </div>
 </div>
 
-<!-- Script cần thiết cho Modal Bootstrap hoạt động -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Hàm bật/tắt hiển thị hành trình
     function toggleDetails(rowId) {
         var row = document.getElementById(rowId);
         if (row.style.display === "none") {
@@ -174,9 +197,9 @@
         }
     }
 
-    // Hàm gắn link ảnh vào Modal và hiển thị Modal
     function showImageModal(imgSrc) {
         document.getElementById('enlargedImg').src = imgSrc;
+        document.getElementById('openOriginalLink').href = imgSrc;
         $('#imageModal').modal('show');
     }
 </script>
