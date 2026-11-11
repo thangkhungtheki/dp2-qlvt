@@ -21,7 +21,10 @@
 </head>
 <body>
 <div class="container-fluid mt-4 mb-5">
-    <h2 class="text-primary mb-4">📜 LỊCH SỬ TUẦN TRA AN NINH</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary mb-0">📜 LỊCH SỬ TUẦN TRA AN NINH</h2>
+        <span class="badge badge-dark p-2" style="font-size: 14px;">Tổng cộng: <%= totalDocs %> ca trực</span>
+    </div>
     
     <!-- THANH TÌM KIẾM THEO NGÀY & TÊN -->
     <div class="card mb-4 shadow-sm">
@@ -47,18 +50,18 @@
         </div>
     </div>
 
-    <!-- BẢNG KẾT QUẢ -->
+    <!-- BẢNG KẾT QUẢ SIÊU NHẸ -->
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
-                <th style="width: 50px;">STT</th>
+                <th style="width: 55px;" class="text-center">STT</th>
                 <th style="width: 90px;" class="text-center">Ảnh Ca</th>
                 <th>Người Tuần Tra</th>
                 <th>Giờ Bắt Đầu</th>
                 <th>Giờ Kết Thúc</th>
                 <th>Tổng Quan Chốt</th>
                 <th>Ngày Ghi Nhận</th>
-                <th style="width: 150px;" class="text-center">Chi Tiết</th>
+                <th style="width: 170px;" class="text-center">Chi Tiết</th>
             </tr>
         </thead>
         <tbody>
@@ -67,15 +70,14 @@
             <% } %>
 
             <% data.forEach(function(item, index) { 
-                let checkpoints = item.checkpoints || [];
-                let abnormalCount = checkpoints.filter(function(cp) { return cp.comment && cp.comment.trim() !== ''; }).length;
+                let stt = (currentPage - 1) * 15 + index + 1;
                 let selfieSrc = '';
                 if (item.selfie) {
                     selfieSrc = (item.selfie.startsWith('data:image') || item.selfie.startsWith('http')) ? item.selfie : 'data:image/jpeg;base64,' + item.selfie;
                 }
             %>
             <tr>
-                <td class="align-middle text-center"><%= index + 1 %></td>
+                <td class="align-middle text-center font-weight-bold"><%= stt %></td>
                 <td class="align-middle text-center">
                     <% if(selfieSrc) { %>
                         <img src="<%= selfieSrc %>" loading="lazy" class="selfie-img" alt="Selfie" onclick="showImageModal('<%= selfieSrc %>')">
@@ -90,81 +92,49 @@
                 <td class="align-middle text-success font-weight-bold"><%= item.startTime %></td>
                 <td class="align-middle text-danger font-weight-bold"><%= item.endTime %></td>
                 <td class="align-middle">
-                    <span class="badge badge-info p-2" style="font-size:13px;"><%= item.totalPoints || checkpoints.length %> chốt</span>
-                    <% if(abnormalCount > 0) { %>
-                        <span class="badge badge-danger p-2 ml-1" style="font-size:13px;">⚠️ <%= abnormalCount %> bất thường</span>
+                    <span class="badge badge-info p-2" style="font-size:13px;"><%= item.totalPoints || 0 %> chốt</span>
+                    <% if(item.abnormalCount > 0) { %>
+                        <span class="badge badge-danger p-2 ml-1" style="font-size:13px;">⚠️ <%= item.abnormalCount %> bất thường</span>
                     <% } %>
                 </td>
                 <td class="align-middle"><%= moment(item.createdAt).format('DD-MM-YYYY HH:mm') %></td>
                 <td class="align-middle text-center">
-                    <button class="btn btn-sm btn-outline-primary font-weight-bold" onclick="toggleDetails('details_<%= item._id %>')">
-                        Xem Hành Trình (<%= checkpoints.length %>)
+                    <button id="btn_<%= item._id %>" class="btn btn-sm btn-outline-primary font-weight-bold" onclick="loadAndToggleDetails('<%= item._id %>')">
+                        📂 Xem Hành Trình
                     </button>
                 </td>
             </tr>
             
-            <!-- Vùng hiển thị chi tiết (Tối ưu cho 30-40 chốt, 5 ảnh/chốt) -->
-            <tr id="details_<%= item._id %>" style="display:none; background-color:#f1f5f9;">
+            <!-- Vùng hiển thị chi tiết (Rỗng ban đầu, chỉ tải qua AJAX khi bấm) -->
+            <tr id="details_<%= item._id %>" data-loaded="false" style="display:none; background-color:#f1f5f9;">
                 <td colspan="8">
-                    <div class="row px-2 pt-2">
-                        <% checkpoints.forEach(function(point, pIdx) { 
-                            let hasComment = point.comment && point.comment.trim() !== '';
-                            let pImages = point.anhthuchien || point.images || point.image || point.anh || point.anhChot || [];
-                        %>
-                            <div class="col-md-4 mb-3">
-                                <div class="card h-100 shadow-sm <%= hasComment ? 'card-abnormal' : '' %>">
-                                    <div class="card-body p-2 d-flex flex-column">
-                                        <div>
-                                            <b class="text-dark">📍 <%= pIdx + 1 %>. <%= point.checkpointName %></b>
-                                            <span class="float-right badge badge-success"><%= point.time %></span>
-                                        </div>
-                                        <div class="text-muted small font-italic mb-1">
-                                            Khu vực: <%= point.khuvuc || '-' %> | Vị trí: <%= point.vitri || '-' %>
-                                        </div>
-
-                                        <% if(hasComment) { %>
-                                            <p class="mb-1 text-danger small font-weight-bold">⚠️ Ghi chú: <%= point.comment %></p>
-                                        <% } else { %>
-                                            <p class="mb-1 text-secondary small">Ghi chú: Bình thường</p>
-                                        <% } %>
-                                        <hr class="my-1">
-                                        
-                                        <!-- Danh sách công việc -->
-                                        <ul class="pl-3 mb-2" style="font-size:12px;">
-                                            <% if(point.congviec && point.congviec.length > 0) { %>
-                                                <% point.congviec.forEach(function(cv) { %>
-                                                    <li><%= cv.isDone ? '✅' : '⬛' %> <%= cv.name %></li>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <li class="text-muted font-italic">Không có checklist</li>
-                                            <% } %>
-                                        </ul>
-
-                                        <!-- Render tối đa 5 Hình ảnh tuần tra tại chốt -->
-                                        <div class="mt-auto pt-2 border-top">
-                                            <% if(pImages && pImages.length > 0) { %>
-                                                <div class="d-flex flex-wrap">
-                                                    <% pImages.forEach(function(img) { 
-                                                        if (!img) return;
-                                                        let imgSrc = (img.startsWith('data:image') || img.startsWith('http')) ? img : 'data:image/jpeg;base64,' + img;
-                                                    %>
-                                                        <img src="<%= imgSrc %>" loading="lazy" class="patrol-thumb mr-1 mb-1" onclick="showImageModal('<%= imgSrc %>')" title="Bấm để phóng to">
-                                                    <% }) %>
-                                                </div>
-                                            <% } else { %>
-                                                <span class="small text-secondary font-italic">(Không chụp ảnh hiện trường)</span>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <% }) %>
-                    </div>
+                    <div id="content_<%= item._id %>" class="p-2"></div>
                 </td>
             </tr>
             <% }) %>
         </tbody>
     </table>
+
+    <!-- THANH PHÂN TRANG (PAGINATION) -->
+    <% if (totalPages > 1) { %>
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                <a class="page-link font-weight-bold" href="?page=<%= currentPage - 1 %>&date=<%= searchDate %>&guardName=<%= encodeURIComponent(searchName) %>">« Trước</a>
+            </li>
+            
+            <% for(let p = Math.max(1, currentPage - 3); p <= Math.min(totalPages, currentPage + 3); p++) { %>
+                <li class="page-item <%= p === currentPage ? 'active' : '' %>">
+                    <a class="page-link font-weight-bold" href="?page=<%= p %>&date=<%= searchDate %>&guardName=<%= encodeURIComponent(searchName) %>"><%= p %></a>
+                </li>
+            <% } %>
+
+            <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                <a class="page-link font-weight-bold" href="?page=<%= currentPage + 1 %>&date=<%= searchDate %>&guardName=<%= encodeURIComponent(searchName) %>">Sau »</a>
+            </li>
+        </ul>
+    </nav>
+    <% } %>
 </div>
 
 <!-- Modal để hiển thị ảnh phóng to -->
@@ -188,12 +158,111 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    function toggleDetails(rowId) {
-        var row = document.getElementById(rowId);
-        if (row.style.display === "none") {
-            row.style.display = "table-row";
-        } else {
-            row.style.display = "none";
+    // Chống lỗi ký tự đặc biệt khi vẽ HTML bằng JS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Hàm tải dữ liệu chốt theo yêu cầu (Lazy Load)
+    async function loadAndToggleDetails(id) {
+        const row = document.getElementById('details_' + id);
+        const contentBox = document.getElementById('content_' + id);
+        const btn = document.getElementById('btn_' + id);
+
+        // Nếu đang mở thì đóng lại ngay
+        if (row.style.display === 'table-row') {
+            row.style.display = 'none';
+            btn.innerText = '📂 Xem Hành Trình';
+            return;
+        }
+
+        row.style.display = 'table-row';
+        btn.innerText = '🔼 Thu Gọn';
+
+        // Nếu đã tải 1 lần rồi thì không cần gọi API lại nữa
+        if (row.getAttribute('data-loaded') === 'true') {
+            return;
+        }
+
+        contentBox.innerHTML = '<div class="text-center py-3 text-primary font-weight-bold">⏳ Đang tải chi tiết các chốt kiểm tra...</div>';
+
+        try {
+            const res = await fetch('/api/dp3/baove/lichsu/chitiet/' + id);
+            const result = await res.json();
+
+            if (!result.ok) throw new Error(result.message || 'Lỗi tải dữ liệu');
+
+            const checkpoints = result.checkpoints || [];
+            if (checkpoints.length === 0) {
+                contentBox.innerHTML = '<div class="text-center text-muted py-2">Ca trực này không có dữ liệu chốt.</div>';
+                row.setAttribute('data-loaded', 'true');
+                return;
+            }
+
+            let html = '<div class="row px-2 pt-1">';
+            checkpoints.forEach(function(point, pIdx) {
+                const hasComment = point.comment && point.comment.trim() !== '';
+                const pImages = point.anhthuchien || point.images || point.image || point.anh || point.anhChot || [];
+
+                // Render checklist
+                let tasksHtml = '';
+                if (point.congviec && point.congviec.length > 0) {
+                    tasksHtml = point.congviec.map(function(cv) {
+                        return '<li>' + (cv.isDone ? '✅' : '⬛') + ' ' + escapeHtml(cv.name) + '</li>';
+                    }).join('');
+                } else {
+                    tasksHtml = '<li class="text-muted font-italic">Không có checklist</li>';
+                }
+
+                // Render tối đa 5 ảnh của chốt
+                let imgsHtml = '';
+                if (pImages && pImages.length > 0) {
+                    imgsHtml = '<div class="d-flex flex-wrap">';
+                    pImages.forEach(function(img) {
+                        if (!img) return;
+                        const imgSrc = (img.startsWith('data:image') || img.startsWith('http')) ? img : 'data:image/jpeg;base64,' + img;
+                        const safeSrc = escapeHtml(imgSrc);
+                        imgsHtml += '<img src="' + safeSrc + '" loading="lazy" class="patrol-thumb mr-1 mb-1" onclick="showImageModal(\'' + safeSrc + '\')" title="Bấm để phóng to">';
+                    });
+                    imgsHtml += '</div>';
+                } else {
+                    imgsHtml = '<span class="small text-secondary font-italic">(Không chụp ảnh hiện trường)</span>';
+                }
+
+                html += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 shadow-sm ${hasComment ? 'card-abnormal' : ''}">
+                            <div class="card-body p-2 d-flex flex-column">
+                                <div>
+                                    <b class="text-dark">📍 ${pIdx + 1}. ${escapeHtml(point.checkpointName)}</b>
+                                    <span class="float-right badge badge-success">${escapeHtml(point.time)}</span>
+                                </div>
+                                <div class="text-muted small font-italic mb-1">
+                                    Khu vực: ${escapeHtml(point.khuvuc || '-')} | Vị trí: ${escapeHtml(point.vitri || '-')}
+                                </div>
+                                ${hasComment 
+                                    ? `<p class="mb-1 text-danger small font-weight-bold">⚠️ Ghi chú: ${escapeHtml(point.comment)}</p>` 
+                                    : `<p class="mb-1 text-secondary small">Ghi chú: Bình thường</p>`}
+                                <hr class="my-1">
+                                <ul class="pl-3 mb-2" style="font-size:12px;">${tasksHtml}</ul>
+                                <div class="mt-auto pt-2 border-top">${imgsHtml}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            contentBox.innerHTML = html;
+            row.setAttribute('data-loaded', 'true');
+        } catch (err) {
+            contentBox.innerHTML = '<div class="text-danger text-center py-2">❌ Lỗi tải chi tiết: ' + escapeHtml(err.message) + '</div>';
         }
     }
 

@@ -258,35 +258,95 @@ router.post('/nhanvien/xoa', async (req, res) => {
     }
 });
 
-// Xem lịch sử tuần tra
+// 1.4 GET: Lịch sử tuần tra (ĐÃ TỐI ƯU PHÂN TRANG & KHÔNG LOAD SẴN CHECKPOINTS)
 router.get('/lichsu', async (req, res) => {
     try {
-        let { date, guardName } = req.query;
-        let queryCondition = {};
+        let { date, guardName, page } = req.query;
+        let currentPage = Math.max(1, parseInt(page) || 1);
+        let limit = 15; // Mỗi trang hiển thị 15 ca trực cho cực nhẹ
+        let skip = (currentPage - 1) * limit;
+
+        let matchStage = {};
 
         if (date) {
             const startOfDay = new Date(date);
             startOfDay.setHours(0, 0, 0, 0);
             const endOfDay = new Date(date);
             endOfDay.setHours(23, 59, 59, 999);
-            queryCondition.createdAt = { $gte: startOfDay, $lte: endOfDay };
+            matchStage.createdAt = { $gte: startOfDay, $lte: endOfDay };
         }
 
         if (guardName) {
-            queryCondition.guardName = { $regex: guardName, $options: 'i' };
+            matchStage.guardName = { $regex: guardName, $options: 'i' };
         }
 
-        const histories = await Patrol.find(queryCondition).sort({ createdAt: -1 });
+        // Đếm tổng số bản ghi và lấy danh sách rút gọn (KHÔNG kéo mảng checkpoints nặng nề về)
+        const [totalDocs, histories] = await Promise.all([
+            Patrol.countDocuments(matchStage),
+            Patrol.aggregate([
+                { $match: matchStage },
+                { $sort: { createdAt: -1 } },
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $project: {
+                        guardId: 1,
+                        guardCode: 1,
+                        guardName: 1,
+                        selfie: 1,
+                        startTime: 1,
+                        endTime: 1,
+                        createdAt: 1,
+                        totalPoints: {
+                            $ifNull: ['$totalPoints', { $size: { $ifNull: ['$checkpoints', []] } }]
+                        },
+                        // Đếm số chốt có ghi chú bất thường ngay trong DB mà không cần tải cả mảng về
+                        abnormalCount: {
+                            $size: {
+                                $filter: {
+                                    input: { $ifNull: ['$checkpoints', []] },
+                                    as: 'cp',
+                                    cond: {
+                                        $and: [
+                                            { $ne: ['$$cp.comment', null] },
+                                            { $ne: ['$$cp.comment', ''] }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ])
+        ]);
+
+        const totalPages = Math.ceil(totalDocs / limit) || 1;
 
         res.render('admin_baove/view_lichsu', {
             data: histories,
             searchDate: date || '',
             searchName: guardName || '',
+            currentPage: currentPage,
+            totalPages: totalPages,
+            totalDocs: totalDocs,
             moment: moment
         });
     } catch (error) {
         console.error("Lỗi xem lịch sử:", error);
         res.status(500).send("Lỗi tải lịch sử hệ thống");
+    }
+});
+
+// 1.5 GET API: Lấy chi tiết hành trình của 1 ca trực khi bấm nút (AJAX Lazy Load)
+router.get('/lichsu/chitiet/:id', async (req, res) => {
+    try {
+        const patrol = await Patrol.findById(req.params.id).select('checkpoints').lean();
+        if (!patrol) {
+            return res.status(404).json({ ok: false, message: 'Không tìm thấy ca trực' });
+        }
+        return res.json({ ok: true, checkpoints: patrol.checkpoints || [] });
+    } catch (error) {
+        return res.status(500).json({ ok: false, message: error.message });
     }
 });
 
